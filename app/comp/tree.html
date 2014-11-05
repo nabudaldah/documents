@@ -1,0 +1,20 @@
+
+<!-- Credits: http://jsfiddle.net/brendanowen/uXbn6/8/ -->
+<script type="text/ng-template" id="tree.node.html">
+  <div class="form-group">    
+    <div class="input-group">
+      <span class="input-group-btn">
+        <button ng-disabled="ngDisabled" ng-if="ngModel.weight >= 0 || !ngModel.weight" ng-click="ngModel.weight =  -1" type="button" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+        <button ng-disabled="ngDisabled" ng-if="ngModel.weight <  0" ng-click="ngModel.weight = 1" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span></button>
+      </span>
+      <input ng-disabled="ngDisabled" type="text" class="form-control" ng-model="ngModel.data" placeholder="({{name}})"></input>
+      <span class="input-group-btn">
+        <button ng-disabled="ngDisabled" ng-if="ngModel.nodes.length" ng-click="remove(ngModel)" type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+        <button ng-disabled="ngDisabled" ng-click="add(ngModel)" type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign"></span></button>
+      </span>
+    </div>
+  </div>
+  <ul style="list-style: none;"><li ng-repeat="ngModel in ngModel.nodes" ng-include="'tree.node.html'"></li></ul>
+</script>
+
+<div ng-model="ngModel" ng-include="'tree.node.html'"></div>

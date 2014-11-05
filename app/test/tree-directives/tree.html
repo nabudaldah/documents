@@ -1,0 +1,22 @@
+
+<div class="form form-group">
+  <div class="input-group">
+    <span class="input-group-btn">
+      <button ng-if="ngModel.weight >= 0" ng-click="toggleSign()" type="button" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+      <button ng-if="ngModel.weight <  0" ng-click="toggleSign()" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span></button>
+    </span>
+    <input type="text" class="form-control" ng-model="ngModel.data"></input>
+    <span class="input-group-btn">
+      <button ng-if="subnode && !ngModel.nodes.length" ng-click="remove()" type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+      <button ng-click="add()" type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign"></span></button>
+      <!-- <button ng-disabled="!ngModel.nodes || !ngModel.nodes.length" type="button" class="btn btn-default"><span class="glyphicon glyphicon-chevron-down"></span></button> -->
+    </span>
+  </div><!-- /input-group -->
+
+</div>
+
+<ul style="list-style: none;">
+  <li ng-repeat="node in ngModel.nodes"  style="list-style: none;">
+    <recursive><tree ng-model="node" subnode="true" parent="ngModel"></tree></recursive>
+  </li>
+</ul>

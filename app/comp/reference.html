@@ -1,0 +1,34 @@
+<!-- 
+<div class="input-group">
+  
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">{{collection}} &nbsp; <span class="caret"></span></button>
+    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+      <li><a href="" ng-repeat="item in collections" ng-click="selectCollection(item._id)">{{item._id}}</a></li>
+    </ul>
+  </div>
+  <input type="text" class="form-control" ng-model="object" ng-change="search()" placeholder="({{name}})">
+
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> ({{objects.length}}{{objects.length == 10?'+':''}} matches) &nbsp; <span class="caret"></span></button>
+    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+      <li><a href="" ng-repeat="item in objects" ng-click="selectObject(item._id)">{{item._id}}</a></li>
+    </ul>
+  </div> 
+
+</div>
+<hr/>
+ -->
+
+<div class="input-group">
+  
+  <input type="text" class="form-control" ng-model="ngModel" ng-change="search()" placeholder="({{name}})">
+
+  <div class="input-group-btn">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"> {{results.length}}{{results.length == 10?'+':''}} {{level}} &nbsp; <span class="caret"></span></button>
+    <ul class="dropdown-menu dropdown-menu-right" role="menu">
+      <li><a href="" ng-repeat="item in results" ng-click="select(item)">{{item}}</a></li>
+    </ul>
+  </div> 
+
+</div>

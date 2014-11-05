@@ -1,0 +1,42 @@
+<!-- this should display as a single line with left and right buttons... -->
+
+<div class="row form-group" ng-repeat="slice in ngModel">
+  <div class="col-sm-6">
+   <div class="input-group">
+      <input type="text" class="form-control" ng-model="slice.value">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="remove($index)"><span class="glyphicon glyphicon-remove"></span></button>
+      </span>
+    </div>
+  </div>
+
+  <div class="col-sm-3">
+    <input type="text" class="form-control" ng-model="slice.from">
+  </div>
+  <div class="col-sm-3">
+    <input type="text" class="form-control" ng-model="slice.to">
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-sm-6">
+
+ <div class="input-group">
+    <input type="text" class="form-control" ng-model="new.value" placeholder="({{name}})">
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="button" ng-click="add()"><span class="glyphicon glyphicon-plus"></span></button>
+    </span>
+  </div>
+
+
+  </div>
+  <div class="col-sm-3">
+    <input type="text" class="form-control" ng-model="new.from" placeholder="(from)">
+  </div>
+  <div class="col-sm-3">
+    <input type="text" class="form-control" ng-model="new.to" placeholder="(to)">
+  </div>
+</div>
+
+<!-- <pre>{{ngModel}}</pre> -->

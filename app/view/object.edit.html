@@ -1,0 +1,189 @@
+
+<div class="panel panel-default fade" ng-class="{in:ready}">
+  <div class="panel-heading clearfix">
+    
+    <button class="btn btn-default pull-right" ng-click="close()">
+      <span class="glyphicon glyphicon-remove"></span>
+    </button>
+
+    <button ng-click="columnsUp()" class="btn btn-default hidden-xs">
+      <span class="glyphicon glyphicon-th-large"/>
+    </button>
+
+    <button style="margin-left: 10px" class="btn btn-default" ng-show="!starred && !new" ng-click="star()" >
+      <span class="glyphicon glyphicon-star"/>
+    </button>
+
+    <button style="margin-left: 10px" class="btn btn-success" ng-show="starred  && !new" ng-click="star()">
+      <span class="glyphicon glyphicon-star"/>
+    </button>
+
+    <button style="margin-left: 10px" ng-click="raw()" ng-show="!new" class="btn btn-default hidden-xs">RAW</button>
+
+    <button style="margin-left: 10px" ng-hide="editing || new" ng-click="edit()" class="btn btn-default">
+      <span class="glyphicon glyphicon-pencil"/>
+    </button>
+
+<!--     <button style="margin-left: 10px" ng-show="editing  && !new" ng-click="save()" class="btn btn-success">
+      <span class="glyphicon glyphicon-pencil"/>
+    </button>
+ -->
+    <button style="margin-left: 10px" ng-click="labels=!labels" class="btn btn-default">
+      <span class="glyphicon glyphicon-tag"/>
+    </button>
+
+    <style>
+    h4 {
+      display: inline-block;
+      margin-left: 10px;
+    }
+    </style>
+
+    <style ng-if="!labels">label {display: none;}</style>
+
+    <h4 class="hidden-xs">{{object._id}}</h4>
+
+    <a href="" class="btn btn-link" ng-click="save()">Save</a>
+
+  </div>
+
+  <style>
+    
+    .clean-inputs > div > .form-control {
+      border: 0px solid white;
+      box-shadow: none;
+      border-bottom: 1px dashed #ddd;
+      border-radius: 0;
+    }
+
+    .clean-inputs > div > .form-control[disabled="disabled"]{
+      cursor: default;
+      background-color: white;
+      opacity: 1;
+    }
+
+  </style>
+
+  <!-- Google Maps -->
+  <style>
+    .angular-google-map-container { height: 200px; }
+
+    .angular-google-map {
+
+    }
+
+    .angular-google-map-container {
+      border-radius: 8px;
+      border: 1px solid black;
+    }
+
+  </style>
+
+
+  <!-- panel-body -->
+  <div class="panel-body object">
+  
+      <div class="form-group col-sm-12" ng-show="new">
+        <label class="control-label">_id</label>
+        <div class="">
+          <input type="text" class="form-control" ng-model="object._id" ng-disabled="!new">
+        </div>
+      </div>
+
+      <!-- Tag list -->
+      <div class="form-group col-sm-12">
+        <label class="control-label">tags</label>
+        <div class="">
+          <taginput ng-model="object.tags" ng-disabled="!editing"></taginput>
+        </div>
+      </div>
+
+      <!-- Template items -->
+      <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="field in object.template track by field.name">
+        <label class="control-label test">{{field.name}} <small>({{field.type}})</small></label>
+        
+        <input      ng-if="field.type == 'text'"       ng-model="object[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
+        <input      ng-if="field.type == 'date'"       ng-model="object[field.name]" ng-disabled="!editing" type="date" class="form-control">
+        <textarea   ng-if="field.type == 'textarea'"   ng-model="object[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px;"></textarea>
+        <javascript ng-if="field.type == 'javascript'" ng-model="object[field.name]" ng-disabled="!editing" col="{{objectCol}}" id="{{objectId}}" script="{{field.name}}"></javascript>
+        <rscript    ng-if="field.type == 'rscript'"    ng-model="object[field.name]" ng-disabled="!editing" col="{{objectCol}}" id="{{objectId}}" script="{{field.name}}"></rscript>
+        <timeslice  ng-if="field.type == 'timeslice'"  ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></timeslice>
+        <reference  ng-if="field.type == 'reference'"  ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></reference>
+        <tree       ng-if="field.type == 'tree'"       ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></tree>
+
+        <!-- Google Maps -->
+        <ui-gmap-google-map ng-if="field.type == 'googlemaps'" center="object[field.name].center" zoom="object[field.name].zoom" options="object[field.name].options"></ui-gmap-google-map>
+
+        <!-- Timeseries -->
+        <timeseries ng-if="field.type == 'timeseries'" ng-model="object.data[field.name]"
+          new         = "{{new}}"
+          collection  = "{{objectCol}}"
+          id          = "{{object._id}}"
+          timeseries  = "{{field.name}}"
+          saving      = "saving"
+          ng-disabled = "!editing">
+        </timeseries>
+     
+      </div>
+
+      <!-- Non-Template items -->
+      <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="(key, value) in object" ng-if="additional(key)">
+        <label class="control-label">{{key}}</label>
+        <div class="">
+          <input type="text"   class="form-control" ng-model="object[key]" ng-disabled="!editing" placeholder="({{key}})">
+        </div>
+      </div>
+      <!-- /Non-Template items -->
+
+      <!-- New object properties -->
+      <div class="form-group col-sm-{{columns}}" ng-show="editing">
+        <label class="control-label">
+          new property:
+        </label>
+        <div class="">
+
+          <div class="input-group">
+            <input type="text" class="form-control" ng-model="newPropertyName" placeholder="(new property)">
+            <div class="input-group-btn">
+              <button type="submit" class="btn btn-default" ng-click="addProperty('text')" ng-disabled="!newPropertyOk()">Add</button>
+              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="!newPropertyOk()"><span class="caret"></span></button>
+              <ul class="dropdown-menu dropdown-menu-right" role="menu">
+                <li><a href="" ng-click="addProperty('textarea')">textarea</a></li>
+                <li><a href="" ng-click="addProperty('number')">number</a></li>
+                <li><a href="" ng-click="addProperty('date')">date</a></li>
+                <li><a href="" ng-click="addProperty('time')">time</a></li>
+                <li><a href="" ng-click="addProperty('timeslice')">timeslice</a></li>
+                <li><a href="" ng-click="addProperty('reference')">reference</a></li>
+                <li><a href="" ng-click="addProperty('timeseries')">timeseries</a></li>
+                <li><a href="" ng-click="addProperty('javascript')">javascript</a></li>
+                <li><a href="" ng-click="addProperty('rscript')">rscript</a></li>
+                <li><a href="" ng-click="addProperty('googlemaps')">googlemaps</a></li>
+                <li><a href="" ng-click="addProperty('tree')">tree</a></li>
+              </ul>
+            </div><!-- /btn-group -->
+          </div><!-- /input-group -->
+
+        </div>
+      </div>
+      <!-- /New object properties -->
+
+  </div> <!-- panel-body -->
+
+  <!-- panel-footer -->
+  <div class="panel-footer clearfix" ng-show="editing && new">
+
+
+    <button ng-click="create()" type="submit" class="pull-right btn btn-primary">
+      <span class="glyphicon glyphicon-floppy-disk"></span> Create
+    </button>
+
+    <div class="checkbox pull-right" style="margin-right: 20px">
+        <input type="checkbox" ng-model="saveAsTemplate" ng-change="asTemplate()"> Create as template?
+    </div>
+
+  </div>
+  <!-- /panel-footer -->
+
+</div>
+
+<!-- <pre>{{object}}</pre> -->

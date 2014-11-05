@@ -1,0 +1,22 @@
+
+<style>
+  .tooltip {
+    width: 80%;
+  }
+  .tooltip-inner {
+    min-width: 100%;
+    font-family: monospace;
+    font-size: small;
+    white-space: pre;
+    text-align: left;
+    overflow: hidden;
+  }
+</style>
+
+<div class="input-group">
+  <div class="input-group-btn">
+    <button id="compute" class="btn btn-default"><span class="glyphicon glyphicon-play"></span> &nbsp; {{script}}</button>    
+  </div>
+  <input type="text" class="form-control code" id="rscript" tooltip="{{message}}">
+</div>
+

@@ -1,0 +1,31 @@
+{
+  "name": "App",
+  "description": "My App",
+  "author": "Nabi Abudaldah <nabi.abudaldah@gen.nl>",
+  "dependencies": {
+    "express": "latest",
+    "express-jwt": "latest",
+    "jsonwebtoken": "latest",
+    "bcrypt-nodejs": "latest",
+    "helmet": "latest",
+    "mongojs": "latest",
+    "mongodb": "latest",
+    "node-uuid": "latest",
+    "moment": "latest",
+    "twix": "latest",
+    "async": "latest",
+    "request": "latest",
+    "xmldoc": "latest",
+    "node-schedule": "latest",
+    "socket.io": "latest",
+    "fibers": "latest",
+    "sqlite3": "latest",
+    "helmet": "latest",
+    "express-json": "latest",
+    "thunky": "latest",
+    "mubsub": "latest",
+    "compression": "latest",
+    "body-parser": "latest"
+  },
+  "engine": "node >= 0.10.32"
+}

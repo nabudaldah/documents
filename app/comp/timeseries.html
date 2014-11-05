@@ -1,0 +1,74 @@
+
+<div class="row">
+  <div class="col-sm-12" ng-show="showGraph">
+    <graph ng-model="timeseries" name="{{name}}" style="height: 145px"></graph>
+  </div>
+  <div class="col-sm-12" ng-show="showData">
+    <textarea id="csv" class="form-control code" rows="7"></textarea>
+  </div>
+</div>
+
+<div class="row form-group" ng-show="!attr.new" style="margin-bottom: -10px;">
+  <div class="col-sm-12">
+
+    <div class="btn-group btn-group-justified">
+      
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" ng-click="offsetDown()">
+          <span class="glyphicon glyphicon-chevron-left"></span>
+        </button>
+      </div>
+      
+      <div class="btn-group">
+        <button type="button" ng-click="span('hour')"    class="btn btn-default">H{{offset>=0?'+':''}}{{offset}}</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" ng-click="span('day')"     class="btn btn-default">D{{offset>=0?'+':''}}{{offset}}</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" ng-click="span('week')"    class="btn btn-default">W{{offset>=0?'+':''}}{{offset}}</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" ng-click="span('month')"   class="btn btn-default">M{{offset>=0?'+':''}}{{offset}}</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" ng-click="span('quarter')" class="btn btn-default">Q{{offset>=0?'+':''}}{{offset}}</button>
+      </div>
+      <div class="btn-group">
+        <button type="button" ng-click="span('year')"    class="btn btn-default">Y{{offset>=0?'+':''}}{{offset}}</button>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" ng-click="offsetUp()">
+          <span class="glyphicon glyphicon-chevron-right"></span>
+        </button>
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<!-- <pre>{{timeseries}}</pre> -->
+
+<!-- <div class="row">
+  <div class="col-sm-12">
+
+    <div class="btn-group btn-group-justified">
+      
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" ng-click="showGraph()">
+          <span class="glyphicon glyphicon-stats"></span> Graph
+        </button>
+      </div>
+
+      <div class="btn-group">
+        <button type="button" class="btn btn-default" ng-click="showGraph()">
+          <span class="glyphicon glyphicon-stats"></span> Data
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+ -->

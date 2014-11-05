@@ -1,0 +1,42 @@
+<div class="container-fluid fade" ng-class="{in:ready}">
+  
+  <div class="row">
+    <div class="col-md-12">
+
+      <div ng-repeat="item in list" class="col-md-3">
+        <div class="panel panel-default" style="overflow: hidden; min-height: 200px" >
+          <div class="panel-heading">
+            <a href="/#/{{item.type}}/{{item._id}}">{{item._id | limitTo : 20}}</a>
+          </div>
+          <div class="panel-body">
+             <!-- <p class="center-block"><span style="font-size: 28px">200 kWh</span></p> -->
+                       <p><ul class="taglist"><li ng-repeat="tag in item.tags" class="tag">{{tag}}</li></ul></p>
+
+          </div>          
+        </div>
+      </div>  
+
+<!--       <div class="col-md-12">
+        <div class="panel panel-default" style="overflow: hidden; min-height: 500px" >
+          <div class="panel-heading">
+            <a href="">Map</a>
+          </div>
+          <div class="panel-body">
+             <p class="center-block"><span style="font-size: 28px">200 kWh</span></p>
+          </div>          
+        </div>
+      </div>   -->
+
+
+    </div>
+  </div>
+
+</div>
+
+<!-- 
+      home widgets kunnen vergroot worden in x en y (col-md-1...12 en min-height: 100...1200px) met de muis/touch
+      van ieder object kun je dan een evbld uitkiezen om te tonen. iedere veld kan als textbox getoont worden
+      andere types die in een template beschreven staan kunnen met een eigen component worden weergegeven. voorb.
+      een tijdserie kan via de reguliere component weergegeven worden!
+-->
+

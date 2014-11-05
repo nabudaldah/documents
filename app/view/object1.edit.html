@@ -1,0 +1,172 @@
+
+<div class="panel panel-default fade" ng-class="{in:ready}">
+  <div class="panel-heading clearfix">
+    
+    <button class="btn btn-default pull-right" ng-click="close()">
+      <span class="glyphicon glyphicon-remove"></span>
+    </button>
+
+    <h4 class="pull-left">{{object._id}}</h4>
+
+    <button class="btn btn-default" style="margin-left: 20px" ng-show="!starred && !new" ng-click="star()" >
+      <span class="glyphicon glyphicon-star"/>
+    </button>
+
+    <button class="btn btn-success" style="margin-left: 20px" ng-show="starred  && !new" ng-click="star()">
+      <span class="glyphicon glyphicon-star"/>
+    </button>
+
+    <button style="margin-left: 20px" ng-click="raw()" ng-show="!new" class="btn btn-default">RAW</button>
+
+    <button style="margin-left: 20px" ng-hide="editing" ng-click="editing=1" class="btn btn-default">
+      <span class="glyphicon glyphicon-pencil"/>
+    </button>
+
+    <button style="margin-left: 20px" ng-show="editing" ng-click="editing=0" class="btn btn-success">
+      <span class="glyphicon glyphicon-pencil"/>
+    </button>
+
+  </div>
+
+  <!-- panel-body -->
+  <div class="panel-body">
+  
+    <form class="form" role="form">
+
+
+      <div ng-if="new" class="form-group">
+        <label class="col-md-2 control-label">_id</label>
+        <div class="col-md-10">
+          <input type="text" class="form-control" ng-model="object._id" ng-disabled="!editing">          
+        </div>
+      </div>
+
+      <!-- Tag list -->
+      <div class="form-group">
+        <label class="col-md-2 control-label">tags</label>
+        <div class="col-md-10">
+          <taginput ng-model="object.tags" ng-disabled="!editing"></taginput>
+        </div>
+      </div>
+
+      <!-- Template items -->
+      <div class="form-group" ng-repeat="field in object.template | orderBy:'order'">
+        <label class="col-md-2 control-label">{{field.name}}</label>
+        <div class="col-md-10">
+
+          <div ng-if="field.type == 'text'">
+            <input type="text" class="form-control" ng-model="object[field.name]" ng-disabled="!editing">          
+          </div>
+
+          <div ng-if="field.type == 'textarea'">
+            <textarea class="form-control code" ng-model="object[field.name]" ng-disabled="!editing"></textarea>          
+          </div>
+
+          <div ng-if="field.type == 'date'">
+            <input type="date" class="form-control" ng-model="object[field.name]" ng-disabled="!editing">
+          </div>
+
+          <div ng-if="field.type == 'javascript'">
+            <javascript ng-model="object[field.name]" col="{{objectCol}}" id="{{objectId}}" script="{{field.name}}" ng-disabled="!editing"></javascript>
+          </div>
+
+          <div ng-if="field.type == 'rscript'">
+            <rscript ng-model="object[field.name]" col="{{objectCol}}" id="{{objectId}}" script="{{field.name}}" ng-disabled="!editing"></rscript>
+          </div>
+
+          <div ng-if="field.type == 'timeseries'">
+            <timeseries
+              ng-model    = "object.data[field.name]"
+              new         = "{{new}}"
+              collection  = "{{objectCol}}"
+              id          = "{{object._id}}"
+              timeseries  = "{{field.name}}"
+              saving      = "saving"
+              ng-disabled = "!editing">
+            </timeseries>
+            <!-- <pre>{{object.data[field.name]}}</pre> -->
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Non-Template items -->
+      <div class="form-group" ng-repeat="(key, value) in object" ng-if="additional(key)">
+        <label class="col-md-2 control-label">{{key}}</label>
+        <div class="col-md-10">
+          <input type="text"   class="form-control" ng-model="object[key]" ng-disabled="!editing">
+        </div>
+      </div>
+      <!-- /Non-Template items -->
+
+      <!-- New object properties -->
+      <div class="form-group" ng-show="editing">
+        <hr/>
+        <label class="col-md-2 control-label">
+          New property:
+        </label>
+        <div class="col-md-10">
+
+          <div class="row">
+            <div class="col-md-5">
+              <input type="text" class="form-control" ng-model="newProperty.name" placeholder="Property name">
+            </div>
+            <div class="col-md-5">
+              <select ng-model="newProperty.type" class="form-control">
+                <option value="text">       Text field        </option>
+                <option value="textarea">   Text box          </option>
+                <option value="number">     Number field      </option>
+                <option value="date">       Date field        </option>
+                <option value="time">       Time field        </option>
+                <option value="timeseries"> Timeseries object </option>
+                <option value="javascript"> JavaScript box    </option>
+                <option value="rscript">    R-Script box      </option>
+              </select>
+            </div>
+
+            <div class="col-md-2">
+              <button class="btn btn-default" ng-click="newPropertyAdd()" ng-disabled="!newPropertyOk()"><span class="glyphicon glyphicon-plus"></span> &nbsp; Add</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+      <!-- /New object properties -->
+
+    </form>
+
+  </div> <!-- panel-body -->
+
+  <!-- panel-footer -->
+  <div class="panel-footer clearfix" ng-show="editing">
+
+    <button ng-click="deleting=!deleting" ng-show="!new" class="btn btn-default">
+      <span class="glyphicon glyphicon-trash"></span>
+    </button>
+
+    <span ng-show="deleting">
+      <button style="margin-left: 20px" ng-click="deleting=0" class="btn btn-success">
+        Keep
+      </button>
+      <button style="margin-left: 20px" ng-click="delete()" class="btn btn-danger">
+        Delete
+      </button>
+    </span>
+
+
+    <button ng-click="save()" type="submit" class="pull-right btn btn-primary">
+      <span class="glyphicon glyphicon-floppy-disk"></span> Save
+    </button>
+
+    <div class="checkbox pull-right" style="margin-right: 20px" ng-show="new">
+      <label>
+        <input type="checkbox" ng-model="saveAsTemplate" ng-change="asTemplate()"> Save as template?
+      </label>
+    </div>
+
+  </div>
+  <!-- /panel-footer -->
+
+</div>
+
+<!-- <pre>{{object}}</pre> -->

@@ -1,0 +1,83 @@
+<style>
+
+  pivottable {
+    font-size: small;
+  }
+
+  pivottable table {
+    margin: 0;
+    padding: 0;
+    font-family: inherit;
+    border-collapse: collapse;
+    border: 1px solid #eee;
+  }
+
+  pivottable tr:hover {
+    background-color: #eee;
+  }
+
+  pivottable td {
+    padding: 4pt;
+    padding-left: 16pt;
+    text-align: right;
+    border: 1px solid #eee;
+  }
+
+  pivottable th {
+    padding: 4pt;
+    padding-left: 16pt;
+    border: 1px solid #eee;
+  }
+
+</style>
+
+<div class="container-fluid">
+
+  <button type="button" class="btn btn-default pull-right" ng-click="rebuild()" ng-disabled="rebuilding"><span class="glyphicon glyphicon-refresh"></span><span ng-show="rebuilding"> Rebuilding...</span></button>
+
+  <form class="form-inline">
+    
+    <select class="form-control" ng-change="load()" ng-model="aggregation">
+      <option>COUNT</option>
+      <option>AVG</option>
+      <option>SUM</option>
+      <option>MIN</option>
+      <option>MAX</option>
+    </select>
+
+    of
+
+    <select class="form-control" ng-change="load()" ng-model="variable" ng-disabled="!aggregation">
+        <option></option>
+      <option ng-repeat="dimension in dimensions">{{dimension}}</option>
+    </select>
+
+    <span ng-show="(aggregation && variable)">
+      per
+
+      <select class="form-control" ng-change="load()" ng-model="row">
+        <option></option>
+        <option ng-repeat="dimension in dimensions" ng-hide="column==dimension">{{dimension}}</option>
+      </select>
+    </span>
+
+    <span ng-show="(aggregation && variable && row)">
+      and
+
+      <select class="form-control" ng-change="load()" ng-model="column">
+        <option></option>
+        <option ng-repeat="dimension in dimensions" ng-hide="row==dimension">{{dimension}}</option>
+      </select>
+
+    </span>
+
+  </form>
+
+  <hr/>
+
+  <!-- <div class="container" style="height: 400px; width: 100%; overflow: auto;"> -->
+  <!-- <div class="container"> -->
+    <pivottable ng-model="data"></pivottable>
+  <!-- </div> -->
+
+</div>
