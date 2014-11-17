@@ -170,6 +170,24 @@ ts.random <- function(from, to, interval = "1d"){
 # Database relying functions for timeseries computations                      #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+trigger <- function(collection, id, property = NULL){
+  if(is.null(property)){
+    trigger <- list(event="update", message=paste0(collection, "/", id));    
+  } else { 
+    trigger <- list(event="update", message=paste0(collection, "/", id, "/", property));
+  }
+  mongo.insert(mongo, 'documents.triggers', trigger);
+} 
+
+trigger.my <- function(property = NULL){
+  if(is.null(property)){
+    trigger <- list(event="update", message=paste0(context$collection, "/", context$id));    
+  } else { 
+    trigger <- list(event="update", message=paste0(context$collection, "/", context$id, "/", property));
+  }
+  mongo.insert(mongo, 'documents.triggers', trigger);
+}
+
 # Load one document from database by ID
 doc <- function(collection, id){
   bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id));

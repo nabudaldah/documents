@@ -36,7 +36,7 @@ try     { config = JSON.parse(fs.readFileSync(__dirname + '/conf/config.json', {
 catch(e){ console.error('Error reading config.json: ' + e); process.exit(); }
 
 /* Job scheduler */
-// var agenda = new Agenda({db: { address: 'localhost:27017/files', collection: 'scheduler' }});
+// var agenda = new Agenda({db: { address: 'localhost:27017/documents', collection: 'scheduler' }});
 
 /* R engine */
 R.start(config.R.exe, config.R.dir);
@@ -118,7 +118,7 @@ app.use(express.static(__dirname + '/app'));
 /* MongoDB R triggers */ 
 // {"event" : "update", "message" : "timeseries/tstest"}
 var mubsub = require('mubsub');
-var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + 'files');
+var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + 'documents');
 var channel = client.channel('triggers');  
 client.on('error', console.error);
 channel.on('error', console.error);
