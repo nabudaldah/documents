@@ -104,7 +104,7 @@
         
         <input      ng-if="field.type == 'text'"       ng-model="object[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
         <input      ng-if="field.type == 'date'"       ng-model="object[field.name]" ng-disabled="!editing" type="date" class="form-control">
-        <textarea   ng-if="field.type == 'textarea'"   ng-model="object[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px;"></textarea>
+        <textarea   ng-if="field.type == 'textarea'"   ng-model="object[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px; font-size: small; font-family: monospace"></textarea>
         <javascript ng-if="field.type == 'javascript'" ng-model="object[field.name]" ng-disabled="!editing" col="{{objectCol}}" id="{{objectId}}" script="{{field.name}}"></javascript>
         <rscript    ng-if="field.type == 'rscript'"    ng-model="object[field.name]" ng-disabled="!editing" col="{{objectCol}}" id="{{objectId}}" script="{{field.name}}"></rscript>
         <timeslice  ng-if="field.type == 'timeslice'"  ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></timeslice>

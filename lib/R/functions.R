@@ -135,20 +135,51 @@ ts.len <- function(ts){
   return(length(ts))
 }
 
+# to should be optional and length too...
+ts.seq <- function(from, to, interval = "1d"){
+  interval <- ts.intervalParse(interval)
+  from <- ts.ISOparse(from);
+  to   <- ts.ISOparse(to);
+  #time <- seq(from = from, to=to, by = interval, length.out = length(vector))
+  time <- seq(from = from, to=to, by = interval)
+  return(time)
+}
+
+ts.ones <- function(from, to, interval = "1d"){
+  idx  <- ts.seq(from, to, interval)
+  len  <- length(idx)
+  ones <- xts(rep(1, len), idx)
+  return(ones)
+}
+
+ts.zeros <- function(from, to, interval = "1d"){
+  idx  <- ts.seq(from, to, interval)
+  len  <- length(idx)
+  zeros <- xts(rep(0, len), idx)
+  return(zeros)
+}
+
+ts.random <- function(from, to, interval = "1d"){
+  idx  <- ts.seq(from, to, interval)
+  len  <- length(idx)
+  random <- xts(runif(len), idx)
+  return(random)
+}
+
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Database relying functions for timeseries computations                      #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Load one document from database by ID
 doc <- function(collection, id){
-  bson  <- mongo.find.one(mongo, paste0('files.', collection), list('_id'=id));
+  bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id));
   return(mongo.bson.to.Robject(bson));
 }
 
 # Load list of documents from database by regex pattern over ID
 doc.n <- function(collection, regex){
   docs <- list();
-  cursor <- mongo.find(mongo, paste0('files.', collection), list('_id'=list('$regex'=regex)));
+  cursor <- mongo.find(mongo, paste0('documents.', collection), list('_id'=list('$regex'=regex)));
   while (mongo.cursor.next(cursor)) {
     bson <- mongo.cursor.value(cursor)
     id <- mongo.bson.value(bson, '_id')
@@ -166,7 +197,7 @@ ts <- function(timeseries = 'timeseries', id = NULL, collection = NULL){
   if(is.null(id)) id <- context$id;  
   
   projection <- paste0('{ "data.', timeseries, '": 1 }')
-  bson  <- mongo.find.one(mongo, paste0('files.', collection), list('_id'=id), projection);
+  bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), projection);
   if(is.null(bson)) { warning('ts: object not found.'); return(NULL); }
   
   vector <- mongo.bson.value(bson, paste0('data.', timeseries, '.vector'));  
@@ -202,14 +233,14 @@ ts.save <- function(ts, collection = 'timeseries', id = NULL, timeseries = 'time
   upd[['$set']][['data']] <- list()
   upd[['$set']][['data']][[timeseries]] <- list(base=base,interval=interval,vector=vector)
   
-  ok <- mongo.update(mongo, paste0('files.', collection), list('_id'=id), upd, mongo.update.upsert);
+  ok <- mongo.update(mongo, paste0('documents.', collection), list('_id'=id), upd, mongo.update.upsert);
   
   if(!ok) { warning('ts.save: update failed.'); return(NULL); }
   
   
   if(ok){
     trigger <- list(event="update", message=paste0(collection, "/", id, "/", timeseries))
-    mongo.insert(mongo, 'files.triggers', trigger);    
+    mongo.insert(mongo, 'documents.triggers', trigger);    
   }
   
   return(ok);
@@ -235,7 +266,7 @@ ts.n <- function(list){
 # List timeseries objects by regex search string on ID
 ts.list <- function(regex){
   query  <- list('_id'=list('$regex'=regex, '$options'='i'))
-  list <- mongo.distinct(mongo, 'files.timeseries', '_id', query)
+  list <- mongo.distinct(mongo, 'documents.timeseries', '_id', query)
   return(c(list))
 }
 
@@ -248,7 +279,7 @@ ts.m <- function(regex, parse = FALSE, vectorize = TRUE){
   interval <- c();
   vector   <- list();
   
-  cursor <- mongo.find(mongo, 'files.timeseries', list('_id'=list('$regex'=regex)),
+  cursor <- mongo.find(mongo, 'documents.timeseries', list('_id'=list('$regex'=regex)),
                        list('_id'=1), list('_id'=1, 'tags'=1, 'data.timeseries'=1))
   while (mongo.cursor.next(cursor)) {
     bson <- mongo.cursor.value(cursor)
@@ -331,20 +362,22 @@ my <- function(property, value=NULL){
   if(is.null(value)){
     projection <- list()
     projection[[property]] <- 1
-    bson  <- mongo.find.one(mongo, paste0('files.', collection), list('_id'=id), projection);
+    bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), projection);
     if(is.null(bson)) { warning('my: object not found.'); return(NULL); }
-    return(mongo.bson.to.Robject(bson, property))    
+    val <- mongo.bson.to.Robject(bson)[[property]]
+    if(!is.na(as.numeric(val))) val <- as.numeric(val)
+    return(val)
   } else {
     
     upd <- list()
     upd[['$set']] <- list()
     upd[['$set']][[property]] <- value
     
-    ok <- mongo.update(mongo, paste0('files.', collection), list('_id'=id), upd);
+    ok <- mongo.update(mongo, paste0('documents.', collection), list('_id'=id), upd);
     
     if(ok){
       trigger <- list(event="update", message=paste0(collection, "/", id))
-      mongo.insert(mongo, 'files.triggers', trigger);    
+      mongo.insert(mongo, 'documents.triggers', trigger);    
     }
     
     return(ok);
@@ -362,6 +395,45 @@ my.ts <- function(timeseries='timeseries', ts=NULL){
 }
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Tree summation function                                                     #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+tree.compute <- function(tree){
+  nodes <- tree$nodes
+  data  <- tree$data
+  N     <- length(nodes)
+  print(paste0('data: ', data, ', nodes: ', N))
+  
+  if(N == 0) { print(paste0('ts:   ', data)) }
+  if(N  > 0) { print(paste0('tree: ', N)); lapply(nodes, tree.compute) }
+  
+  reference <- unlist(strsplit(unlist(data), "/"))
+  print(reference)
+
+   if(N == 0){
+     return(ts(timeseries='timeseries', id=reference[2], collection=reference[1]))
+   } else {
+     subtree <- lapply(nodes, tree.compute);
+     results <- Reduce(function(x, y) merge(x, y, all=TRUE), subtree)
+     result <- xts(rowSums(results), index(results))
+     ts.save(result, timeseries='timeseries', id=reference[2], collection=reference[1])
+     return(result)
+   }
+}
+
+tree <- function(collection, id, tree){
+  if(is.null(collection) || is.null(id) || is.null(tree)) stop('please provide, collection, id and tree.')
+  d <- doc(collection, id)
+  
+  return(tree.compute(d[[tree]]));
+}
+
+my.tree <- function(tree = NULL){
+  tree <- ifelse(is.null(tree), 'tree', tree)
+  return(tree(context$collection, context$id, tree));
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Connect to local MongoDB instance for immediate database use                #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
@@ -373,57 +445,4 @@ if(is.null(mongo)){
 
 if(is.null(mongo) || !mongo.is.connected(mongo)){
   stop('No database connection.')
-}
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Tree summation function                                                     #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-# Recursive tree compute function
-tree.compute <- function(tree){
-  nodes <- tree$nodes
-  data  <- tree$data
-  N     <- length(nodes)
-  reference <- unlist(strsplit(unlist(data), "/"))
-
-  # If tree has no nodes, it is a final node
-  if(N == 0){
-    return(ts(timeseries='timeseries', id=reference[2], collection=reference[1]))
-
-  # If tree has 1 or more nodes, we need to compute it first (recursively)
-  # This could be computed much faster by avoiding the Reduce/merge function
-  # Look at ts.m() for clues.
-  } else {
-    subtree <- lapply(nodes, tree.compute);
-    results <- Reduce(function(x, y) merge(x, y, all=TRUE), subtree)
-    result <- xts(rowSums(results), index(results))
-    ts.save(result, timeseries='timeseries', id=reference[2], collection=reference[1])
-    return(result)
-  }
-}
-
-# Compute document tree
-tree <- function(collection, id, tree){
-  if(is.null(collection) || is.null(id) || is.null(tree)) stop('please provide, collection, id and tree.')
-  d <- doc(collection, id)
-  
-  return(tree.compute(d[[tree]]));
-}
-
-# Compute my tree (context enabled)
-my.tree <- function(tree = NULL){
-  tree <- ifelse(is.null(tree), 'tree', tree)
-  return(tree(context$collection, context$id, tree));
-}
-
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Tree summation function                                                     #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-
-# Propergate update of document or property by a trigger
-trigger <- function(collection, id, property = 'NULL'){
-    message <- paste0(collection, "/", id);
-    if(!is.null(property)) message <- paste0(message, "/", property)
-    trigger <- list(event="update", message=message);
-    return(mongo.insert(mongo, 'files.triggers', trigger));
 }

@@ -79,8 +79,8 @@ ctrl.config(function ($httpProvider) {
 // https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
 ctrl.controller('main', function ($scope, $http, $window, $location, messages, $route, socket) {
 
-  $scope.authUser = "nabi@gen.nl";
-  $scope.authPass = "1234";
+  $scope.authUser = "admin@localhost";
+  $scope.authPass = "admin";
 
   $scope.loadCollections = function(){
     $http.get('/v1/settings?query=collection').success(function (data) { 

@@ -46,7 +46,7 @@
   <script src="/bower_components/numeral/numeral.js"></script>
 
   <!-- Highstock -->
-  <script src="/bower_components/highstock/js/highstock.src.js"></script>
+  <script src="/bower_components/highstock-release/highstock.js"></script>
   <script>Highcharts.setOptions({global: { useUTC: false }});</script>
 
   <!-- CodeMirror -->
@@ -139,90 +139,16 @@
     <div id="menubtn" ng-click="menu()"><span class="glyphicon glyphicon-chevron-left"></span></div>
 
     <style>
-      .mysidebar { box-shadow: inset -10px 0 50px -5px hsla(0,0%,0%,.25); }
+      .mysidebar { 
+        box-shadow: inset -10px 0 50px -5px hsla(0,0%,0%,.25); 
+        width: 88px;
+      }
     </style>
 
     <!-- Sidebar -->
     <div id="sidebar-wrapper" class="mysidebar">
 
-<style>
-  .clock {
-    box-shadow: 0 1px 8px rgba(34, 34, 34, 0.3),inset 0 1px 8px rgba(34, 34, 34, 0.3);
-    width: 120px;
-    height: 120px;
-    margin: 0 auto;
-    position: relative;
-    border: 4px solid #fff;
-    border-radius: 50%;
-  }
-
-  .clock:after {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 12px;
-    height: 12px;
-    margin: -6px 0 0 -6px;
-    background: #fff;
-    border-radius: 6px;
-    content: "";
-    display: block;
-  }
-
-  .hour {
-    width: 0;
-    height: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -4px 0 -4px -25%;
-    padding: 4px 0 4px 25%;
-    background: #fff;
-    -webkit-transform-origin: 100% 50%;
-    -ms-transform-origin: 100% 50%;
-    transform-origin: 100% 50%;
-    border-radius: 4px 0 0 4px;
-  }
-
-  .minute {
-    width: 0;
-    height: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -40% -3px 0;
-    padding: 40% 3px 0;
-    background: #fff;
-    -webkit-transform-origin: 50% 100%;
-    -ms-transform-origin: 50% 100%;
-    transform-origin: 50% 100%;
-    border-radius: 3px 3px 0 0;
-  }
-
-  .second {
-    width: 0;
-    height: 0;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -40% -1px 0 0;
-    padding: 40% 1px 0;
-    background: #fff;
-    -webkit-transform-origin: 50% 100%;
-    -ms-transform-origin: 50% 100%;
-    transform-origin: 50% 100%;
-  }
-</style>
-
-      <!-- Clock inspired by MomentJS  -->
-      <div style="margin-top: 40px;
-width: 230px;">
-        <div class="clock">
-          <div id="hour"   class="hour"   style="transform: rotate(341.95deg);"></div>
-          <div id="minute" class="minute" style="transform: rotate(143.4deg);"></div>
-          <div id="second" class="second" style="transform: rotate(324deg);"></div>
-        </div>
-      </div>
+      <div ng-include="clock.html"></div>
 
       <ul class="sidebar-nav" style="position: relative">
         <li>&nbsp;</li>
@@ -250,7 +176,7 @@ width: 230px;">
   }
 </style>
 
-      <div id="page-content">
+      <div id="page-content" style="padding: 20px">
         <div ng-view></div>
       </div>
 

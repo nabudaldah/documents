@@ -20,12 +20,12 @@
     "socket.io": "latest",
     "fibers": "latest",
     "sqlite3": "latest",
-    "helmet": "latest",
     "express-json": "latest",
     "thunky": "latest",
     "mubsub": "latest",
     "compression": "latest",
-    "body-parser": "latest"
+    "body-parser": "latest",
+    "cheerio": "~0.18.0"
   },
   "engine": "node >= 0.10.32"
 }
