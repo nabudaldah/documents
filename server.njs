@@ -31,24 +31,9 @@ var error = function(message){
 };
 
 // Configuration
-var config = {
-  development: true,
-  authTimeout: 24 * 60,
-  R: {
-    exe: '/usr/bin/R',
-    dir: __dirname + '/lib/R/',
-    init: '.libPaths("/home/ubuntu/R/x86_64-pc-linux-gnu-library/3.0");source("functions.R");'
-  },
-  mongo: {
-    database: 'files'
-  },
-  sqlite: {
-    database: __dirname + '/db/pivot.sqlite3'
-  },
-  js: {
-    context: __dirname + '/lib/js/contextV2.js'
-  }
-};
+var config = null;
+try     { config = JSON.parse(fs.readFileSync(__dirname + '/conf/config.json', { enconding: 'utf8'} )); }
+catch(e){ console.error('Error reading config.json: ' + e); process.exit(); }
 
 /* Job scheduler */
 // var agenda = new Agenda({db: { address: 'localhost:27017/files', collection: 'scheduler' }});
@@ -59,6 +44,34 @@ R.run(config.R.init);
 
 /* Database */
 var db  = mongo.connect(config.mongo.database);
+
+db.on('error',function(err) {
+  console.error('MongoDB error: ', err);
+  process.exit();
+  return;
+});
+
+db.on('ready',function() {
+  console.log('Connected to MongoDB.');
+
+  /* Check if settings exists and if not -> install default super user from config.json */
+  db.getCollectionNames(function(err, data){
+
+    if(err) {
+      console.error('Error getting collection names from database.');
+      process.exit();
+      return;
+    };
+
+    if(!data || !data.length || data.indexOf('settings') == -1){
+      console.log('Initializing MongoDB: creating admin user and default collections.')
+      db.collection('settings').insert(config.admin);
+      db.collection('settings').insert(config.collections);
+    };
+
+  });
+});
+
 var db3_create = new sqlite3.Database(config.sqlite.database);
 db3_create.close();
 var db3 = new sqlite3.Database(config.sqlite.database, sqlite3.OPEN_READONLY);
@@ -549,7 +562,7 @@ var initiateScheduler = function(){
 
   var result = function(err, result){
     if(err) console.log(err);
-    console.log(result);
+    // console.log(result);
   };
 
   async.series([fetchCollections, fetchDocuments, scheduleJobs], result);
@@ -610,7 +623,7 @@ if(config.development){
 } else {
   secret = uuid.v1();
   app.use('/api', expressJwt({secret: secret}));
-  setInterval(function(){ secret = uuid.v1(); }, config.authTimeout * 60 * 1000);
+  setInterval(function(){ secret = uuid.v1(); }, config.authExpiration * 60 * 1000);
 }
 
 app.post('/authenticate', function (req, res) {
@@ -620,7 +633,7 @@ app.post('/authenticate', function (req, res) {
     //if(err || !data) { denied(401, 'Access denied.'); return; }
     bcrypt.compare(req.body.password, data.password, function(err, match) {      
       //if(err || !match) { denied(401, 'Access denied.'); return; }
-      res.json({ token: jwt.sign(data, secret, { expiresInMinutes: config.authTimeout }), profile: data });
+      res.json({ token: jwt.sign(data, secret, { expiresInMinutes: config.authExpiration }), profile: data });
     });
   });
 });
