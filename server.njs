@@ -118,7 +118,7 @@ app.use(express.static(__dirname + '/app'));
 /* MongoDB R triggers */ 
 // {"event" : "update", "message" : "timeseries/tstest"}
 var mubsub = require('mubsub');
-var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + 'documents');
+var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
 var channel = client.channel('triggers');  
 client.on('error', console.error);
 channel.on('error', console.error);
@@ -134,7 +134,7 @@ app.get('/v1/status', function (req, res){
     uptime: process.uptime(),
     arch: process.arch,
     platform: process.platform,
-    memory: process.memoryUsage(),
+    memory: process.memoryUsage().rss,
     version: process.version 
   };
 
@@ -168,7 +168,7 @@ app.get('/v1/:collection', function (req, res) {
 /* Update pivot table */
 app.get('/v1/:collection/pivot-update', function(req, res){
   var collection = req.params.collection;
-  pivot.update(collection, config.sqlite.database, function(err, results){
+  pivot.update(config.mongo.database, collection, config.sqlite.database, function(err, results){
     if(err) { res.status(400).send(error('Failed to save update pivot table')); return; }
     res.end();
   });
@@ -448,7 +448,7 @@ app.get('/v1/:collection/:id/compute/:script', function (req, res) {
 });
 
 /* Javascript execute */
-var executeJavascriptContext = fs.readFileSync(config.js.context, { encoding : 'utf8' });
+var executeJavascriptContext = fs.readFileSync(__dirname + '/lib/js/context.js', { encoding : 'utf8' });
 var executeJavascript = function (javascript, context, callback){
 
   var vmContext = {
@@ -490,7 +490,7 @@ app.get('/v1/:collection/:id/execute/:script', function (req, res) {
     if(!data[req.params.script]) { console.error('Script not found.'); }
 
     var javascript = data[req.params.script].javascript;
-    var context = { collection: req.params.collection, id: req.params.id, script: req.params.script };
+    var context = { database: config.mongo.database, collection: req.params.collection, id: req.params.id, script: req.params.script };
     // executeJavascript = function (javascript, context, callback)
     executeJavascript(javascript, context);
 
@@ -561,7 +561,7 @@ var initiateScheduler = function(){
         var object     = data;
         var repeat     = object[job.variable].schedule;
         var javascript = object[job.variable].javascript;
-        var context    = { collection: job.collection, id: job.object, script: job.variable } ;
+        var context = { database: config.mongo.database, collection: job.collection, id: job.object, script: job.variable } ;
 
         job.process = schedule.scheduleJob(repeat, function(){
           executeJavascript(javascript, context);
@@ -617,7 +617,7 @@ app.get('/v1/:collection/:id/schedule/:script', function (req, res) {
     job.process = schedule.scheduleJob(repeat, function(){
 
       var javascript = object[job.variable].javascript;
-      var context    = { collection: job.collection, id: job.object, script: job.variable };
+      var context = { database: config.mongo.database, collection: job.collection, id: job.object, script: job.variable };
 
       job.process = schedule.scheduleJob(repeat, function(){
         executeJavascript(javascript, context);

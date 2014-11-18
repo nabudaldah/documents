@@ -24,10 +24,6 @@
       <span class="glyphicon glyphicon-pencil"/>
     </button>
 
-<!--     <button style="margin-left: 10px" ng-show="editing  && !new" ng-click="save()" class="btn btn-success">
-      <span class="glyphicon glyphicon-pencil"/>
-    </button>
- -->
     <button style="margin-left: 10px" ng-click="labels=!labels" class="btn btn-default">
       <span class="glyphicon glyphicon-tag"/>
     </button>
@@ -43,7 +39,9 @@
 
     <h4 class="hidden-xs">{{object._id}}</h4>
 
-    <a href="" class="btn btn-link" ng-click="save()">Save</a>
+    <button style="margin-left: 10px" ng-show="!new" ng-click="save()" class="btn btn-success">
+      <span class="glyphicon glyphicon-pencil"/> Save
+    </button>
 
   </div>
 
@@ -159,6 +157,7 @@
                 <li><a href="" ng-click="addProperty('rscript')">rscript</a></li>
                 <li><a href="" ng-click="addProperty('googlemaps')">googlemaps</a></li>
                 <li><a href="" ng-click="addProperty('tree')">tree</a></li>
+                <li><a href="" ng-click="addProperty('hidden')">hidden</a></li>
               </ul>
             </div><!-- /btn-group -->
           </div><!-- /input-group -->

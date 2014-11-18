@@ -150,15 +150,25 @@
           <li><a href="/#/settings/"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
           <li><a href="" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> &nbsp; Sign out</a></li>
         </ul>
+
+        <div style="padding: 20px; position: absolute; bottom: 0px; color: white;" ng-click="checkStatus()">
+            <span ng-if="!status">
+                <span class="label label-danger">Server not responding</span>
+            </span>
+            <span ng-if="status">
+                <span class="label label-success" tooltip="{{status}}">Server up-and-running</span>
+            </span>
+        </div>
+
       </div>
     </div>
 
     <!-- Main content -->
-    <div class="container-fluid">
+    <div class="container-fluid" ng-if="authenticated()">
 
       <!-- User messages -->
       <div class="row">
-        <div class="col-sm-12">
+        <div class="col-sm-12" class="main">
           <mc-messages></mc-messages>
         </div>
       </div>
@@ -166,7 +176,7 @@
       <!-- Content -->
       <div class="row">
         <div class="col-sm-12">
-          <div ng-view class="main"></div>    
+          <div ng-view class="main"></div>
         </div>
       </div>
     </div>
@@ -180,19 +190,6 @@
         <button type="submit" value="Login" class="btn btn-lg btn-primary btn-block">Sign in</button>
       </form>    
     </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   </body>
 </html>

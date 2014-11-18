@@ -76,7 +76,7 @@ ctrl.config(function ($httpProvider) {
 
 // Token based authentication
 // https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
-ctrl.controller('main', function ($scope, $http, $window, $location, messages, $route, socket) {
+ctrl.controller('main', function ($scope, $http, $window, $location, messages, $route, socket, $interval) {
 
   $scope.authUser = "admin@localhost";
   $scope.authPass = "admin";
@@ -163,5 +163,31 @@ ctrl.controller('main', function ($scope, $http, $window, $location, messages, $
       setTimeout(function(){ $(window).resize(); }, 500);
     }
   }
+
+  $scope.checkStatus = function(){
+    $http
+      .get('/v1/status')
+      .success(function(data, status, headers, config){
+        var txt = "";
+
+        txt =       "NodeJS " + data.version + "\n"
+        txt = txt + data.platform + " (" + data.arch  + ")\n";
+        txt = txt + "Up:  " + numeral(data.uptime).format('00:00:00') + "\n";
+        txt = txt + "Mem: " + numeral(data.memory).format('0.0 b') + "\n";
+
+        $scope.status = txt;
+
+      }).error(function(data, status, headers, config){
+        $scope.status = null;
+        //messages.add('danger', 'Server not responding.', {timeout: statusInterval })
+      });
+  }
+
+  var statusInterval = 1000 * 60;
+  setInterval(function() {
+    $scope.checkStatus();
+  }, statusInterval);
+
+  $scope.checkStatus();
 
 });
