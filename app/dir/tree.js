@@ -30,7 +30,7 @@ app.directive("tree", function() {
 
   var directive = {
     scope: { ngModel: '=', ngDisabled: '=', name: '@' },
-    templateUrl: '/comp/tree.html',
+    templateUrl: '/dir/tree.html',
     link: link
   };
 

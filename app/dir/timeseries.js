@@ -138,7 +138,7 @@ app.directive('timeseries', function($http, socket) {
 
   var directive =  {
       restrict: 'E',
-      templateUrl: '/comp/timeseries.html',
+      templateUrl: '/dir/timeseries.html',
       scope: { ngModel: '=', ngDisabled: '=', saving: '=', collection: '@', id: '@', timeseries: '@' },
       transclude: true,
       link: link

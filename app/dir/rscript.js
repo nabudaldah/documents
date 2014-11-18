@@ -53,7 +53,7 @@ app.directive('rscript', function ($http) {
   var directive =  {
       restrict: 'E',
       require: '^ngModel',
-      templateUrl: '/comp/rscript.html',
+      templateUrl: '/dir/rscript.html',
       scope: { ngModel: '=', ngDisabled: '=', col: '@col', id: '@id', script: '@script' },
       transclude: true,
       link: link

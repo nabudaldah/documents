@@ -92,7 +92,7 @@ app.directive('javascript', function ($http) {
   var directive =  {
       restrict: 'E',
       require: '^ngModel',
-      templateUrl: '/comp/javascript.html',
+      templateUrl: '/dir/javascript.html',
       scope: { ngModel: '=', ngDisabled: '=', col: '@col', id: '@id', script: '@script' },
       transclude: true,
       link: link

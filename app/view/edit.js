@@ -1,4 +1,4 @@
-ctrl.controller('object.edit', function ($scope, $routeParams, $http, $location, $window, messages, socket, $timeout) {
+ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $window, messages, socket, $timeout) {
 
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 

@@ -1,202 +1,198 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="app">
-<head>
+  <head>
 
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <title>App</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <title>App</title>
 
-  <!-- Custom CSS -->
-  <link href="index.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="index.css" rel="stylesheet">
 
-  <!-- jQuery -->
-  <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+    <!-- jQuery -->
+    <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 
-  <!-- AngularJS -->
-  <script src="/bower_components/angularjs/angular.min.js"></script>
-  <script src="/lib/js/angular-route.js"></script>
+    <!-- AngularJS -->
+    <script src="/bower_components/angularjs/angular.min.js"></script>
+    <script src="/lib/js/angular-route.js"></script>
 
-  <!-- Twitter Bootstrap -->
-  <link  href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-  <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>  
-  <script src="/bower_components/bootstrap-js-components/dist/popover.js"></script>
-  <script src="/bower_components/bootstrap-js-components/dist/tooltip.js"></script>
+    <!-- Twitter Bootstrap -->
+    <link  href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>  
+    <script src="/bower_components/bootstrap-js-components/dist/popover.js"></script>
+    <script src="/bower_components/bootstrap-js-components/dist/tooltip.js"></script>
 
-  <!-- Angular UI: Bootstrap UI Popover plugin -->
-  <script src="/bower_components/bootstrap-ui/src/popover/popover.js"></script>
-  <script src="/bower_components/bootstrap-ui/src/tooltip/tooltip.js"></script>
+    <!-- Angular UI: Bootstrap UI Popover plugin -->
+    <script src="/bower_components/bootstrap-ui/src/popover/popover.js"></script>
+    <script src="/bower_components/bootstrap-ui/src/tooltip/tooltip.js"></script>
 
-  <!-- Angular Google Maps -->
-  <script src="/bower_components/lodash/dist/lodash.min.js"></script>
-  <script src="/bower_components/bluebird/js/browser/bluebird.js"></script>
-  <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
-  <script src="/bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
+    <!-- Angular Google Maps -->
+    <script src="/bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="/bower_components/bluebird/js/browser/bluebird.js"></script>
+    <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+    <script src="/bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
 
-  <!-- Angular UI: Tree -->
-  <link  href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">
-  <script src="bower_components/angular-ui-tree/dist/angular-ui-tree.min.js"></script>
+    <!-- Angular UI: Tree -->
+    <link  href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">
+    <script src="bower_components/angular-ui-tree/dist/angular-ui-tree.min.js"></script>
 
-  <!-- Moment.js and Twix component -->
-  <script src="/bower_components/momentjs/moment.js"></script>
-  <script src="/bower_components/twix/bin/twix.min.js"></script>
-  
-  <!-- Numeral.js -->
-  <script src="/bower_components/numeral/numeral.js"></script>
+    <!-- Moment.js and Twix component -->
+    <script src="/bower_components/momentjs/moment.js"></script>
+    <script src="/bower_components/twix/bin/twix.min.js"></script>
+    
+    <!-- Numeral.js -->
+    <script src="/bower_components/numeral/numeral.js"></script>
 
-  <!-- Highstock -->
-  <script src="/bower_components/highstock-release/highstock.js"></script>
-  <script>Highcharts.setOptions({global: { useUTC: false }});</script>
+    <!-- Highstock -->
+    <script src="/bower_components/highstock-release/highstock.js"></script>
+    <script>Highcharts.setOptions({global: { useUTC: false }});</script>
 
-  <!-- CodeMirror -->
-  <link  href="/bower_components/codemirror/lib/codemirror.css" rel="stylesheet">
-  <link  href="/bower_components/codemirror/theme/elegant.css" rel="stylesheet">
-  <script src="/bower_components/codemirror/lib/codemirror.js"></script>
-  <script src="/bower_components/codemirror/mode/javascript/javascript.js"></script>
-  <script src="/bower_components/codemirror/addon/edit/matchbrackets.js"></script>
-  <script src="/bower_components/codemirror/addon/edit/closebrackets.js"></script>
-  <script src="/bower_components/codemirror/addon/lint/lint.js"></script>
-  <script src="/bower_components/codemirror/addon/lint/javascript-lint.js"></script>
+    <!-- CodeMirror -->
+    <link  href="/bower_components/codemirror/lib/codemirror.css" rel="stylesheet">
+    <link  href="/bower_components/codemirror/theme/elegant.css" rel="stylesheet">
+    <script src="/bower_components/codemirror/lib/codemirror.js"></script>
+    <script src="/bower_components/codemirror/mode/javascript/javascript.js"></script>
+    <script src="/bower_components/codemirror/addon/edit/matchbrackets.js"></script>
+    <script src="/bower_components/codemirror/addon/edit/closebrackets.js"></script>
+    <script src="/bower_components/codemirror/addon/lint/lint.js"></script>
+    <script src="/bower_components/codemirror/addon/lint/javascript-lint.js"></script>
 
-  <!-- JSHint -->
-  <script src="/bower_components/jshint/dist/jshint.js"></script>
+    <!-- JSHint -->
+    <script src="/bower_components/jshint/dist/jshint.js"></script>
 
-  <!-- Non-bower components -->
-  <script src="/lib/js/ui-bootstrap-tpls-0.11.0.js"></script>
-  <script src="/lib/js/ng-infinite-scroll.js"></script>
-  <script src="/lib/js/uuid.js"></script>
-  
-  <!-- Credits: https://github.com/mateu-aguilo-bosch/message-center -->
-  <script src="/lib/js/angular-message-center.js"></script>
+    <!-- Non-bower components -->
+    <script src="/lib/js/ui-bootstrap-tpls-0.11.0.js"></script>
+    <script src="/lib/js/ng-infinite-scroll.js"></script>
+    <script src="/lib/js/uuid.js"></script>
+    
+    <!-- Credits: https://github.com/mateu-aguilo-bosch/message-center -->
+    <script src="/lib/js/angular-message-center.js"></script>
 
-  <!--[if lt IE 9]>
-  <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-  <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-  <![endif]-->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
 
-  <!-- Socket.io -->
-  <script src="/socket.io/socket.io.js"></script>
+    <!-- Socket.io -->
+    <script src="/socket.io/socket.io.js"></script>
 
-  <!-- AngularJS App -->
-  <script src="/index.js"></script>
+    <!-- AngularJS App -->
+    <script src="/index.js"></script>
 
-  <!-- AngularJS Socket.io Service -->
-  <script src="/serv/socket.io.js"></script>
+    <!-- AngularJS Socket.io Service -->
+    <script src="/serv/socket.io.js"></script>
 
-  <!-- AngularJS Directives -->
-  <script src="/comp/taginput.js"></script>
-  <script src="/comp/taglist.js"></script>
-  <script src="/comp/graph.js"></script>
-  <script src="/comp/pivottable.js"></script>
-  <script src="/comp/timeseries.js"></script>
-  <script src="/comp/javascript.js"></script>
-  <script src="/comp/rscript.js"></script>
-  <script src="/comp/timeslice.js"></script>
-  <script src="/comp/reference.js"></script>
-  <script src="/comp/tree.js"></script>
+    <!-- AngularJS Directives -->
+    <script src="/dir/taginput.js"></script>
+    <script src="/dir/taglist.js"></script>
+    <script src="/dir/graph.js"></script>
+    <script src="/dir/pivottable.js"></script>
+    <script src="/dir/timeseries.js"></script>
+    <script src="/dir/javascript.js"></script>
+    <script src="/dir/rscript.js"></script>
+    <script src="/dir/timeslice.js"></script>
+    <script src="/dir/reference.js"></script>
+    <script src="/dir/tree.js"></script>
 
-  <!-- AngularJS Controllers -->
-  <script src="/ctrl/home.js"></script>
-  <script src="/ctrl/object.list.js"></script>
-  <script src="/ctrl/object.edit.js"></script>
-  <script src="/ctrl/object.pivot.js"></script>
-  <script src="/ctrl/object.raw.js"></script>
+    <!-- AngularJS Views -->
+    <script src="/view/home.js"></script>
+    <script src="/view/list.js"></script>
+    <script src="/view/edit.js"></script>
+    <script src="/view/pivot.js"></script>
+    <script src="/view/raw.js"></script>
 
+    <!-- Drag & Drop support -->
+    <script src="/lib/js/drag-n-drop.js"></script>
 
-  <!-- Drag & Drop support -->
+  </head>
+  <body ng-controller="main">
 
-  <script>
-    function dragenter(event){
-      //console.log(document.getElementById(event.srcElement.id))
-    };
+    <!-- Mobile navigation (only on x-small devices) -->
+    <nav ng-if="authenticated()" class="visible-xs-block navbar navbar-default" role="navigation">
+      <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Documents</a>
+        </div>
 
-    function dragstart(event){
-      // console.log(event.srcElement.id + ' is being dragged ...');
-      //$("#" + event.srcElement.id).hide();
-      var data = event.target.id;
-      // var data = Math.random();
-      // var data = "nabi abudaldah";
-      event.dataTransfer.setData("Text", data);
-      console.log(event.dataTransfer.getData("Text"));
-    };
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+            <li><a href="/#/"><span class="glyphicon glyphicon-home"></span> &nbsp; Home</a></li>
+            <li ng-repeat="collection in collections"><a href="/#/{{collection}}"><span class="glyphicon glyphicon-list"></span> &nbsp; {{collection}}</a></li>
+            <hr/>
+            <li><a href="/#/settings/{{user._id}}"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
+            <li><a href="/#/settings/"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
+            <li><a href="" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> &nbsp; Sign out</a></li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
 
-    function drop(event){
-      //$("#" + event.target.id).focus();
-      event.preventDefault();
-      var data = event.dataTransfer.getData("Text");
-      console.log(data)
-      event.target.value = data;
-      console.log(event)
-    };
-  </script>
-</head>
-<body ng-controller="main">
-
-  <!-- Credits: http://startbootstrap.com/templates/simple-sidebar/ -->
-  <div id="wrapper">
-
-    <div id="menubtn" ng-click="menu()"><span class="glyphicon glyphicon-chevron-left"></span></div>
-
-    <style>
-      .mysidebar { 
-        box-shadow: inset -10px 0 50px -5px hsla(0,0%,0%,.25); 
-        width: 88px;
-      }
-    </style>
-
-    <!-- Sidebar -->
-    <div id="sidebar-wrapper" class="mysidebar">
-
-      <div ng-include="clock.html"></div>
-
-      <ul class="sidebar-nav" style="position: relative">
-        <li>&nbsp;</li>
-
-        <li><a href="/#/"><span class="glyphicon glyphicon-home"></span> &nbsp; Home</a></li>
-        <!-- <li><a href="/#/map/">Geo Map</a></li> -->
-        <li ng-repeat="collection in collections"><a href="/#/{{collection}}"><span class="glyphicon glyphicon-list"></span> &nbsp; {{collection}}</a></li>
-        <hr/>
-        <li><a href="/#/settings/{{user._id}}"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
-        <li><a href="/#/settings/"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
-        <li><a href="" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> &nbsp; Sign out</a></li>
-      </ul>
-
-    </div>
-    <!-- /#sidebar-wrapper -->
-
-    <!-- Page Content -->
-    <div id="page-content-wrapper">
-
-      <mc-messages></mc-messages>
-
-<style>
-  .hidden {
-    display: none;
-  }
-</style>
-
-      <div id="page-content" style="padding: 20px">
-        <div ng-view></div>
+    <!-- Desktop / table navigation (only on non-x-small devices) -->
+    <!-- Credits: http://startbootstrap.com/templates/simple-sidebar/ -->
+    <div id="wrapper" class="hidden-xs pull-left">
+      <!-- Sidebar -->
+      <div id="sidebar-wrapper" class="mysidebar">
+        <ul class="sidebar-nav" style="position: relative; padding-top: 20px">
+          <li><a href="/#/"><span class="glyphicon glyphicon-home"></span> &nbsp; Home</a></li>
+          <li ng-repeat="collection in collections"><a href="/#/{{collection}}"><span class="glyphicon glyphicon-list"></span> &nbsp; {{collection}}</a></li>
+          <hr/>
+          <li><a href="/#/settings/{{user._id}}"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
+          <li><a href="/#/settings/"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
+          <li><a href="" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> &nbsp; Sign out</a></li>
+        </ul>
       </div>
-
-      <!-- Authentication -->
-      <div id="page-authentication" class="container-fluid">
-        <form ng-submit="login()" class="form-signin" role="form">
-          <h2 class="form-signin-heading">Please sign in</h2>
-          <input ng-model="authUser" type="email"    class="form-control" placeholder="Email address" required autofocus/>
-          <input ng-model="authPass" type="password" class="form-control" placeholder="Password"      required/>
-          <button type="submit" value="Login" class="btn btn-lg btn-primary btn-block">Sign in</button>
-        </form>    
-      </div>
-
     </div>
-    <!-- /#page-content-wrapper -->
+
+    <!-- Main content -->
+    <div class="container-fluid">
+
+      <!-- User messages -->
+      <div class="row">
+        <div class="col-sm-12">
+          <mc-messages></mc-messages>
+        </div>
+      </div>
+      
+      <!-- Content -->
+      <div class="row">
+        <div class="col-sm-12">
+          <div ng-view class="main"></div>    
+        </div>
+      </div>
+    </div>
+
+    <!-- Authentication -->
+    <div class="container-fluid" id="page-authentication">
+      <form ng-submit="login()" class="form-signin" role="form">
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <input ng-model="authUser" type="email"    class="form-control" placeholder="Email address" required autofocus/>
+        <input ng-model="authPass" type="password" class="form-control" placeholder="Password"      required/>
+        <button type="submit" value="Login" class="btn btn-lg btn-primary btn-block">Sign in</button>
+      </form>    
+    </div>
 
 
-  </div>
-  <!-- /#wrapper -->
 
 
-</body>
+
+
+
+
+
+
+
+
+
+
+  </body>
 </html>

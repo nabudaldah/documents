@@ -128,6 +128,20 @@ channel.subscribe('update', function(message) {
   io.sockets.emit(message, 'updated');
 });
 
+/* Show server status: potentially dangerous information given... */
+app.get('/v1/status', function (req, res){
+  var status = {
+    uptime: process.uptime(),
+    arch: process.arch,
+    platform: process.platform,
+    memory: process.memoryUsage(),
+    version: process.version 
+  };
+
+  res.send(status);
+  res.end();
+});
+
 /* List objects (only returns _id, name and tags attributes for performance reasons) */
 app.get('/v1/:collection', function (req, res) {
   var collection = db.collection(req.params.collection);

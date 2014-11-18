@@ -1,4 +1,4 @@
-ctrl.controller('object.pivot', function ($scope, $http, $window, $location) {
+ctrl.controller('pivot', function ($scope, $http, $window, $location) {
 
   $scope.object = $location.path().split('/')[1];
   $scope.api  = '/v1/' + $scope.object;

@@ -17,12 +17,12 @@ app.config(['$routeProvider', function($routeProvider) { $routeProvider
   // .when('/timeseries/:id',   { templateUrl: '/view/timeseries.edit.html', controller: 'timeseries.edit' })
 
   // Generieke views en controllers
-  .when('/:object',               { templateUrl: '/view/object.list.html',  controller: 'object.list' })
-  .when('/:object/pivot',         { templateUrl: '/view/object.pivot.html', controller: 'object.pivot'})
-  .when('/:object/new',           { templateUrl: '/view/object.edit.html',  controller: 'object.edit' })
-  .when('/:object/new/:template', { templateUrl: '/view/object.edit.html',  controller: 'object.edit' })
-  .when('/:object/:id',           { templateUrl: '/view/object.edit.html',  controller: 'object.edit' })
-  .when('/:object/:id/raw',       { templateUrl: '/view/object.raw.html' ,  controller: 'object.raw'  })
+  .when('/:collection',               { templateUrl: '/view/list.html',  controller: 'list' })
+  .when('/:collection/pivot',         { templateUrl: '/view/pivot.html', controller: 'pivot'})
+  .when('/:collection/new',           { templateUrl: '/view/edit.html',  controller: 'edit' })
+  .when('/:collection/new/:template', { templateUrl: '/view/edit.html',  controller: 'edit' })
+  .when('/:collection/:id',           { templateUrl: '/view/edit.html',  controller: 'edit' })
+  .when('/:collection/:id/raw',       { templateUrl: '/view/raw.html' ,  controller: 'raw'  })
 
   .otherwise({ redirectTo: '/'});
 
@@ -52,7 +52,6 @@ app.factory('authInterceptor', ['$q', '$rootScope', '$location', '$window', 'mes
         return response || $q.when(response);
       },
       responseError: function (response) {
-
         if (response && response.status === 401) {
           console.log('401: Unauthorized.')
           messages.add('danger', 'Unauthorized: please login.')

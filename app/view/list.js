@@ -1,4 +1,4 @@
-ctrl.controller('object.list', function ($scope, $http, $window, $location, socket) {
+ctrl.controller('list', function ($scope, $http, $window, $location, socket, messages) {
 
   $scope.object = $location.path().split('/')[1];
   $scope.api  = '/v1/' + $scope.object;
@@ -39,6 +39,8 @@ ctrl.controller('object.list', function ($scope, $http, $window, $location, sock
     $http.get(url).success(function(data) { 
       $scope.list = data;
       $scope.colInit();
+    }).error(function(error){
+      messages.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
   };
 
@@ -72,7 +74,12 @@ ctrl.controller('object.list', function ($scope, $http, $window, $location, sock
   $scope.loadmore = function(){
     if($scope.list && $scope.list.length){
       var url = $scope.api + '/?query=' + $scope.query + '&skip=' + $scope.list.length + '&limit=24';
-      $http.get(url).success( function (data) { $scope.list = $scope.list.concat(data); $scope.colInit(); } );
+      $http.get(url).success( function (data) { 
+        $scope.list = $scope.list.concat(data); 
+        $scope.colInit(); 
+      }).error(function(error){
+        messages.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+      });
     }
   }
 

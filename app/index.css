@@ -475,16 +475,16 @@ margin-bottom: 6px;
 }
 
 #wrapper.toggled {
-    padding-left: 250px;
+    padding-left: 150px;
 }
 
 #sidebar-wrapper {
     z-index: 1000;
     position: fixed;
-    left: 250px;
+    left: 150px;
     width: 0;
     height: 100%;
-    margin-left: -250px;
+    margin-left: -150px;
     overflow-y: auto;
     overflow-x: hidden;
     background: #428bca;
@@ -495,7 +495,7 @@ margin-bottom: 6px;
 }
 
 #wrapper.toggled #sidebar-wrapper {
-    width: 250px;
+    width: 150px;
 }
 
 #page-content-wrapper {
@@ -505,7 +505,7 @@ margin-bottom: 6px;
 
 #wrapper.toggled #page-content-wrapper {
     position: absolute;
-    margin-right: -250px;
+    margin-right: -150px;
 }
 
 /* Sidebar Styles */
@@ -513,15 +513,16 @@ margin-bottom: 6px;
 .sidebar-nav {
     position: absolute;
     top: 0;
-    width: 250px;
+    width: 150px;
     margin: 0;
     padding: 0;
     list-style: none;
 }
 
 .sidebar-nav li {
-    text-indent: 20px;
+    text-indent: 10px;
     line-height: 40px;
+    font-size: small;
 }
 
 .sidebar-nav li a {
@@ -556,55 +557,55 @@ margin-bottom: 6px;
     background: none;
 }
 
-    #wrapper {
-        padding-left: 250px;
-    }
+#wrapper {
+    padding-left: 150px;
+}
 
-    #wrapper.toggled {
-        padding-left: 0;
-    }
+#wrapper.toggled {
+    padding-left: 0;
+}
 
-    #sidebar-wrapper {
-        width: 250px;
-    }
+#sidebar-wrapper {
+    width: 150px;
+}
 
-    #wrapper.toggled #sidebar-wrapper {
-        width: 0;
-    }
+#wrapper.toggled #sidebar-wrapper {
+    width: 0;
+}
 
-    #page-content-wrapper {
-        padding: 20px;
-    }
+#page-content-wrapper {
+    padding: 20px;
+}
 
-    #wrapper.toggled #page-content-wrapper {
-        position: relative;
-        margin-right: 0;
-    }
+#wrapper.toggled #page-content-wrapper {
+    position: relative;
+    margin-right: 0;
+}
 
 
-
+#wrapper li {
+}
 
 
 #menubtn {
 
-    background: #428bca;
+  background: #428bca;
 
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+  -webkit-transition: all 0.5s ease;
+  -moz-transition: all 0.5s ease;
+  -o-transition: all 0.5s ease;
+  transition: all 0.5s ease;
 
-    width: 40px;
-    height: 40px;
-    background-color: #428bca;
-    border-radius: 20px;
-    color: white;
-    padding: 12px;
-    position: fixed;
-    bottom: 50px;
-    left: 230px;
-    z-index: 2000
-
+  width: 40px;
+  height: 40px;
+  background-color: #428bca;
+  border-radius: 20px;
+  color: white;
+  padding: 12px;
+  position: fixed;
+  bottom: 50px;
+  left: 230px;
+  z-index: 2000
 }
 
 #menubtn.toggled {
@@ -616,3 +617,17 @@ margin-bottom: 6px;
   font-size: x-small;
 }
 
+.mysidebar { 
+  /*box-shadow: inset -10px 0 50px -5px hsla(0,0%,0%,.25); */
+  box-shadow:         0px 0px 15px 0px rgba(50, 50, 50, 0.5);
+  width: 95px;
+  opacity: 0.9;
+}
+
+@media (min-width: 768px) {
+  .main {
+    margin-left: 150px;
+    margin-top: 15px;
+    padding: 15px;
+  }
+}
