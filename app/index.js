@@ -179,7 +179,6 @@ ctrl.controller('main', function ($scope, $http, $window, $location, messages, $
 
       }).error(function(data, status, headers, config){
         $scope.status = null;
-        //messages.add('danger', 'Server not responding.', {timeout: statusInterval })
       });
   }
 

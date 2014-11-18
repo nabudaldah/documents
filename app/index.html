@@ -165,21 +165,15 @@
 
     <!-- Main content -->
     <div class="container-fluid" ng-if="authenticated()">
-
       <!-- User messages -->
-      <div class="row">
-        <div class="col-sm-12" class="main">
-          <mc-messages></mc-messages>
-        </div>
+      <div class="menu-margin-messages">
+          <mc-messages></mc-messages>      
       </div>
-      
       <!-- Content -->
-      <div class="row">
-        <div class="col-sm-12">
-          <div ng-view class="main"></div>
-        </div>
+      <div class="menu-margin-content">
+        <div ng-view></div>
       </div>
-    </div>
+    </div>        
 
     <!-- Authentication -->
     <div class="container-fluid" id="page-authentication">
