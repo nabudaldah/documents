@@ -13,11 +13,11 @@ app.directive('javascript', function ($http) {
       gutters: ["CodeMirror-lint-markers", "errors"]
     });
 
-    editor.setSize("100%", 130)
+    editor.setSize("100%", 130);
 
     editor.on('change', function(){
-      if(!scope.ngModel) scope.ngModel = { javascript: '' }
-      scope.ngModel.javascript = editor.getValue();
+      if(!scope.ngModel) scope.ngModel = '';
+      scope.ngModel = editor.getValue();
 
       editor.clearGutter('errors');
 
@@ -39,15 +39,29 @@ app.directive('javascript', function ($http) {
     scope.name = attr.script;
 
     scope.execute = function(){
+      scope.message = "Executing..."
+      scope.executing = true;
       var update = {};
       update[attr.script] = scope.ngModel;
-      $http.put('/v1/' + attr.col + '/' + attr.id, update).success(function(data){
-        $http.get('/v1/'+attr.col+'/'+attr.id+'/execute/' + attr.script).success(function(result) {
+      $http.put('/v1/' + attr.col + '/' + attr.id, update)
+        .success(function(data){
+          $http.get('/v1/'+attr.col+'/'+attr.id+'/execute/' + attr.script)
+            .success(function(data, status, headers, config) {
+              scope.message = data;
+              scope.executing = false;
+            })
+            .error(function(data, status, headers, config){
+              scope.message = data;
+              scope.executing = false;
+            });
+        })
+        .error(function(data, status, headers, config){
+          scope.message = "Error executing javascript on server."
+          scope.executing = false;
         });
-      });
     }
 
-    scope.reschedule = function(){
+/*    scope.reschedule = function(){
       if(scope.ngModel.runEvery) {
         var schedules = {
           "d" :  { recurs: true, year: null, month: null, date: null, dayOfWeek: null, hour:    0, minute:    0, second:    0 },
@@ -66,11 +80,11 @@ app.directive('javascript', function ($http) {
           console.log('rescheduled')
         });
       });
-    }
+    }*/
 
     var ngModelChanged = function(){
-      if(scope.ngModel && scope.ngModel.javascript)
-        editor.setValue(scope.ngModel.javascript);
+      if(scope.ngModel)
+        editor.setValue(scope.ngModel);
     }
 
     var ngDisabledChanged = function(){
@@ -87,6 +101,10 @@ app.directive('javascript', function ($http) {
     ngModelChanged();
     ngDisabledChanged();
 
+    scope.$on('$destroy', function() {
+      console.log("javascript.js: destroy");
+      editor = undefined;
+    });
   }
 
   var directive =  {

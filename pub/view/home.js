@@ -20,8 +20,12 @@ ctrl.controller('home', function ($scope, $http, $window, $location) {
 
       starred.map(function(star){
 
-        var type = star.match(/([^\/]+)/)[0];
-        var id   = star.match(/([^\/]+)$/)[0];
+        var typeMatch = star.match(/([^\/]+)/);
+        if(!typeMatch) return null;
+        var type = typeMatch[0];
+        var idMatch = star.match(/([^\/]+)$/);
+        if(!idMatch) return null;
+        var id   = idMatch[0];
 
         var item = {type: type, _id: id};
 

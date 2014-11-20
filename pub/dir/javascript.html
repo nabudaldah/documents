@@ -155,7 +155,15 @@ writing-mode: lr-tb;
 
 </style>
 <div class="row form-group">
-  <div class="col-md-12">
+  <div class="col-sm-2">
+    <button type="button" class="btn btn-default" ng-click="execute()" ng-disabled="executing" tooltip="{{message}}">
+      <span class="glyphicon glyphicon-play" ng-hide="executing"></span>
+      <img  src="/img/loading.gif" ng-show="executing"/>
+      &nbsp; {{name}}
+    </button>
+  </div>
+
+  <div class="col-sm-10">
     <textarea rows="7" style="height: 100px"></textarea>
     <!-- <textarea ng-model="ngModel.javascript" class="form-control code" rows="7" spellcheck="false"></textarea> -->
   </div>
@@ -163,11 +171,12 @@ writing-mode: lr-tb;
 
 <div class="row form-group" style="margin-bottom: -10px">
 
-  <div class="col-md-6">
-    <button type="button" class="btn btn-default" ng-click="execute()"><span class="glyphicon glyphicon-play"></span> &nbsp; {{name}}</button>    
-  </div>
 
-  <div class="col-md-6">
+<!--   <div class="col-sm-9">
+    <input type="text" class="form-control" value="{{message}}"></input>
+  </div>
+ -->
+<!--   <div class="col-sm-6">
     <select class="form-control" ng-model="ngModel.runEvery" ng-change="reschedule()">
       <option value="-">Do not run automatically</option>
       <option value="d">Daily</option>
@@ -176,5 +185,5 @@ writing-mode: lr-tb;
       <option value="5s">Every 5 seconds</option>
     </select>
   </div>
-
+ -->
 </div>

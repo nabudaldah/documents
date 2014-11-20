@@ -32,7 +32,7 @@ node_modules
 db
 
 # Bower dependencies
-app/bower_components
+pub/bower_components
 
 # Configurations
 conf

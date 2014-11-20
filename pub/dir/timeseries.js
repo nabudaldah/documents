@@ -129,9 +129,10 @@ app.directive('timeseries', function($http, socket) {
     socket.on(ref, function (data) {
       load();
     });
+    
     scope.$on('$locationChangeStart', function (event, next, current) {
       socket.close(ref);
-      scope.timeseries = null;
+      scope.timeseries = undefined;
     });
 
   }

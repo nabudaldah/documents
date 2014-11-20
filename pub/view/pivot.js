@@ -55,6 +55,12 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location) {
       if($scope.measure) url += "&measure=" + $scope.measure
       if($scope.where)   url += "&where="   + $scope.where;
 
+      var query = {
+        filters: [  ],
+        aggregations: $scope.aggregation,
+        dimensions: [$scope.row, $scope.column]
+      }
+
       $http.get(url).success(function (data, status, headers, config) {
         $scope.data = data;
       });

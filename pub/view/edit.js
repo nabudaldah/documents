@@ -139,7 +139,10 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
   $scope.star = function(){
     $scope.starred = !$scope.starred;
     $http.get('/v1/settings/' + $scope.user._id).success(function (data, status, headers, config) {
-      if(data && data.starred){
+      if(data){
+        if(data.starred == undefined){
+          data.starred = [];
+        }
         if(typeof(data.starred) == 'string') data.starred = data.starred.split(',');
         if($scope.starred) data.starred.push($scope.objectRef);
           else data.starred.splice(data.starred.indexOf($scope.objectRef), 1);
@@ -201,6 +204,8 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
       //$scope.object = 
       syncObject(oldObject, newObject);
       //syncObject($scope.object, object);
+      delete oldObject;
+      
     });    
   };
 
@@ -215,5 +220,9 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
     $window.localStorage.columns = $scope.columns;
     $timeout(function(){ $(window).trigger('resize') }, 0);
   }
+
+  $scope.$on("$destroy", function() {
+    console.log('destroy')
+  });
 
 });

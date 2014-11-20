@@ -9,6 +9,8 @@ app.directive('graph', function() {
       var graphId = uuid()
       element.find('div').attr('id', graphId)
 
+      var chart;
+
       scope.$watch('ngModel', function(){
 
         if(!scope.ngModel) return;
@@ -27,7 +29,7 @@ app.directive('graph', function() {
 
         if(typeof(data) == 'string') data = data.split(',');
 
-        var chart = new Highcharts.StockChart({
+        chart = new Highcharts.StockChart({
           credits: { enabled: false, margin: 0, spacing: [0, 0, 0, 0] },
           legend: { enabled: false },
           //xAxis: { type: 'datetime', tickLength: 0, minorTickLength: 0, minorGridLineWidth: 0, gridLineWidth: 0, labels: {enabled: true }, lineWidth: 0 },
@@ -47,6 +49,15 @@ app.directive('graph', function() {
           plotOptions: { series: { animation: false } }
         }); // var chart1 = ...
       }, true); // scope.$watch ...
+
+      scope.$on('$destroy', function() {
+        console.log('graph.js: destroy');
+        if(chart) {
+          console.log('graph.js: destroyed...')
+          chart.destroy();
+        }
+      });
+
     }
   };
 });

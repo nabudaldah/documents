@@ -172,20 +172,15 @@ ts.random <- function(from, to, interval = "1d"){
 
 trigger <- function(collection, id, property = NULL){
   if(is.null(property)){
-    trigger <- list(event="update", message=paste0(collection, "/", id));    
+    trigger <- list(event=paste0("update", context$pid), message=paste0(collection, "/", id));    
   } else { 
-    trigger <- list(event="update", message=paste0(collection, "/", id, "/", property));
+    trigger <- list(event=paste0("update", context$pid), message=paste0(collection, "/", id, "/", property));
   }
   mongo.insert(mongo, 'documents.triggers', trigger);
 } 
 
 trigger.my <- function(property = NULL){
-  if(is.null(property)){
-    trigger <- list(event="update", message=paste0(context$collection, "/", context$id));    
-  } else { 
-    trigger <- list(event="update", message=paste0(context$collection, "/", context$id, "/", property));
-  }
-  mongo.insert(mongo, 'documents.triggers', trigger);
+  trigger(context$collection, context$id, property);
 }
 
 # Load one document from database by ID
@@ -257,8 +252,7 @@ ts.save <- function(ts, collection = 'timeseries', id = NULL, timeseries = 'time
   
   
   if(ok){
-    trigger <- list(event="update", message=paste0(collection, "/", id, "/", timeseries))
-    mongo.insert(mongo, 'documents.triggers', trigger);    
+    trigger(collection, id, timeseries);
   }
   
   return(ok);
@@ -394,8 +388,7 @@ my <- function(property, value=NULL){
     ok <- mongo.update(mongo, paste0('documents.', collection), list('_id'=id), upd);
     
     if(ok){
-      trigger <- list(event="update", message=paste0(collection, "/", id))
-      mongo.insert(mongo, 'documents.triggers', trigger);    
+      trigger(collection, id);
     }
     
     return(ok);

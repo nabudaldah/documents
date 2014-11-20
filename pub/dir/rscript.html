@@ -1,0 +1,27 @@
+
+<style>
+  .tooltip {
+    width: 80%;
+    min-width: 300px;
+  }
+  .tooltip-inner {
+    min-width: 100%;
+    font-family: monospace;
+    font-size: small;
+    white-space: pre;
+    text-align: left;
+    overflow: hidden;
+  }
+</style>
+
+<div class="input-group">
+  <div class="input-group-btn">
+    <button class="btn btn-default" ng-click="compute()" ng-disabled="computing" tooltip="{{message}}">
+    <span class="glyphicon glyphicon-play" ng-hide="computing"></span>
+    <img  src="/img/loading.gif" ng-show="computing"/>
+    &nbsp; {{script}}</button>    
+  </div>
+  <input type="text" class="form-control code" ng-model="ngModel"></input>
+</div>
+
+<!-- {{ngModel}} -->
