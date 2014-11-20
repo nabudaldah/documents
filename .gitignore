@@ -35,4 +35,6 @@ db
 pub/bower_components
 
 # Configurations
-conf
+config.json
+ssl
+

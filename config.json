@@ -1,5 +1,8 @@
 {
-  "development": true,
+  "httpPort": 3000,
+  "httpsPort": 3001,
+  "https": false,
+  "redirect": false,
   "authExpiration": 1440,
   "R": {
     "exe": "C:/Program Files/R/R-3.1.1/bin/x64/Rterm.exe",

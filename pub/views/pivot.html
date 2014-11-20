@@ -33,7 +33,10 @@
 
 <div class="container-fluid">
 
-  <button type="button" class="btn btn-default pull-right" ng-click="rebuild()" ng-disabled="rebuilding"><span class="glyphicon glyphicon-refresh"></span><span ng-show="rebuilding"> Rebuilding...</span></button>
+  <button type="button" class="btn btn-default pull-right" ng-click="rebuild()" ng-disabled="rebuilding">
+    <span class="glyphicon glyphicon-refresh" ng-hide="rebuilding"></span>
+    <img  src="/images/loading.gif" ng-show="rebuilding"/>
+  </button>
 
   <form class="form-inline">
     

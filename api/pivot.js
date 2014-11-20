@@ -2,6 +2,7 @@ module.exports = function(app, config){
 
   var sqlite3 = require('sqlite3').verbose();
   var pivot   = require('../lib/pivot.js');
+  var async   = require('async');
 
   console.log('Opening Sqlite3 database file...')
   try {

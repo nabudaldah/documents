@@ -134,25 +134,19 @@ if (cluster.isMaster) {
   require(__dirname + '/api/execute.js')(app, config, db);
   require(__dirname + '/api/authenticate.js')(app, config, db);
 
-  /* Development server (on port 3000 on http only) */
-  if(config.development){
-    var server = http.createServer(app).listen(3000);
-    io = io.listen(server);
-    console.log('Development server ready.');
-  } 
-
-  /* Production server (on port 80 and https enabled) */
-  if(!config.development){
-    /* Always redirect to HTTPS */
-    var redirect = function(req, res) { res.writeHead(301, {Location: 'https://localhost/'}); res.end(); };
-    http.createServer(redirect).listen(80);
-
-    /* Open app on HTTPS (http://www.mobilefish.com/services/ssl_certificates/ssl_certificates.php) */
-    var ssl = { key: fs.readFileSync(__dirname + '/ssl/key.pem'), cert: fs.readFileSync(__dirname + '/ssl/cert.pem') };
-    var server = https.createServer(ssl, app).listen(443);
-    io = io.listen(server);
-    console.log('Server ready.');
+  /* Always redirect to HTTPS */
+  if(config.redirect || false){
+    var redirect = function(req, res) { res.writeHead(301, {Location: 'https://localhost:' + config.httpsPort || 3001 + '/'}); res.end(); };
+    http.createServer(redirect).listen(config.httpPort || 3000);
+  } else {
+    var httpServer = http.createServer(app).listen(config.httpPort || 3000);
+    io = io.listen(httpServer);  
   }
 
-
+  /* Open app on HTTPS (http://www.mobilefish.com/services/ssl_certificates/ssl_certificates.php) */
+  if(config.https){
+    var ssl = { key: fs.readFileSync(__dirname + '/ssl/key.pem'), cert: fs.readFileSync(__dirname + '/ssl/cert.pem') };
+    var httpsServer = https.createServer(ssl, app).listen(config.httpsPort || 3001);
+    io = io.listen(httpsServer);
+  }
 }
