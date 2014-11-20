@@ -43,7 +43,7 @@ if (cluster.isMaster) {
   console.log('Loading config.json file...');
   var config;
   try {
-    var content = fs.readFileSync('./conf/config.json', { enconding: 'utf8'} );
+    var content = fs.readFileSync(__dirname + '/conf/config.json', { enconding: 'utf8'} );
     config = JSON.parse(content);
   } catch(e){
     console.error('Error reading config.json: ' + e);
@@ -106,7 +106,7 @@ if (cluster.isMaster) {
   app.use(bodyParser.json());
 
   app.use(compression({threshold: 512}));
-  app.use(express.static('./pub'));
+  app.use(express.static(__dirname + '/pub'));
 
   /* MongoDB R triggers */ 
   // {"event" : "update", "message" : "timeseries/tstest"}
@@ -125,14 +125,14 @@ if (cluster.isMaster) {
     io.sockets.emit(message, channel);
   };
 
-  require('./api/status.js')(app);
-  require('./api/list.js')(app, db);
-  require('./api/pivot.js')(app, config);
-  require('./api/document.js')(app, config, db, trigger);
-  require('./api/timeseries.js')(app, config, db);
-  require('./api/compute.js')(app, config, db);
-  require('./api/execute.js')(app, config, db);
-  require('./api/authenticate.js')(app, config, db);
+  require(__dirname + '/api/status.js')(app);
+  require(__dirname + '/api/list.js')(app, db);
+  require(__dirname + '/api/pivot.js')(app, config);
+  require(__dirname + '/api/document.js')(app, config, db, trigger);
+  require(__dirname + '/api/timeseries.js')(app, config, db);
+  require(__dirname + '/api/compute.js')(app, config, db);
+  require(__dirname + '/api/execute.js')(app, config, db);
+  require(__dirname + '/api/authenticate.js')(app, config, db);
 
   /* Development server (on port 3000 on http only) */
   if(config.development){
