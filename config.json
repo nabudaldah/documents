@@ -1,0 +1,25 @@
+{
+  "development": true,
+  "authExpiration": 1440,
+  "R": {
+    "exe": "C:/Program Files/R/R-3.1.1/bin/x64/Rterm.exe",
+    "dir": "C:/Users/nabi.abudaldah.GENGROUP/Documents/GitHub/documents/lib/",
+    "init": "source(\"functions.R\");"
+  },
+  "mongo": {
+    "database": "documents"
+  },
+  "sqlite": {
+    "database": "C:/Users/nabi.abudaldah.GENGROUP/Documents/GitHub/documents/db/pivot.sqlite3"
+  },
+  "admin": {
+    "_id" : "admin@localhost",
+    "name" : "Administrator",
+    "password" : "$2a$10$LR8Rws//j0.w9fEtNs/2Jubfryco8vUV8UBQOnsIizFu2C8jXpvjK",
+    "tags" : [ "admin" ]
+  },
+  "collections": [{
+    "_id": "documents",
+    "tags" : [ "collection" ]
+  }]
+}

@@ -1,4 +1,4 @@
-ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window, messages) {
+ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window) {
 
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 

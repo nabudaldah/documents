@@ -90,7 +90,7 @@ app.directive('reference', function ($http) {
   var directive =  {
       restrict: 'E',
       require: '^ngModel',
-      templateUrl: '/dir/reference.html',
+      templateUrl: '/directives/reference.html',
       scope: { ngModel: '=', ngDisabled: '=' },
       transclude: true,
       link: link

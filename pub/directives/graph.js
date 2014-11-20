@@ -3,7 +3,7 @@ app.directive('graph', function() {
     restrict: 'E',
     require: '^ngModel',
     scope: { ngModel: '=', name: '@' },
-    templateUrl: '/dir/graph.html',
+    templateUrl: '/directives/graph.html',
     link: function(scope, element, attr, ngModel){
 
       var graphId = uuid()

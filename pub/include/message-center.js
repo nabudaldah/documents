@@ -2,12 +2,12 @@
 'use strict';
 
 // Create a new angular module.
-var messages = angular.module('messages', []);
+var MessageCenterModule = angular.module('MessageCenterModule', []);
 
 // Define a service to inject.
-messages.
-  service('messages', ['$sce', '$timeout',
-    function ($sce, $timeout) {
+MessageCenterModule.
+  service('messageCenterService', ['$rootScope', '$sce', '$timeout',
+    function ($rootScope, $sce, $timeout) {
       return {
         mcMessages: this.mcMessages || [],
         status: {
@@ -72,12 +72,15 @@ messages.
               this.mcMessages[index].processed = true;
             }
           }
+        },
+        flush: function () {
+          $rootScope.mcMessages = this.mcMessages;
         }
       };
     }
   ]);
-messages.
-  directive('mcMessages', ['$rootScope', 'messages', function ($rootScope, messages) {
+MessageCenterModule.
+  directive('mcMessages', ['$rootScope', 'messageCenterService', function ($rootScope, messageCenterService) {
     /*jshint multistr: true */
     var templateString = '\
     <div id="mc-messages-wrapper">\
@@ -97,12 +100,15 @@ messages.
       restrict: 'EA',
       template: templateString,
       link: function(scope, element, attrs) {
+        // Bind the messages from the service to the root scope.
+        messageCenterService.flush();
         var changeReaction = function (event, to, from) {
           // Update 'unseen' messages to be marked as 'shown'.
-          messages.markShown();
+          messageCenterService.markShown();
           // Remove the messages that have been shown.
-          messages.removeShown();
-          $rootScope.mcMessages = messages.mcMessages;
+          messageCenterService.removeShown();
+          $rootScope.mcMessages = messageCenterService.mcMessages;
+          messageCenterService.flush();
         };
         $rootScope.$on('$locationChangeStart', changeReaction);
 

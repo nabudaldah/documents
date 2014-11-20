@@ -33,7 +33,7 @@ app.directive('timeslice', function () {
   var directive =  {
       restrict: 'E',
       require: '^ngModel',
-      templateUrl: '/dir/timeslice.html',
+      templateUrl: '/directives/timeslice.html',
       scope: { ngModel: '=', ngDisabled: '=' , name: '@name' },
       transclude: true,
       link: link

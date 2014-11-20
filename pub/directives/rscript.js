@@ -39,12 +39,13 @@ app.directive('rscript', function ($http) {
 
     ngDisabledChanged();
 
+    $('[data-toggle="tooltip"]').tooltip();
   }
 
   var directive =  {
       restrict: 'E',
       require: '^ngModel',
-      templateUrl: '/dir/rscript.html',
+      templateUrl: '/directives/rscript.html',
       scope: { ngModel: '=', ngDisabled: '=', col: '@col', id: '@id', script: '@script' },
       transclude: true,
       link: link

@@ -156,9 +156,9 @@ writing-mode: lr-tb;
 </style>
 <div class="row form-group">
   <div class="col-sm-2">
-    <button type="button" class="btn btn-default" ng-click="execute()" ng-disabled="executing" tooltip="{{message}}">
+    <button type="button" class="btn btn-default" ng-click="execute()" ng-disabled="executing" data-toggle="tooltip" data-placement="top" data-original-title="{{message}}">
       <span class="glyphicon glyphicon-play" ng-hide="executing"></span>
-      <img  src="/img/loading.gif" ng-show="executing"/>
+      <img  src="/images/loading.gif" ng-show="executing"/>
       &nbsp; {{name}}
     </button>
   </div>

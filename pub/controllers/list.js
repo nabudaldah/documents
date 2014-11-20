@@ -1,4 +1,6 @@
-ctrl.controller('list', function ($scope, $http, $window, $location, socket, messages) {
+ctrl.controller('list',
+  ['$scope', '$http', '$window', '$location', 'socket', 'messageCenterService',
+  function ($scope, $http, $window, $location, socket, messageCenterService) {
 
   $scope.object = $location.path().split('/')[1];
   $scope.api  = '/v1/' + $scope.object;
@@ -40,7 +42,7 @@ ctrl.controller('list', function ($scope, $http, $window, $location, socket, mes
       $scope.list = data;
       $scope.colInit();
     }).error(function(error){
-      messages.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+      messageCenterService.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
   };
 
@@ -78,7 +80,7 @@ ctrl.controller('list', function ($scope, $http, $window, $location, socket, mes
         $scope.list = $scope.list.concat(data); 
         $scope.colInit(); 
       }).error(function(error){
-        messages.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+        messageCenterService.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
       });
     }
   }
@@ -103,4 +105,4 @@ ctrl.controller('list', function ($scope, $http, $window, $location, socket, mes
     $scope.load();
   }
 
-});
+}]);

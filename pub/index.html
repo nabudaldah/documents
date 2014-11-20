@@ -15,41 +15,37 @@
     <script src="/bower_components/jquery/dist/jquery.min.js"></script>
 
     <!-- AngularJS -->
-    <script src="/bower_components/angularjs/angular.min.js"></script>
-    <script src="/lib/js/angular-route.js"></script>
+    <script src="/bower_components/angular/angular.min.js"></script>
+    <script src="/bower_components/angular-route/angular-route.min.js"></script>
 
     <!-- Twitter Bootstrap -->
     <link  href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>  
-    <script src="/bower_components/bootstrap-js-components/dist/popover.js"></script>
-    <script src="/bower_components/bootstrap-js-components/dist/tooltip.js"></script>
+    <script src="/bower_components/bootstrap/js/tooltip.js"></script>
 
-    <!-- Angular UI: Bootstrap UI Popover plugin -->
+     <!-- Angular UI: Bootstrap UI Popover plugin depends on Angular 1.2 !!! no go -->
+<!--
     <script src="/bower_components/bootstrap-ui/src/popover/popover.js"></script>
     <script src="/bower_components/bootstrap-ui/src/tooltip/tooltip.js"></script>
-
+ -->
     <!-- Angular Google Maps -->
+    <!-- 
     <script src="/bower_components/lodash/dist/lodash.min.js"></script>
     <script src="/bower_components/bluebird/js/browser/bluebird.js"></script>
     <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
     <script src="/bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
+    -->
 
-    <!-- Angular UI: Tree -->
-    <link  href="bower_components/angular-ui-tree/dist/angular-ui-tree.min.css">
-    <script src="bower_components/angular-ui-tree/dist/angular-ui-tree.min.js"></script>
-
-    <!-- Moment.js and Twix component -->
-    <script src="/bower_components/momentjs/moment.js"></script>
+    <!-- Moment.js /w Twix component and Numeral.js -->
+    <script src="/bower_components/moment/min/moment.min.js"></script>
     <script src="/bower_components/twix/bin/twix.min.js"></script>
-    
-    <!-- Numeral.js -->
-    <script src="/bower_components/numeral/numeral.js"></script>
+    <script src="/bower_components/numeral/min/numeral.min.js"></script>
 
-    <!-- Highstock -->
+    <!-- Timeseries graphs: Highstock -->
     <script src="/bower_components/highstock-release/highstock.js"></script>
     <script>Highcharts.setOptions({global: { useUTC: false }});</script>
 
-    <!-- CodeMirror -->
+    <!-- JavaScript editing: CodeMirror + JSHint (2.5.6 needed?) -->
     <link  href="/bower_components/codemirror/lib/codemirror.css" rel="stylesheet">
     <link  href="/bower_components/codemirror/theme/elegant.css" rel="stylesheet">
     <script src="/bower_components/codemirror/lib/codemirror.js"></script>
@@ -58,53 +54,53 @@
     <script src="/bower_components/codemirror/addon/edit/closebrackets.js"></script>
     <script src="/bower_components/codemirror/addon/lint/lint.js"></script>
     <script src="/bower_components/codemirror/addon/lint/javascript-lint.js"></script>
-
-    <!-- JSHint -->
     <script src="/bower_components/jshint/dist/jshint.js"></script>
 
-    <!-- Non-bower components -->
-    <script src="/lib/js/ui-bootstrap-tpls-0.11.0.js"></script>
-    <script src="/lib/js/ng-infinite-scroll.js"></script>
-    <script src="/lib/js/uuid.js"></script>
+    <!-- Angular UI Bootstrap -->
+<!-- 
+    <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+ -->
+    <!-- Infinite Scroll -->
+    <script src="/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
     
-    <!-- Credits: https://github.com/mateu-aguilo-bosch/message-center -->
-    <script src="/lib/js/angular-message-center.js"></script>
+    <!-- Drag & Drop support -->
+    <script src="/include/drag-n-drop.js"></script>
 
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-
+    <!-- Generate valid UUID's -->
+    <script src="/include/uuid.js"></script>
+    
     <!-- Socket.io -->
     <script src="/socket.io/socket.io.js"></script>
 
     <!-- AngularJS App -->
-    <script src="/index.js"></script>
+    <script src="/app.js"></script>
+    <script src="/main.js"></script>
+    <script src="/auth.js"></script>
 
     <!-- AngularJS Socket.io Service -->
-    <script src="/serv/socket.io.js"></script>
+    <script src="/services/socket.io.js"></script>
+
+    <!-- Credits: https://github.com/mateu-aguilo-bosch/message-center -->
+    <script src="/include/message-center.js"></script>
 
     <!-- AngularJS Directives -->
-    <script src="/dir/taginput.js"></script>
-    <script src="/dir/taglist.js"></script>
-    <script src="/dir/graph.js"></script>
-    <script src="/dir/pivottable.js"></script>
-    <script src="/dir/timeseries.js"></script>
-    <script src="/dir/javascript.js"></script>
-    <script src="/dir/rscript.js"></script>
-    <script src="/dir/timeslice.js"></script>
-    <script src="/dir/reference.js"></script>
-    <script src="/dir/tree.js"></script>
+    <script src="/directives/taginput.js"></script>
+    <script src="/directives/taglist.js"></script>
+    <script src="/directives/graph.js"></script>
+    <script src="/directives/pivottable.js"></script>
+    <script src="/directives/timeseries.js"></script>
+    <script src="/directives/javascript.js"></script>
+    <script src="/directives/rscript.js"></script>
+    <script src="/directives/timeslice.js"></script>
+    <script src="/directives/reference.js"></script>
+    <script src="/directives/tree.js"></script>
 
-    <!-- AngularJS Views -->
-    <script src="/view/home.js"></script>
-    <script src="/view/list.js"></script>
-    <script src="/view/edit.js"></script>
-    <script src="/view/pivot.js"></script>
-    <script src="/view/raw.js"></script>
-
-    <!-- Drag & Drop support -->
-    <script src="/lib/js/drag-n-drop.js"></script>
+    <!-- AngularJS Controllers -->
+    <script src="/controllers/home.js"></script>
+    <script src="/controllers/list.js"></script>
+    <script src="/controllers/edit.js"></script>
+    <script src="/controllers/pivot.js"></script>
+    <script src="/controllers/raw.js"></script>
 
   </head>
   <body ng-controller="main">
@@ -156,7 +152,7 @@
                 <span class="label label-danger">Server not responding</span>
             </span>
             <span ng-if="status">
-                <span class="label label-success" tooltip="{{status}}">Server up-and-running</span>
+                <span class="label label-success" data-toggle="tooltip" data-placement="top" data-title="{{status}}" data-original-title="{{status}}">Server up-and-running</span>
             </span>
         </div>
 
@@ -182,7 +178,7 @@
         <input ng-model="authUser" type="email"    class="form-control" placeholder="Email address" required autofocus/>
         <input ng-model="authPass" type="password" class="form-control" placeholder="Password"      required/>
         <button type="submit" value="Login" class="btn btn-lg btn-primary btn-block">Sign in</button>
-      </form>    
+      </form>
     </div>
 
   </body>

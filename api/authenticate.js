@@ -16,7 +16,7 @@ module.exports = function(app, config, db){
   }
 
   app.post('/authenticate', function (req, res) {
-    var denied = function(status, message) { res.send(status, error(message)); return; };
+    var denied = function(status, message) { res.send(status, message); return; };
     if(!req.body.username || !req.body.password) { denied(400, 'No username and password provided.'); return; }
     db.collection('settings').findOne( { _id: req.body.username }, function(err, data){
       if(err || !data) { denied(401, 'Access denied.'); return; }

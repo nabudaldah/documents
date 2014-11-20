@@ -105,12 +105,15 @@ app.directive('javascript', function ($http) {
       console.log("javascript.js: destroy");
       editor = undefined;
     });
+
+    $('[data-toggle="tooltip"]').tooltip();
+    
   }
 
   var directive =  {
       restrict: 'E',
       require: '^ngModel',
-      templateUrl: '/dir/javascript.html',
+      templateUrl: '/directives/javascript.html',
       scope: { ngModel: '=', ngDisabled: '=', col: '@col', id: '@id', script: '@script' },
       transclude: true,
       link: link

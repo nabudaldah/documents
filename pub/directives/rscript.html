@@ -16,9 +16,9 @@
 
 <div class="input-group">
   <div class="input-group-btn">
-    <button class="btn btn-default" ng-click="compute()" ng-disabled="computing" tooltip="{{message}}">
+    <button class="btn btn-default" ng-click="compute()" ng-disabled="computing" data-toggle="tooltip" data-placement="top" data-original-title="{{message}}">
     <span class="glyphicon glyphicon-play" ng-hide="computing"></span>
-    <img  src="/img/loading.gif" ng-show="computing"/>
+    <img  src="/images/loading.gif" ng-show="computing"/>
     &nbsp; {{script}}</button>    
   </div>
   <input type="text" class="form-control code" ng-model="ngModel"></input>

@@ -1,7 +1,7 @@
 
 // socket.io is not cluster ready!!!
 var cluster = require('cluster');
-var workers = 2; //require('os').cpus().length;
+var workers = 1; //require('os').cpus().length;
 cluster.schedulingPolicy = cluster.SCHED_NONE;
 //cluster.schedulingPolicy = cluster.SCHED_RR;
 
@@ -43,7 +43,7 @@ if (cluster.isMaster) {
   console.log('Loading config.json file...');
   var config;
   try {
-    var content = fs.readFileSync(__dirname + '/conf/config.json', { enconding: 'utf8'} );
+    var content = fs.readFileSync(__dirname + '/config.json', { enconding: 'utf8'} );
     config = JSON.parse(content);
   } catch(e){
     console.error('Error reading config.json: ' + e);
@@ -148,7 +148,7 @@ if (cluster.isMaster) {
     http.createServer(redirect).listen(80);
 
     /* Open app on HTTPS (http://www.mobilefish.com/services/ssl_certificates/ssl_certificates.php) */
-    var ssl = { key: fs.readFileSync('conf/ssl/key.pem'), cert: fs.readFileSync('conf/ssl/cert.pem') };
+    var ssl = { key: fs.readFileSync(__dirname + '/ssl/key.pem'), cert: fs.readFileSync(__dirname + '/ssl/cert.pem') };
     var server = https.createServer(ssl, app).listen(443);
     io = io.listen(server);
     console.log('Server ready.');
