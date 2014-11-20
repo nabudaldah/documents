@@ -9,7 +9,7 @@ module.exports = function(app, config, db){
 	var xmldoc  = require('xmldoc');
 	var mongo   = require('mongojs');
 
-	var executeJavascriptContext = fs.readFileSync(__dirname + '/lib/context.js', { encoding : 'utf8' });
+	var executeJavascriptContext = fs.readFileSync(__dirname + '/../lib/context.js', { encoding : 'utf8' });
 	var executeJavascript = function (javascript, context, callback){
 
 	  var vmContext = {
