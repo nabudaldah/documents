@@ -27,6 +27,7 @@ if (cluster.isMaster) {
   var mongo       = require('mongojs');
   var io          = require('socket.io');
   var moment      = require('moment');
+  var assert      = require('assert');
 
   /* Express.io */
   var http        = require('http');
@@ -41,17 +42,21 @@ if (cluster.isMaster) {
 
   /* Load config.json file */
   console.log('Loading config.json file...');
+  assert(fs.existsSync(__dirname + '/config.json'), 'Configuration file config.json should exist.');
   var config;
   try {
     var content = fs.readFileSync(__dirname + '/config.json', { enconding: 'utf8'} );
     config = JSON.parse(content);
   } catch(e){
+    assert(false, 'config.json should be in valid JSON format.')
     console.error('Error reading config.json: ' + e);
     process.exit();
   }
 
   /* Database */
   console.log('Connecting to MongoDB...');
+  assert(config.mongo, 'Mongo should be configured in config.json.');
+  assert(config.mongo.database, 'A Mongo database should be configured in config.json.');
   var db  = mongo.connect(config.mongo.database);
 
   db.on('error',function(err) {
@@ -110,6 +115,7 @@ if (cluster.isMaster) {
 
   /* MongoDB R triggers */ 
   // {"event" : "update", "message" : "timeseries/tstest"}
+  assert(config.mongo && config.mongo.database, 'Mongo should be configured in config.json for Mubsub.');
   var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
   var channel = client.channel('triggers');  
   client.on('error', console.error);
@@ -134,8 +140,11 @@ if (cluster.isMaster) {
   require(__dirname + '/api/execute.js')(app, config, db);
   require(__dirname + '/api/authenticate.js')(app, config, db);
 
-  /* Always redirect to HTTPS */
-  if(config.redirect || false){
+
+  assert(config.httpPort,  'config.js: httpPort attribute should be a valid TCP port number.');
+  assert(config.httpsPort, 'config.js: httpsPort attribute should be a valid TCP port number.');
+
+  if(config.redirect){
     var redirect = function(req, res) { res.writeHead(301, {Location: 'https://localhost:' + config.httpsPort || 3001 + '/'}); res.end(); };
     http.createServer(redirect).listen(config.httpPort || 3000);
   } else {
