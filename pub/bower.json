@@ -17,7 +17,7 @@
     "tests"
   ],
   "dependencies": {
-    "angularjs": "=1.3.0",
+    "angularjs": "latest",
     "bootstrap": "latest",
     "momentjs": "latest",
     "twix": "latest",
@@ -30,6 +30,7 @@
     "angular-ui": "latest",
     "bootstrap-ui": "latest",
     "angular-google-maps": "latest",
-    "angular-ui-tree": "latest"
+    "angular-ui-tree": "latest",
+    "bluebird": "latest"
   }
 }

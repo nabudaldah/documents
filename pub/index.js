@@ -1,6 +1,6 @@
 
 /* Modules */
-var app = angular.module('app', ['ngRoute','ctrl', 'infinite-scroll', 'ui.bootstrap', 'messages', 'google-maps'.ns(), 'ui.tree']);
+var app = angular.module('app', ['ngRoute','ctrl', 'infinite-scroll', 'ui.bootstrap', 'messages', 'ui.tree']);
 
 /* Routes (Views and Controllers) */
 app.config(['$routeProvider', function($routeProvider) { $routeProvider
