@@ -1,5 +1,12 @@
 
-<div class="panel panel-default fade" ng-class="{in:ready}">
+<style>
+	.panel-update {
+		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
+		border-color: rgb(106, 176, 232);
+	}
+</style>
+
+<div id="main-panel" class="panel panel-default fade" ng-class="{in:ready}">
   <div class="panel-heading clearfix">
     
     <button class="btn btn-default pull-right" ng-click="close()">
@@ -108,6 +115,7 @@
         <timeslice  ng-if="field.type == 'timeslice'"  ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></timeslice>
         <reference  ng-if="field.type == 'reference'"  ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></reference>
         <tree       ng-if="field.type == 'tree'"       ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></tree>
+        <process    ng-if="field.type == 'process'"    ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></process>
 
         <!-- Google Maps -->
         <ui-gmap-google-map ng-if="field.type == 'googlemaps'" center="object[field.name].center" zoom="object[field.name].zoom" options="object[field.name].options"></ui-gmap-google-map>
@@ -157,6 +165,7 @@
                 <li><a href="" ng-click="addProperty('rscript')">rscript</a></li>
                 <li><a href="" ng-click="addProperty('googlemaps')">googlemaps</a></li>
                 <li><a href="" ng-click="addProperty('tree')">tree</a></li>
+                <li><a href="" ng-click="addProperty('process')">process</a></li>
                 <li><a href="" ng-click="addProperty('hidden')">hidden</a></li>
               </ul>
             </div><!-- /btn-group -->

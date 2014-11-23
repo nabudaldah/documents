@@ -2,44 +2,78 @@ app.directive('rscript', function ($http) {
 
   var link = function (scope, element, attr, ngModel) {
 
+    var id = uuid()
+    element.find('textarea').attr('id', id)
+    var editor = CodeMirror.fromTextArea(document.getElementById(id), {
+      //mode: "javascript",
+      matchBrackets: true,
+      lineNumbers: true,
+      lint: true,
+      tabSize: 2,
+      gutters: ["CodeMirror-lint-markers", "errors"]
+    });
+
+    editor.setSize("100%", 400);
+
+    editor.on('change', function(){
     if(!scope.ngModel) scope.ngModel = '';
+      scope.ngModel = editor.getValue();
+    });
+
+    editor.on('blur', function(){
+      scope.$apply();
+    });
+
+    scope.name = attr.script;
 
     scope.compute = function(){
-      scope.message = 'Computing...'
+      scope.message = "Computing..."
       scope.computing = true;
       var update = {};
-      update[attr.script] = scope.ngModel.toString();
+      update[attr.script] = scope.ngModel;
       $http.put('/v1/'+attr.col+'/'+attr.id, update)
-      .success(function(result) {
-        $http.get('/v1/'+attr.col+'/'+attr.id+'/compute/' + attr.script)
-        .success(function(result) {
-          scope.message   = result;
-          scope.computing = false;
+        .success(function(data){
+          $http.get('/v1/'+attr.col+'/'+attr.id+'/compute/' + attr.script)
+            .success(function(data, status, headers, config) {
+              scope.message = data;
+              scope.computing = false;
         })
-        .error(function(result){
-          scope.message   = result;
-          scope.computing = false;
+            .error(function(data, status, headers, config){
+              scope.message = data;
+              scope.computing = false;
         });
       })
-      .error(function(result){
-        scope.message   = result;
-        scope.computing = false;
+        .error(function(data, status, headers, config){
+          scope.message = "Error computing javascript on server."
+          scope.computing = false;
       });
     };
 
+    var ngModelChanged = function(){
+      if(scope.ngModel)
+        editor.setValue(scope.ngModel);
+    }
+
     var ngDisabledChanged = function(){
       if(scope.ngDisabled) {
-        element.find('select, button, input').attr("disabled", "disabled");
+        element.find('select, button, textarea').attr("disabled", "disabled");
       } else {
-        element.find('select, button, input').removeAttr("disabled");
+        element.find('select, button, textarea').removeAttr("disabled");
       }
     };
 
+    scope.$watch('ngModel',    ngModelChanged,    true);
     scope.$watch('ngDisabled', ngDisabledChanged, true);
 
+    ngModelChanged();
     ngDisabledChanged();
 
+    scope.$on('$destroy', function() {
+      editor = undefined;
+    });
+
     $('[data-toggle="tooltip"]').tooltip();
+    
   }
 
   var directive =  {

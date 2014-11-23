@@ -1,0 +1,135 @@
+<!-- this should display as a single line with left and right buttons... -->
+
+
+<div class="panel panel-default">
+  <div class="panel-body">
+
+<div class="col-sm-2">
+      <div class="panel panel-success" style="overflow: hidden; min-height: 160px" >
+        <div class="panel-heading">
+          Step 1
+          <span class="glyphicon glyphicon-ok pull-right"></span>
+        </div>
+        <div class="panel-body">
+          <p>Edwin Bloem</p>
+          <p>2014-11-21</p>
+          <p>11:38</p>
+        </div>          
+      </div>
+    </div>
+
+
+    <div class="col-sm-2">
+      <div class="panel panel-success" style="overflow: hidden; min-height: 160px" >
+        <div class="panel-heading">
+          Step 2
+          <span class="glyphicon glyphicon-ok pull-right"></span>
+        </div>
+        <div class="panel-body">
+          Done: 12:17
+        </div>          
+      </div>
+    </div>
+
+
+    <div class="col-sm-2">
+      <div class="panel panel-danger" style="overflow: hidden; min-height: 160px" >
+        <div class="panel-heading">
+          Step 3
+          <span class="glyphicon glyphicon-remove pull-right"></span>
+        </div>
+        <div class="panel-body">
+          Failed: 13:00
+        </div>          
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="panel panel-primary" style="overflow: hidden; min-height: 160px" >
+        <div class="panel-heading">
+          Step 4
+        </div>
+        <div class="panel-body">
+          <p><button class="btn btn-success"><span class="glyphicon glyphicon-ok"></span> &nbsp; Done</button></p>
+          <p><button class="btn btn-danger"><span class="glyphicon glyphicon-remove"></span> &nbsp; Failed</button></p>
+          <!-- <p><button class="btn btn-warning"><span class="glyphicon glyphicon-arrow-right"></span> &nbsp; Skip</button></p> -->
+        </div>          
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="panel panel-default" style="overflow: hidden; min-height: 160px" >
+        <div class="panel-heading">
+          Step 5
+        </div>
+        <div class="panel-body">
+        </div>          
+      </div>
+    </div>
+
+    <div class="col-sm-2">
+      <div class="panel panel-default" style="overflow: hidden; min-height: 160px; border: 1px dashed #eee" >
+        <div class="panel-heading" style="border: 1px dashed #eee">
+          <em>Add step...</em>
+          <span class="glyphicon glyphicon-plus pull-right"></span>
+        </div>
+        <div class="panel-body">
+        </div>          
+      </div>
+    </div>
+
+
+  </div>
+</div>
+
+<hr/>
+<p>
+  <ul>
+    <li>Definieer achtergrondprocess dat dit process checkt op tijdigheid...javascript</li>
+    <li>Maak read-write-execute policy mogelijk op object: read: bekijken, write: maken/aanpassen, execute: OK/NOK klikken</li>
+    <li>Per blokje: wat mag? Wait, Done, Failed, Skip?</li>
+
+  </ul>
+</p>
+<hr/>
+
+<div class="row form-group" ng-repeat="slice in ngModel">
+  <div class="col-sm-6">
+   <div class="input-group">
+      <input type="text" class="form-control" ng-model="slice.value">
+      <span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="remove($index)"><span class="glyphicon glyphicon-remove"></span></button>
+      </span>
+    </div>
+  </div>
+
+  <div class="col-sm-3">
+    <input type="text" class="form-control" ng-model="slice.from">
+  </div>
+  <div class="col-sm-3">
+    <input type="text" class="form-control" ng-model="slice.to">
+  </div>
+
+</div>
+
+<div class="row">
+  <div class="col-sm-6">
+
+ <div class="input-group">
+    <input type="text" class="form-control" ng-model="new.value" placeholder="({{name}})">
+    <span class="input-group-btn">
+      <button class="btn btn-default" type="button" ng-click="add()"><span class="glyphicon glyphicon-plus"></span></button>
+    </span>
+  </div>
+
+
+  </div>
+  <div class="col-sm-3">
+    <input type="text" class="form-control" ng-model="new.from" placeholder="(from)">
+  </div>
+  <div class="col-sm-3">
+    <input type="text" class="form-control" ng-model="new.to" placeholder="(to)">
+  </div>
+</div>
+
+<!-- <pre>{{ngModel}}</pre> -->

@@ -1,86 +1,86 @@
-      <div class="input-group">
-        <input ng-model="query" ondragover="drop(event)" ng-change="search()" name="search" type="search" class="form-control" placeholder="Search...">
+<div class="input-group">
 
-        <span class="input-group-btn">
-          <button ng-click="colDown()" class="btn btn-default hidden-xs" tabindex="-1"><span class="glyphicon glyphicon-zoom-out"></span></button>
-          <button ng-click="colUp()"   class="btn btn-default hidden-xs" tabindex="-1"><span class="glyphicon glyphicon-zoom-in"></span></button>
+	<span class="input-group-btn">
 
-<!--           <button ng-click="download()" class="btn btn-default">
-            <span class="glyphicon glyphicon-cloud-upload"></span>
-          </button>
+		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+			Menu &nbsp; 
+			<span class="caret" style="font-size: small;"></span>
+			<span class="sr-only">Toggle Dropdown</span>
+		</button>
 
-          <button ng-show="selected.length" ng-click="download()" class="btn btn-default">
-            <span class="glyphicon glyphicon-cloud-download"></span>
-          </button>
- -->
-          <a href="{{::route}}/pivot" class="btn btn-default">
-            <span class="glyphicon glyphicon-stats"></span>
-          </a>
+		<ul class="dropdown-menu" role="menu">
+			<li ng-repeat="template in templates"><a ng-click="new(template._id)">New: {{::template._id}}</a></li>
+			<li ng-if="templates.length" class="divider"></li>
+			<li><a href="{{::route}}/new">New document</a></li>
 
-<!--           <button ng-show="selected.length && deleting" ng-click="delete()" class="btn btn-danger">
-            Delete
-          </button>
+			<li class="divider"></li>
 
-          <button ng-show="selected.length && deleting" ng-click="deleting=0" class="btn btn-success">
-            Keep
-          </button>
+			<li><a ng-click="colDown()" ng-hide="" class="lnk lnk-default hidden-xs" tabindex="-1">
+				<span class="glyphicon glyphicon-zoom-out"></span> &nbsp; Smaller documents
+			</a></li>
 
-          <button ng-show="selected.length" ng-click="deleting=!deleting" class="btn btn-default">
-            <span class="glyphicon glyphicon-trash"></span>
-          </button>
- -->
+			<li><a ng-click="colUp()" class="lnk lnk-default hidden-xs" tabindex="-1">
+				<span class="glyphicon glyphicon-zoom-in"></span> &nbsp; Larger documents
+			</a></li>
 
-          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-           New
-           <span class="caret" style="font-size: small;"></span>
-           <span class="sr-only">Toggle Dropdown</span>
-         </button>
-         <ul class="dropdown-menu" role="menu">
-          <li ng-repeat="template in templates"><a ng-click="new(template._id)">Template: {{::template._id}}</a></li>
-          <li ng-if="templates" class="divider"></li>
-          <li><a href="{{::route}}/new">New object</a></li>
-        </ul>
+			<li><a ng-click="upload()" class="lnk lnk-default" title="Upload data">
+				<span class="glyphicon glyphicon-cloud-upload"></span> &nbsp; Upload data
+			</a></li>
 
+			<li><a ng-click="download()" class="lnk lnk-default" title="Download data">
+				<span class="glyphicon glyphicon-cloud-download"></span> &nbsp; Download data
+			</a></li>
 
-        
-      </span>
+			<li><a href="{{::route}}/pivot" class="lnk lnk-default">
+				<span class="glyphicon glyphicon-stats"></span> &nbsp; Pivot data
+			</a></li>
+		</ul>
 
-    </div>
+	</span>
+	<input ng-model="query" ondragover="drop(event)" ng-change="search()" name="search" type="search" class="form-control" placeholder="Search...">
 
+</div>
 
 <hr/>
 
 <style>
-.item1:hover { 
-    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
-    border-color: rgb(106, 176, 232);
-  }
-  .selected { 
-    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
-    border-color: rgb(106, 176, 232);
-  }
+	.item1:hover { 
+		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
+		border-color: rgb(106, 176, 232);
+	}
+	.selected { 
+		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
+		border-color: rgb(106, 176, 232);
+	}
 </style>
 
 <div class="fade" ng-class="{in:list.length}">
-
-  <div ng-repeat="item in list" class="col-var col-sm-3">
-    <div class="panel panel-default item" id="{{::object}}/{{::item._id}}" style="overflow: hidden; min-height: 200px" draggable="true" ondragstart="dragstart(event)">
-      <div class="panel-heading">
-        <a href="{{::route}}/{{::item._id}}">{{::item._id}}</a>
-<!-- 
-        <span class="pull-right glyphicon glyphicon-ok" ng-showw="!deleting && selected.indexOf(item._id) != -1"></span>
-        <span class="pull-right glyphicon glyphicon-remove" ng-showw="deleting && selected.indexOf(item._id) != -1"></span>
--->          
-      </div>
-      <div class="panel-body">
-        <p>{{::item.name}}</p>
-        <taglist tags="{{::item.tags}}"></tags>
-        <!-- <p><ul class="taglist"><li ng-repeatt="tag in item.tags" class="tag">{{::tag}}</li></ul></p> -->
-        <!-- <p ng-repeat="(key, value) in item | limitTo:4">{{value | limitTo : 20}}</p> -->
-      </div>          
-    </div>
-  </div>  
+	<div ng-repeat="item in list" class="col-var col-sm-3">
+		<div class="panel panel-default item" id="{{::object}}/{{::item._id}}" style="overflow: hidden; min-height: 200px" draggable="true" ondragstart="dragstart(event)">
+			<div class="panel-heading">
+				<a href="{{::route}}/{{::item._id}}">{{::item._id}}</a>
+			</div>
+			<div class="panel-body">
+				<p>{{::item.name}}</p>
+				<taglist tags="{{::item.tags}}"></taglist>
+			</div>
+		</div>
+	</div>
 </div>
 
+<style>
+	.pointer {
+		background-image: url('/images/arrows.png');
+		padding-left: 90px;
+		margin-left: 50px;
+		height: 90px;
+		background-repeat: no-repeat;
+		padding-top: 75px;
+	}
+</style>
 
-<div infinite-scroll="loadmore()" infinite-scroll-distance="0"></div>
+<div class="pointer" ng-show="start">
+	<em>Start up here by creating a new document or template!</em>
+</div>
+
+<div infinite-scroll="loadmore()" infinite-scroll-distance="10"></div>

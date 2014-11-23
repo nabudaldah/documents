@@ -41,6 +41,7 @@ ctrl.controller('list',
     $http.get(url).success(function(data) { 
       $scope.list = data;
       $scope.colInit();
+      if(!$scope.list.length) $scope.start = true;
     }).error(function(error){
       messageCenterService.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });

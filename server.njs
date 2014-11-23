@@ -1,4 +1,3 @@
-
 // socket.io is not cluster ready!!!
 var cluster = require('cluster');
 var workers = 1; //require('os').cpus().length;
@@ -107,8 +106,10 @@ if (cluster.isMaster) {
   });
 
   app.use(helmet());
-  app.use(bodyParser.urlencoded({ extended: false }));
-  app.use(bodyParser.json());
+
+  // Credits: http://stackoverflow.com/questions/19917401/node-js-express-request-entity-too-large
+  app.use(bodyParser.json({limit: '16mb'}));
+  app.use(bodyParser.urlencoded({limit: '16mb', extended: true }));
 
   app.use(compression({threshold: 512}));
   app.use(express.static(__dirname + '/pub'));
@@ -132,7 +133,7 @@ if (cluster.isMaster) {
   };
 
   require(__dirname + '/api/status.js')(app);
-  require(__dirname + '/api/list.js')(app, db);
+  require(__dirname + '/api/collection.js')(app, db);
   require(__dirname + '/api/pivot.js')(app, config);
   require(__dirname + '/api/document.js')(app, config, db, trigger);
   require(__dirname + '/api/timeseries.js')(app, config, db);

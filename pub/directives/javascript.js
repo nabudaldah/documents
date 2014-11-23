@@ -13,7 +13,7 @@ app.directive('javascript', function ($http) {
       gutters: ["CodeMirror-lint-markers", "errors"]
     });
 
-    editor.setSize("100%", 130);
+    editor.setSize("100%", 400);
 
     editor.on('change', function(){
       if(!scope.ngModel) scope.ngModel = '';
@@ -34,6 +34,10 @@ app.directive('javascript', function ($http) {
         // editor.setBookmark({ line: err.line, ch: err.character}, {widget: warning})
       }
 
+    });
+
+    editor.on('blur', function(){
+      scope.$apply();
     });
 
     scope.name = attr.script;

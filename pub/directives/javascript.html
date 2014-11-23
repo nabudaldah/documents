@@ -154,36 +154,26 @@ writing-mode: lr-tb;
 }
 
 </style>
+
 <div class="row form-group">
-  <div class="col-sm-2">
+  <div class="col-sm-12">
+  
     <button type="button" class="btn btn-default" ng-click="execute()" ng-disabled="executing" data-toggle="tooltip" data-placement="top" data-original-title="{{message}}">
       <span class="glyphicon glyphicon-play" ng-hide="executing"></span>
       <img  src="/images/loading.gif" ng-show="executing"/>
       &nbsp; {{name}}
     </button>
-  </div>
 
-  <div class="col-sm-10">
-    <textarea rows="7" style="height: 100px"></textarea>
-    <!-- <textarea ng-model="ngModel.javascript" class="form-control code" rows="7" spellcheck="false"></textarea> -->
+    <button type="button" class="btn btn-default" ng-click="edit = !edit">
+      <span class="glyphicon glyphicon-pencil"></span>
+     	&nbsp; Edit {{name}} JavaScript
+    </button>
+
   </div>
 </div>
 
-<div class="row form-group" style="margin-bottom: -10px">
-
-
-<!--   <div class="col-sm-9">
-    <input type="text" class="form-control" value="{{message}}"></input>
+<div class="row form-group" ng-show="edit">
+  <div class="col-sm-12">
+    <textarea></textarea>
   </div>
- -->
-<!--   <div class="col-sm-6">
-    <select class="form-control" ng-model="ngModel.runEvery" ng-change="reschedule()">
-      <option value="-">Do not run automatically</option>
-      <option value="d">Daily</option>
-      <option value="h">Hourly</option>
-      <option value="m">Every minute</option>
-      <option value="5s">Every 5 seconds</option>
-    </select>
-  </div>
- -->
 </div>

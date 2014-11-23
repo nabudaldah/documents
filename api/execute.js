@@ -8,19 +8,20 @@ module.exports = function(app, config, db){
 	var request = require('request');
 	var xmldoc  = require('xmldoc');
 	var mongo   = require('mongojs');
+	var parse   = require('csv-parse');
 
 	var executeJavascriptContext = fs.readFileSync(__dirname + '/../lib/context.js', { encoding : 'utf8' });
 	var executeJavascript = function (javascript, context, callback){
 
 	  var vmContext = {
-	    console: console,
+	  	console: console,
 	    Fiber: Fiber,
 	    mongo: mongo,
 	    fs: fs,
 	    request: request,
-	    require: require,
 	    moment: moment,
 	    xmldoc: xmldoc,
+	    parse: parse,
 	    Timeseries: Timeseries,
 	    context: context
 	  };

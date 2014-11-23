@@ -1,4 +1,6 @@
-ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $window, socket, $timeout) {
+ctrl.controller('edit',
+	['$scope', '$routeParams', '$http', '$location', '$window', 'socket', '$timeout', 'messageCenterService',
+	function ($scope, $routeParams, $http, $location, $window, socket, $timeout, messageCenterService) {
 
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 
@@ -25,7 +27,8 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
     }
     
     if($routeParams.template){
-      $http.get('/v1/' + $scope.objectCol + '/' + $routeParams.template).success(function (templateObject) {
+      $http.get('/v1/' + $scope.objectCol + '/' + $routeParams.template)
+      .success(function (templateObject) {
         $scope.object.template = templateObject.template;
         $scope.ready= true;
       }).error(function(error){
@@ -38,13 +41,14 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
 
   if(!$scope.new) {
 
-    $http.get($scope.objectApi).success(function (object) {
+    $http.get($scope.objectApi)
+    .success(function (object) {
 
       $scope.object = object;
       $scope.ready = true;
 
     }).error(function(error){
-      messages.add('danger', 'Error retrieving object "' + $scope.objectRef + '": ' + JSON.stringify(error, undefined, 2));
+      messageCenterService.add('danger', 'Error retrieving object "' + $scope.objectRef + '".');
     });
 
   }
@@ -56,11 +60,14 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
   }
 
   $scope.starred = false;
-  $http.get('/v1/settings/' + $scope.user._id).success(function (data, status, headers, config) {
+  $http.get('/v1/settings/' + $scope.user._id)
+  .success(function (data, status, headers, config) {
     if(data && data.starred){
       if(typeof(data.starred) == 'string') data.starred = data.starred.split(',');
       $scope.starred = data.starred.indexOf($scope.objectRef) != -1;
     }
+  }).error(function (data, status, headers, config){
+      messageCenterService.add('danger', 'Error retrieving user settings "/v1/settings/' + $scope.user._id + '".');  	
   });
 
   $scope.edit = function(){
@@ -78,23 +85,25 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
 
   $scope.save = function(){
     $scope.saving = !$scope.saving;
-    $http.put('/v1/' + $scope.objectCol + '/' + $scope.object._id, $scope.object);
-    //$scope.editing = false;
+    $http.put('/v1/' + $scope.objectCol + '/' + $scope.object._id, $scope.object)
+    .success(function (data, status, headers, config){
+    	// all ok
+    }).error(function (data, status, headers, config){
+      messageCenterService.add('danger', 'Error saving object "' + $scope.object._id + '".');
+    });
   };
 
   $scope.create = function(){
     $scope.saving = !$scope.saving;
     var url = '/v1/' + $scope.objectCol;
     console.log($scope.object)
-    $http.post(url, $scope.object).
-      success(function(){
+    $http.post(url, $scope.object)
+    .success(function (data, status, headers, config){
         var url = '/' + $scope.objectCol + '/' + $scope.object._id;
-        console.log(url)
         $location.path(url);
-      }).
-      error(function(){
-        messages.add('danger', 'Error creating object "' + $scope.object._id + '": ' + JSON.stringify(error, undefined, 2));
-      });
+    }).error(function (data, status, headers, config){
+      messageCenterService.add('danger', 'Error creating object "' + $scope.object._id + '".');
+    });
   }
 
   $scope.asTemplate = function(){
@@ -138,7 +147,8 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
 
   $scope.star = function(){
     $scope.starred = !$scope.starred;
-    $http.get('/v1/settings/' + $scope.user._id).success(function (data, status, headers, config) {
+    $http.get('/v1/settings/' + $scope.user._id)
+    .success(function (data, status, headers, config) {
       if(data){
         if(data.starred == undefined){
           data.starred = [];
@@ -148,6 +158,8 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
           else data.starred.splice(data.starred.indexOf($scope.objectRef), 1);
         $http.put('/v1/settings/' + $scope.user._id, {starred: data.starred});
       }
+    }).error(function (data, status, headers, config){
+      messageCenterService.add('danger', 'Error starring object.');
     });
   };
 
@@ -162,6 +174,11 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
 
   $scope.refresh = function(){
     $http.get($scope.objectApi).success(function (newObject) {
+
+    	$('#main-panel').addClass('panel-update');
+    	$timeout(function(){
+  	  	$('#main-panel').removeClass('panel-update');
+    	}, 500)
 
       var oldObject = $scope.object;
       //var newObject = newObject)
@@ -225,4 +242,4 @@ ctrl.controller('edit', function ($scope, $routeParams, $http, $location, $windo
     console.log('destroy')
   });
 
-});
+}]);

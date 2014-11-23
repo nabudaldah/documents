@@ -110,10 +110,10 @@ ctrl.controller('main',
       });
   }
 
-  var statusInterval = 1000 * 60;
-  setInterval(function() {
-    $scope.checkStatus();
-  }, statusInterval);
+  // var statusInterval = 1000 * 60;
+  // setInterval(function() {
+  //   $scope.checkStatus();
+  // }, statusInterval);
 
   $scope.checkStatus();
 

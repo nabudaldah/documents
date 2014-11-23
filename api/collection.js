@@ -16,8 +16,24 @@ module.exports = function(app, db){
 	    { _id: 1, name: 1, tags: 1 })
 	  .limit(limit)
 	  .skip(skip, function (err, data) { 
-	    if(err || !data) { res.status(500).send(error('Database error.')); return; }
+	    if(err || !data) { res.status(500).send('Database error.'); return; }
 	    res.send(data);
 	  });
 	});
+
+	app.get('/v1/:collection/count', function (req, res) {
+	  var collection = db.collection(req.params.collection);
+
+	  var regex;
+	  try     { regex = new RegExp(req.query.query, 'i'); }
+	  catch(e){ regex = req.query.query; }
+
+	  var tags = req.query.query?req.query.query.split(' '):[];
+
+	  collection.count({$or: [{ _id: regex }, { name: regex }, { tags: { $all: tags } } ] }, function (err, data) { 
+	    if(err || !data) { res.status(500).send('Database error.'); return; }
+	    res.send({ count: data });
+	  });
+	});
+
 };
