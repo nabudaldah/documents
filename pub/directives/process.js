@@ -2,15 +2,55 @@ app.directive('process', function () {
 
   var link = function (scope, element, attr, ngModel) {
 
+    scope.user = JSON.parse(window.localStorage.user || "{}");
+    scope.description = null;
+
     if(!scope.ngModel) scope.ngModel = [];
 
-    scope.name = attr.name;
-    scope.new = {from: "", to: "", value: ""}
+    scope.current = function(index){
+      var item = scope.ngModel[index];
+      if(item.skip   || item.done || item.fail) return false;
+      if(index == 0) return true;
+      var before = scope.ngModel[index - 1]; 
+      if(before.skip || before.done || before.fail) return true;
+    };
+
+    scope.passed = function(index){
+      var item = scope.ngModel[index];
+      if(item.skip   || item.done || item.fail) return true;
+      else return false;
+    }
+
+    scope.addable = function(){
+      return scope.description != null && scope.description != ''; 
+    }
 
     scope.add = function(){
-      scope.ngModel.push(scope.new);
-      scope.new = {from: "", to: "", value: ""}      
+      scope.ngModel.push({
+        description: scope.description,
+      });
+      scope.description = null;
     }
+
+    scope.sign = function(index){
+      scope.ngModel[index].user = scope.user._id;
+      scope.ngModel[index].time = moment().format();      
+    }
+
+    scope.skip = function(index){
+      scope.ngModel[index].skip = true;
+      scope.sign(index);
+    };
+
+    scope.done = function(index){
+      scope.ngModel[index].done = true;
+      scope.sign(index);
+    };
+
+    scope.fail = function(index){
+      scope.ngModel[index].fail = true;
+      scope.sign(index);
+    };
 
     scope.remove = function(index){
       scope.ngModel.splice(index, 1);
