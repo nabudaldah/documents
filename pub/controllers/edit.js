@@ -82,6 +82,19 @@ ctrl.controller('edit',
     $location.path('/' + $scope.collection);
   }
 
+  $scope.autosave = function(property){
+  	if(property == undefined || $scope.doc[property] == undefined) return;
+
+  	var doc = {};
+  	doc[property] = $scope.doc[property];
+    $http.put('/v1/' + $scope.collection + '/' + $scope.doc._id, doc)
+    .success(function (data, status, headers, config){
+    	// all ok
+    }).error(function (data, status, headers, config){
+      messageCenterService.add('danger', 'Error autosaving property "' + property + '" of doc "' + $scope.doc._id + '".');
+    });  	
+  }
+
   $scope.save = function(){
     $scope.saving = !$scope.saving;
     $http.put('/v1/' + $scope.collection + '/' + $scope.doc._id, $scope.doc)
