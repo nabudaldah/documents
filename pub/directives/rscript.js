@@ -5,12 +5,12 @@ app.directive('rscript', function ($http) {
     var id = uuid()
     element.find('textarea').attr('id', id)
     var editor = CodeMirror.fromTextArea(document.getElementById(id), {
-      //mode: "javascript",
-      matchBrackets: true,
+      //mode: "r",
+      matchBrackets: false,
       lineNumbers: true,
-      lint: true,
+      lint: false,
       tabSize: 2,
-      gutters: ["CodeMirror-lint-markers", "errors"]
+      gutters: []
     });
 
     editor.setSize("100%", 400);
@@ -44,7 +44,7 @@ app.directive('rscript', function ($http) {
         });
       })
         .error(function(data, status, headers, config){
-          scope.message = "Error computing javascript on server."
+          scope.message = "Error computing rscript on server."
           scope.computing = false;
       });
     };

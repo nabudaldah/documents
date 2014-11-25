@@ -8,16 +8,6 @@
 
     <h4 class="pull-left">{{object._id}}</h4>
 
-    <button class="btn btn-default" style="margin-left: 20px" ng-show="!starred && !new" ng-click="star()" >
-      <span class="glyphicon glyphicon-star"/>
-    </button>
-
-    <button class="btn btn-success" style="margin-left: 20px" ng-show="starred  && !new" ng-click="star()">
-      <span class="glyphicon glyphicon-star"/>
-    </button>
-
-    <button style="margin-left: 20px" ng-click="form()" ng-show="!new" class="btn btn-danger">RAW</button>
-
     <button style="margin-left: 20px" ng-hide="editing" ng-click="editing=1" class="btn btn-default">
       <span class="glyphicon glyphicon-pencil"/>
     </button>
@@ -30,12 +20,12 @@
 
       <!-- Read only mode -->
       <div ng-show="!editing">
-        <pre class="code">{{text}}</pre>
+        <pre class="code" style="font-size: small">{{text}}</pre>
       </div>
 
       <!-- Editing mode -->
       <div ng-show="editing">
-        <textarea class="form-control code" rows="20" ng-model="text"></textarea>
+        <textarea class="form-control code" style="font-size: small" rows="20" ng-model="text"></textarea>
       </div>
 
     </div> <!-- container-fluid -->

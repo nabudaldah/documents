@@ -4,31 +4,32 @@ ctrl.controller('edit',
 
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 
-  $scope.id  = $routeParams.id;
-  $scope.collection = $location.path().split('/')[1];
-  $scope.reference = $scope.collection + '/' + $scope.id;
-  $scope.api = '/v1/' + $scope.reference;
+  $scope.objectId  = $routeParams.id;
+  $scope.objectCol = $location.path().split('/')[1];
+  $scope.objectRef = $scope.objectCol + '/' + $scope.objectId;
+  $scope.objectApi = '/v1/' + $scope.objectRef;
+  $scope.objectUrl = '/' + $scope.objectRef;
 
-  $scope.doc   = {};
-  $scope.doc.template = [];
+  $scope.object   = {};
+  $scope.object.template = [];
 
-  $scope.new = !$scope.id;
+  $scope.new = !$scope.objectId;
   //$scope.ready = true;
   $scope.editing = true;
 
   if($scope.new){
 
     $scope.editing = true;
-    $scope.doc = {
-      _id: $scope.collection + '-' + uuid().split('-')[0],
-      tags: [$scope.collection],
+    $scope.object = {
+      _id: $scope.objectCol + '-' + uuid().split('-')[0],
+      tags: [$scope.objectCol],
       template: []
     }
     
     if($routeParams.template){
-      $http.get('/v1/' + $scope.collection + '/' + $routeParams.template)
+      $http.get('/v1/' + $scope.objectCol + '/' + $routeParams.template)
       .success(function (templateObject) {
-        $scope.doc.template = templateObject.template;
+        $scope.object.template = templateObject.template;
         $scope.ready= true;
       }).error(function(error){
         $scope.ready = true;
@@ -40,21 +41,21 @@ ctrl.controller('edit',
 
   if(!$scope.new) {
 
-    $http.get($scope.api)
-    .success(function (doc) {
+    $http.get($scope.objectApi)
+    .success(function (object) {
 
-      $scope.doc = doc;
+      $scope.object = object;
       $scope.ready = true;
 
     }).error(function(error){
-      messageCenterService.add('danger', 'Error retrieving doc "' + $scope.reference + '".');
+      messageCenterService.add('danger', 'Error retrieving object "' + $scope.objectRef + '".');
     });
 
   }
 
   $scope.additional = function(field){
     if(field == '_id' || field == 'tags' || field == "template" || field == "data") return false;
-    for(t in $scope.doc.template) if($scope.doc.template[t].name == field) return false;
+    for(t in $scope.object.template) if($scope.object.template[t].name == field) return false;
     return true;
   }
 
@@ -63,7 +64,7 @@ ctrl.controller('edit',
   .success(function (data, status, headers, config) {
     if(data && data.starred){
       if(typeof(data.starred) == 'string') data.starred = data.starred.split(',');
-      $scope.starred = data.starred.indexOf($scope.reference) != -1;
+      $scope.starred = data.starred.indexOf($scope.objectRef) != -1;
     }
   }).error(function (data, status, headers, config){
       messageCenterService.add('danger', 'Error retrieving user settings "/v1/settings/' + $scope.user._id + '".');  	
@@ -79,56 +80,47 @@ ctrl.controller('edit',
   }
 
   $scope.close = function(){
-    $location.path('/' + $scope.collection);
+    $location.path('/' + $scope.objectCol);
   }
 
   $scope.save = function(){
     $scope.saving = !$scope.saving;
-    $http.put('/v1/' + $scope.collection + '/' + $scope.doc._id, $scope.doc)
+    $http.put('/v1/' + $scope.objectCol + '/' + $scope.object._id, $scope.object)
     .success(function (data, status, headers, config){
     	// all ok
     }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error saving doc "' + $scope.doc._id + '".');
-    });
-  };
-
-  $scope.delete = function(){
-    $http.delete('/v1/' + $scope.collection + '/' + $scope.doc._id)
-    .success(function (data, status, headers, config){
-    	$scope.close();
-    }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error deleting document "' + $scope.doc._id + '".');
+      messageCenterService.add('danger', 'Error saving object "' + $scope.object._id + '".');
     });
   };
 
   $scope.create = function(){
     $scope.saving = !$scope.saving;
-    var url = '/v1/' + $scope.collection;
-    console.log($scope.doc)
-    $http.post(url, $scope.doc)
+    var url = '/v1/' + $scope.objectCol;
+    console.log($scope.object)
+    $http.post(url, $scope.object)
     .success(function (data, status, headers, config){
-        var url = '/' + $scope.collection + '/' + $scope.doc._id;
+        var url = '/' + $scope.objectCol + '/' + $scope.object._id;
         $location.path(url);
     }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error creating doc "' + $scope.doc._id + '".');
+      messageCenterService.add('danger', 'Error creating object "' + $scope.object._id + '".');
     });
   }
 
   $scope.asTemplate = function(){
     if($scope.saveAsTemplate){
-      $scope.doc.tags.push('template');
+      $scope.object.tags.push('template');
     } else {
-      $scope.doc.tags.splice($scope.doc.tags.indexOf('template'), 1);      
+      $scope.object.tags.splice($scope.object.tags.indexOf('template'), 1);      
     }
   }
 
   $scope.addProperty = function(type){
     $scope.newProperty = { type: type, name: $scope.newPropertyName, order: null } // default text field...
-    if(!$scope.doc.template) $scope.doc.template = [];
-    $scope.newProperty.order = $scope.doc.template.length + 1;
-    $scope.doc.template.push($scope.newProperty);
+    if(!$scope.object.template) $scope.object.template = [];
+    $scope.newProperty.order = $scope.object.template.length + 1;
+    $scope.object.template.push($scope.newProperty);
     if(type == 'googlemaps'){
-      $scope.doc[$scope.newPropertyName] = {
+      $scope.object[$scope.newPropertyName] = {
         center: {
           latitude: 45,
           longitude: -73
@@ -147,8 +139,8 @@ ctrl.controller('edit',
 
   $scope.newPropertyOk = function(){
     if(!$scope.newPropertyName) return false;
-    for(i in $scope.doc.template){
-      if($scope.doc.template[i].name == $scope.newPropertyName) return false;
+    for(i in $scope.object.template){
+      if($scope.object.template[i].name == $scope.newPropertyName) return false;
     }
     return true;
   }
@@ -162,33 +154,33 @@ ctrl.controller('edit',
           data.starred = [];
         }
         if(typeof(data.starred) == 'string') data.starred = data.starred.split(',');
-        if($scope.starred) data.starred.push($scope.reference);
-          else data.starred.splice(data.starred.indexOf($scope.reference), 1);
+        if($scope.starred) data.starred.push($scope.objectRef);
+          else data.starred.splice(data.starred.indexOf($scope.objectRef), 1);
         $http.put('/v1/settings/' + $scope.user._id, {starred: data.starred});
       }
     }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error starring doc.');
+      messageCenterService.add('danger', 'Error starring object.');
     });
   };
 
-  socket.on($scope.reference, function (data) {
+  socket.on($scope.objectRef, function (data) {
     $scope.refresh();
   });
 
   $scope.$on('$locationChangeStart', function (event, next, current) {
-    socket.close($scope.reference);
-    $scope.doc = null;
+    socket.close($scope.objectRef);
+    $scope.object = null;
   });
 
   $scope.refresh = function(){
-    $http.get($scope.api).success(function (newObject) {
+    $http.get($scope.objectApi).success(function (newObject) {
 
     	$('#main-panel').addClass('panel-update');
     	$timeout(function(){
   	  	$('#main-panel').removeClass('panel-update');
     	}, 500)
 
-      var oldObject = $scope.doc;
+      var oldObject = $scope.object;
       //var newObject = newObject)
       // console.log(oldObject)
       // console.log(newObject)
@@ -226,9 +218,9 @@ ctrl.controller('edit',
         return oldObject;
       }
 
-      //$scope.doc = 
+      //$scope.object = 
       syncObject(oldObject, newObject);
-      //syncObject($scope.doc, doc);
+      //syncObject($scope.object, object);
       delete oldObject;
       
     });    

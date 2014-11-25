@@ -38,14 +38,6 @@
 
 	    <li class="divider"></li>
 
-	    <li><a href="" ng-click="delete()" ng-show="!new">
-	    	<span class="glyphicon glyphicon-trash"/> &nbsp; Delete document
-	    </a></li>
-
-	    <li><a href="" ng-click="template()" ng-show="!new">
-	    	<span class="glyphicon glyphicon-pencil"/> &nbsp; Edit template
-	    </a></li>
-
 	    <li><a href="" ng-click="raw()" ng-show="!new">
 	    	<span class="glyphicon glyphicon-wrench"/> &nbsp; Show RAW
 	    </a></li>
@@ -70,7 +62,7 @@
 
     <style ng-if="!labels">label {display: none;}</style>
 
-    <h4 class="hidden-xs">{{doc._id}}</h4>
+    <h4 class="hidden-xs">{{object._id}}</h4>
 
   </div>
 
@@ -108,12 +100,12 @@
 
 
   <!-- panel-body -->
-  <div class="panel-body doc">
+  <div class="panel-body object">
   
       <div class="form-group col-sm-12" ng-show="new">
         <label class="control-label">_id</label>
         <div class="">
-          <input type="text" class="form-control" ng-model="doc._id" ng-disabled="!new">
+          <input type="text" class="form-control" ng-model="object._id" ng-disabled="!new">
         </div>
       </div>
 
@@ -121,32 +113,32 @@
       <div class="form-group col-sm-12">
         <label class="control-label">tags</label>
         <div class="">
-          <taginput ng-model="doc.tags" ng-disabled="!editing"></taginput>
+          <taginput ng-model="object.tags" ng-disabled="!editing"></taginput>
         </div>
       </div>
 
       <!-- Template items -->
-      <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="field in doc.template track by field.name">
+      <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="field in object.template track by field.name">
         <label class="control-label test">{{field.name}} <small>({{field.type}})</small></label>
         
-        <input      ng-if="field.type == 'text'"       ng-model="doc[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
-        <input      ng-if="field.type == 'date'"       ng-model="doc[field.name]" ng-disabled="!editing" type="date" class="form-control">
-        <textarea   ng-if="field.type == 'textarea'"   ng-model="doc[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px; font-size: small; font-family: monospace"></textarea>
-        <javascript ng-if="field.type == 'javascript'" ng-model="doc[field.name]" ng-disabled="!editing" col="{{collection}}" id="{{id}}" script="{{field.name}}"></javascript>
-        <rscript    ng-if="field.type == 'rscript'"    ng-model="doc[field.name]" ng-disabled="!editing" col="{{collection}}" id="{{id}}" script="{{field.name}}"></rscript>
-        <timeslice  ng-if="field.type == 'timeslice'"  ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></timeslice>
-        <reference  ng-if="field.type == 'reference'"  ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></reference>
-        <tree       ng-if="field.type == 'tree'"       ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></tree>
-        <process    ng-if="field.type == 'process'"    ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></process>
+        <input      ng-if="field.type == 'text'"       ng-model="object[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
+        <input      ng-if="field.type == 'date'"       ng-model="object[field.name]" ng-disabled="!editing" type="date" class="form-control">
+        <textarea   ng-if="field.type == 'textarea'"   ng-model="object[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px; font-size: small; font-family: monospace"></textarea>
+        <javascript ng-if="field.type == 'javascript'" ng-model="object[field.name]" ng-disabled="!editing" col="{{objectCol}}" id="{{objectId}}" script="{{field.name}}"></javascript>
+        <rscript    ng-if="field.type == 'rscript'"    ng-model="object[field.name]" ng-disabled="!editing" col="{{objectCol}}" id="{{objectId}}" script="{{field.name}}"></rscript>
+        <timeslice  ng-if="field.type == 'timeslice'"  ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></timeslice>
+        <reference  ng-if="field.type == 'reference'"  ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></reference>
+        <tree       ng-if="field.type == 'tree'"       ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></tree>
+        <process    ng-if="field.type == 'process'"    ng-model="object[field.name]" ng-disabled="!editing" name="{{field.name}}"></process>
 
         <!-- Google Maps -->
-        <ui-gmap-google-map ng-if="field.type == 'googlemaps'" center="doc[field.name].center" zoom="doc[field.name].zoom" options="doc[field.name].options"></ui-gmap-google-map>
+        <ui-gmap-google-map ng-if="field.type == 'googlemaps'" center="object[field.name].center" zoom="object[field.name].zoom" options="object[field.name].options"></ui-gmap-google-map>
 
         <!-- Timeseries -->
-        <timeseries ng-if="field.type == 'timeseries'" ng-model="doc.data[field.name]"
+        <timeseries ng-if="field.type == 'timeseries'" ng-model="object.data[field.name]"
           new         = "{{new}}"
-          collection  = "{{collection}}"
-          id          = "{{doc._id}}"
+          collection  = "{{objectCol}}"
+          id          = "{{object._id}}"
           timeseries  = "{{field.name}}"
           saving      = "saving"
           ng-disabled = "!editing">
@@ -155,15 +147,15 @@
       </div>
 
       <!-- Non-Template items -->
-      <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="(key, value) in doc" ng-if="additional(key)">
+      <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="(key, value) in object" ng-if="additional(key)">
         <label class="control-label">{{key}}</label>
         <div class="">
-          <input type="text"   class="form-control" ng-model="doc[key]" ng-disabled="!editing" placeholder="({{key}})">
+          <input type="text"   class="form-control" ng-model="object[key]" ng-disabled="!editing" placeholder="({{key}})">
         </div>
       </div>
       <!-- /Non-Template items -->
 
-      <!-- New doc properties -->
+      <!-- New object properties -->
       <div class="form-group col-sm-{{columns}}" ng-show="editing">
         <label class="control-label">
           new property:
@@ -195,7 +187,7 @@
 
         </div>
       </div>
-      <!-- /New doc properties -->
+      <!-- /New object properties -->
 
   </div> <!-- panel-body -->
 
@@ -216,4 +208,4 @@
 
 </div>
 
-<!-- <pre>{{doc}}</pre> -->
+<!-- <pre>{{object}}</pre> -->

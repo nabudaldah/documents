@@ -29,8 +29,9 @@ module.exports = function(app, config, db){
 	  var vmScript = executeJavascriptContext.replace('/* SCRIPT */', javascript);
 	  var ref = context.collection + '/' + context.id + '/' + context.script;
 	  console.log('executing: ' + ref);
-	  try { 
-	  	vm.runInContext(vmScript, vm.createContext(vmContext));
+	  try {
+
+	  	vm.runInContext(vmScript, vm.createContext(vmContext), {timeout: 1000});
 	  } catch(exception) {
 	  	console.error('error executing: ' + ref + ' (' + exception + ')'); 
 	    if(context.response) {
