@@ -8,7 +8,6 @@ module.exports = function(app, config, db){
 	var request = require('request');
 	var xmldoc  = require('xmldoc');
 	var mongo   = require('mongojs');
-	var parse   = require('csv-parse');
 
 	var executeJavascriptContext = fs.readFileSync(__dirname + '/../lib/context.js', { encoding : 'utf8' });
 	var executeJavascript = function (javascript, context, callback){
@@ -21,7 +20,6 @@ module.exports = function(app, config, db){
 	    request: request,
 	    moment: moment,
 	    xmldoc: xmldoc,
-	    parse: parse,
 	    Timeseries: Timeseries,
 	    context: context
 	  };
