@@ -250,11 +250,6 @@ ts.save <- function(ts, collection = 'timeseries', id = NULL, timeseries = 'time
   
   if(!ok) { warning('ts.save: update failed.'); return(NULL); }
   
-  
-  if(ok){
-    trigger(collection, id, timeseries);
-  }
-  
   return(ok);
 }
 
@@ -387,10 +382,6 @@ my <- function(property, value=NULL){
     
     ok <- mongo.update(mongo, paste0('documents.', collection), list('_id'=id), upd);
     
-    if(ok){
-      trigger(collection, id);
-    }
-    
     return(ok);
   }
 }
@@ -409,29 +400,27 @@ my.ts <- function(timeseries='timeseries', ts=NULL){
 # Tree summation function                                                     #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# This should be much much faster! merge() shouldn't be used
+# Compute a tree object (R list nested object)
 tree.compute <- function(tree){
   nodes <- tree$nodes
   data  <- tree$data
   N     <- length(nodes)
-  print(paste0('data: ', data, ', nodes: ', N))
-  
-  if(N == 0) { print(paste0('ts:   ', data)) }
-  if(N  > 0) { print(paste0('tree: ', N)); lapply(nodes, tree.compute) }
   
   reference <- unlist(strsplit(unlist(data), "/"))
-  print(reference)
-
-   if(N == 0){
-     return(ts(timeseries='timeseries', id=reference[2], collection=reference[1]))
-   } else {
-     subtree <- lapply(nodes, tree.compute);
-     results <- Reduce(function(x, y) merge(x, y, all=TRUE), subtree)
-     result <- xts(rowSums(results), index(results))
-     ts.save(result, timeseries='timeseries', id=reference[2], collection=reference[1])
-     return(result)
-   }
+  
+  if(N == 0){
+    return(ts(timeseries='timeseries', id=reference[2], collection=reference[1]))
+  } else {
+    subtree <- lapply(nodes, tree.compute);
+    results <- Reduce(function(x, y) merge(x, y, all=TRUE), subtree)
+    result <- xts(rowSums(results), index(results))
+    ts.save(result, timeseries='timeseries', id=reference[2], collection=reference[1])
+    return(result)
+  }
 }
 
+# Compute a tree in the database
 tree <- function(collection, id, tree){
   if(is.null(collection) || is.null(id) || is.null(tree)) stop('please provide, collection, id and tree.')
   d <- doc(collection, id)
@@ -439,9 +428,145 @@ tree <- function(collection, id, tree){
   return(tree.compute(d[[tree]]));
 }
 
+# Compute one of my trees
 my.tree <- function(tree = NULL){
   tree <- ifelse(is.null(tree), 'tree', tree)
   return(tree(context$collection, context$id, tree));
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# Tree summation function (vectorized version)                                #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+
+# Load one vector from database (do not create XTS objects, just plain vectors)
+ts.v <- function(timeseries = "timeseries", id = NULL, collection = NULL){
+  if(!mongo.is.connected(mongo)) stop('Not connected to mongodb.');
+  
+  if(is.null(collection)) collection <- context$collection;  
+  if(is.null(id))         id         <- context$id;  
+  
+  projection <- paste0('{ "data.', timeseries, '": 1 }')
+  bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), projection);
+  if(is.null(bson)) stop('ts: object not found.');
+  
+  vector <- mongo.bson.value(bson, paste0('data.', timeseries, '.vector'));
+  vector <- as.double(vector)
+  
+  interval <- mongo.bson.value(bson, paste0('data.', timeseries, '.interval'))
+  base     <- mongo.bson.value(bson, paste0('data.', timeseries, '.base'))
+  
+  attr(vector, "reference")  <- paste0(collection, '/', id, '/', timeseries);
+  attr(vector, "base")       <- base
+  attr(vector, "interval")   <- interval
+  
+  return(vector);
+}
+
+ts.vsave <- function(vector){
+  
+  reference <- attr(vector, "reference")
+  reference <- unlist(strsplit(reference, "/"))
+  if(length(reference) != 3)
+    stop('Incomplete reference attribute. Cannot store vector.')
+  
+  timeseries <- reference[3]
+  id         <- reference[2]
+  collection <- reference[1]
+  
+  if(!mongo.is.connected(mongo))
+    stop('Not connected to mongodb.');
+    
+  base     <- attr(vector, "base")
+  interval <- attr(vector, "interval")
+  #vector   <- as.double(vector);
+  
+  upd <- list()
+  upd[['$set']] <- list()
+  upd[['$set']][['data']] <- list()
+  upd[['$set']][['data']][[timeseries]] <- list(base=base, interval=interval, vector=vector)
+  
+  ok <- mongo.update(mongo, paste0('documents.', collection), list('_id'=id), upd, mongo.update.upsert);
+  
+  if(!ok) stop('Failed to update object in database.')
+  return(ok);    
+}
+
+# Merge list of vectors into one matrix
+ts.vmatrix <- function(vlist){
+  
+  reference <- sapply(vlist, function(x){ attr(x, 'reference') });
+  base      <- sapply(vlist, function(x){ attr(x, 'base') });
+  interval  <- sapply(vlist, function(x){ attr(x, 'interval') });
+  
+  minBase <- min(base)
+  if(length(unique(interval)) > 1) 
+    stop("Cannot merge multiple intervals.")
+  
+  interval <- interval[1]
+  
+  seconds <- ts.intervalSeconds(interval)
+  
+  to <- ts.ISOparse(minBase)
+  for(i in 1:(length(vlist)-1)){
+    from <- ts.ISOparse(base[i])
+    padding <- as.double(difftime(from, to, units="secs")) / seconds;
+    if(padding) vlist[i] <- c(rep(NaN, padding), vlist);
+  }
+  
+  maxLength <- max(sapply(vlist, length))
+  
+  vlist <- lapply(vlist, function(x){
+    length(x) <- maxLength;
+    return(x)
+  })
+  
+  # Aligned matrix of all timeseries
+  vmatrix <- do.call(cbind, vlist)
+  
+  attr(vmatrix, "reference") <- reference
+  attr(vmatrix, "base")      <- minBase
+  attr(vmatrix, "interval")  <- interval
+  colnames(vmatrix) <- reference
+  
+  return(vmatrix)
+  
+}
+
+# Compute a tree object (R list nested object)
+vtree.compute <- function(tree){
+  nodes <- tree$nodes
+  data  <- tree$data
+  N     <- length(nodes)
+    
+  reference <- unlist(strsplit(unlist(data), "/"))
+  
+  if(N == 0){
+    return(ts.v(timeseries='timeseries', id=reference[2], collection=reference[1]))
+  } else {
+    vlist   <- lapply(nodes, vtree.compute)
+    vmatrix <- ts.vmatrix(vlist)
+    vsum    <- rowSums(vmatrix)
+    attr(vsum, "base")      <- attr(vmatrix, "base")
+    attr(vsum, "interval")  <- attr(vmatrix, "interval")
+    attr(vsum, "reference") <- paste0(data, '/timeseries')
+    
+    ts.vsave(vsum)
+    return(vsum)
+  }
+}
+
+# Compute a tree in the database
+vtree <- function(collection, id, tree){
+  if(is.null(collection) || is.null(id) || is.null(tree)) stop('please provide, collection, id and tree.')
+  d <- doc(collection, id)
+  
+  return(vtree.compute(d[[tree]]));
+}
+
+# Compute one of my trees
+my.vtree <- function(tree = NULL){
+  tree <- ifelse(is.null(tree), 'tree', tree)
+  return(vtree(context$collection, context$id, tree));
 }
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

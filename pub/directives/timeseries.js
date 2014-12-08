@@ -87,7 +87,7 @@ app.directive('timeseries', function($http, socket) {
     var view = function(){
       element.find('input#base').val(scope.timeseries.base);
       element.find('select#interval').val(scope.timeseries.interval);
-      element.find('textarea#csv').val(scope.timeseries.vector.map(function(x){ return parseFloat(x); }).join('\n'));
+      //element.find('textarea#csv').val(scope.timeseries.vector.map(function(x){ return parseFloat(x); }).join('\n'));
       // if(scope.format){
       //   element.find('textarea#csv').val(scope.timeseries.vector.map(function(x){ return parseFloat(x); }).join('\n'));
       // }

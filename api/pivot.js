@@ -63,7 +63,7 @@ module.exports = function(app, config){
 
       function fetchDimension(dimension, end){
         var query = "SELECT DISTINCT(`" + dimension + "`) FROM `" + table + "` ORDER BY `" + dimension + "`;";
-        console.log("SQL: " + query);
+        //console.log("SQL: " + query);
         db3.all(query, function(err, table) {
           if(err || !table) { end(err); return; }
           for(var r = 0; r < table.length; r++){
@@ -85,7 +85,7 @@ module.exports = function(app, config){
       if(where.length)   sql += " AND " + where.join(" AND ");
       if(dimensions.length) sql += " GROUP BY " + dimensions.join(', ');
       sql += ";"
-      console.log('sql: ' + sql);
+      //console.log('sql: ' + sql);
       db3.all(sql, function(err, table) {
         if(err) { end(err); return; }
         data["table"] = table;

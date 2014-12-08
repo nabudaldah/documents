@@ -41,10 +41,10 @@ if (cluster.isMaster) {
 
   /* Load config.json file */
   console.log('Loading config.json file...');
-  assert(fs.existsSync(__dirname + '/config.json'), 'Configuration file config.json should exist.');
+  assert(fs.existsSync(process.cwd() + '/config.json'), 'Configuration file config.json should exist.');
   var config;
   try {
-    var content = fs.readFileSync(__dirname + '/config.json', { enconding: 'utf8'} );
+    var content = fs.readFileSync(process.cwd() + '/config.json', { enconding: 'utf8'} );
     config = JSON.parse(content);
   } catch(e){
     assert(false, 'config.json should be in valid JSON format.')
@@ -112,7 +112,7 @@ if (cluster.isMaster) {
   app.use(bodyParser.urlencoded({limit: '16mb', extended: true }));
 
   app.use(compression({threshold: 512}));
-  app.use(express.static(__dirname + '/pub'));
+  app.use(express.static(process.cwd() + '/pub'));
 
   /* MongoDB R triggers */ 
   // {"event" : "update", "message" : "timeseries/tstest"}
@@ -132,15 +132,16 @@ if (cluster.isMaster) {
     io.sockets.emit(message, channel);
   };
 
-  require(__dirname + '/api/status.js')(app);
-  require(__dirname + '/api/collection.js')(app, db);
-  require(__dirname + '/api/pivot.js')(app, config);
-  require(__dirname + '/api/document.js')(app, config, db, trigger);
-  require(__dirname + '/api/timeseries.js')(app, config, db);
-  require(__dirname + '/api/compute.js')(app, config, db);
-  require(__dirname + '/api/execute.js')(app, config, db);
-  require(__dirname + '/api/authenticate.js')(app, config, db);
-
+  require(process.cwd() + '/api/status.js')(app);
+  require(process.cwd() + '/api/collection.js')(app, db);
+  require(process.cwd() + '/api/pivot.js')(app, config);
+  require(process.cwd() + '/api/document.js')(app, config, db, trigger);
+  require(process.cwd() + '/api/csv.js')(app, db);
+  require(process.cwd() + '/api/timeseries.js')(app, config, db);
+  require(process.cwd() + '/api/compute.js')(app, config, db);
+  require(process.cwd() + '/api/execute.js')(app, config, db);
+  require(process.cwd() + '/api/status.js')(app);
+  require(process.cwd() + '/api/authenticate.js')(app, config, db);
 
   assert(config.httpPort,  'config.js: httpPort attribute should be a valid TCP port number.');
   assert(config.httpsPort, 'config.js: httpsPort attribute should be a valid TCP port number.');
@@ -155,7 +156,7 @@ if (cluster.isMaster) {
 
   /* Open app on HTTPS (http://www.mobilefish.com/services/ssl_certificates/ssl_certificates.php) */
   if(config.https){
-    var ssl = { key: fs.readFileSync(__dirname + '/ssl/key.pem'), cert: fs.readFileSync(__dirname + '/ssl/cert.pem') };
+    var ssl = { key: fs.readFileSync(process.cwd() + '/ssl/key.pem'), cert: fs.readFileSync(process.cwd() + '/ssl/cert.pem') };
     var httpsServer = https.createServer(ssl, app).listen(config.httpsPort || 3001);
     io = io.listen(httpsServer);
   }
