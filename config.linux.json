@@ -1,0 +1,27 @@
+{
+  "httpPort": 3000,
+  "httpsPort": 3001,
+  "https": false,
+  "redirect": false,
+  "authExpiration": 1440,
+  "R": {
+    "exe": "/usr/bin/R",
+    "init": ""
+  },
+  "mongo": {
+    "database": "documents"
+  },
+  "sqlite": {
+    "database": "/home/user/documents/db/pivot.sqlite3"
+  },
+  "admin": {
+    "_id" : "admin@localhost",
+    "name" : "Administrator",
+    "password" : "$2a$10$LR8Rws//j0.w9fEtNs/2Jubfryco8vUV8UBQOnsIizFu2C8jXpvjK",
+    "tags" : [ "admin" ]
+  },
+  "collections": [{
+    "_id": "documents",
+    "tags" : [ "collection" ]
+  }]
+}
