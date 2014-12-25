@@ -12,7 +12,7 @@
     "database": "documents"
   },
   "sqlite": {
-    "database": "/opt/documents/pivot.sqlite3"
+    "database": "/tmp/documents.sqlite3"
   },
   "admin": {
     "_id" : "admin@localhost",
