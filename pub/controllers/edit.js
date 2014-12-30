@@ -155,6 +155,8 @@ ctrl.controller('edit',
         }
       };
     }
+    // Auto save after adding property
+    $scope.save();
     delete $scope.newPropertyName;
   };
 
