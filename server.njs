@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 /* General */
 var fs          = require('fs');
 var mongo       = require('mongojs');

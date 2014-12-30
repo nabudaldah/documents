@@ -44,8 +44,10 @@ echo ""
 
 git clone https://github.com/nabudaldah/documents.git
 cd /opt/documents
-git pull origin
-cd /opt
+chmod +x server.njs
+chmod +x install.sh
+chmod +x uninstall.sh
+chmod +x upgrade.sh
 
 echo ""
 echo "### Installing bower and forever with NPM ... "
