@@ -16,6 +16,7 @@ echo "### Installing Documents App in /opt/documents ... "
 echo ""
 
 CWD=$PWD
+export DEBIAN_FRONTEND=noninteractive
 
 [ -d /opt ] || mkdir -p /opt
 cd /opt
@@ -24,25 +25,26 @@ echo ""
 echo "### Installing MongoDB ... "
 echo ""
 
-apt-get -y install mongodb
+apt-get -q -y install mongodb
 
 echo ""
 echo "### Installing NodeJS, NPM and Git ... "
 echo ""
 
-apt-get -y install nodejs-legacy npm git
+apt-get -q -y install nodejs-legacy npm git
 
 echo ""
 echo "### Installing R ... "
 echo ""
 
-apt-get -y install r-base-core
+apt-get -q -y install r-base-core
 
 echo ""
 echo "### Installing iptables-persistent ... "
 echo ""
 
-apt-get -y install iptables-persistent
+apt-get -q -y install iptables-persistent
+
 iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 80 -j REDIRECT --to-port 3000
 iptables-save  > /etc/iptables/rules.v4
 ip6tables-save > /etc/iptables/rules.v6
