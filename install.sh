@@ -105,7 +105,7 @@ echo "### Installing Bower modules ... "
 echo ""
 
 cd /opt/documents/pub
-bower install --allow-root
+bower install --allow-root --no-interactive
 
 echo ""
 echo "### Starting Documents App ... "
