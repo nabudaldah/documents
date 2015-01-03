@@ -605,52 +605,37 @@ if(is.null(mongo) || !mongo.is.connected(mongo)){
 
 
 
-# Check if 'update' field of other objects is newer than mine or absent 
+# Check if 'update' field of other objects is newer than mine
 updates <- function(documents){
-  
   t0 <- my('update', parse=ts.ISOparse)
-  
-  update <- FALSE
   for(reference in documents) {
     reference  <- unlist(strsplit(reference, "/"))
     collection <- reference[1]
-    id         <- reference[2]
-          
-    document <- doc(collection, id);
-    if('update' %in% names(document)){
-      t1 <- ts.ISOparse(document[['update']])
-      if(t1 > t0){
-        print(paste0('document ', id, ' has newer data...'))
-        update <- TRUE
-      }
-    } else {
-      print(paste0('document ', id, ' has no update field... '))
-      update <- TRUE
-    }
+    id         <- reference[2]    
+    t1 <- v(collection, id, 'update', parse = ts.ISOparse);
+    if(!is.null(t1) && t1 > t0) return(TRUE);      
   }
-  
-  return(update)
-  
+  return(FALSE)
 }
 
 v <- function(collection, id, field, value = NULL, parse = NULL){
   
-  if(!mongo.is.connected(mongo)) stop('Not connected to mongodb.');
-    
   if(is.null(value)){
     fields <- list()
     fields[[field]] <- 1
-    bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), fields);
-    if(is.null(bson)) { warning('my: object not found.'); return(NULL); }
-    obj <- mongo.bson.to.Robject(bson);
-    if(field %in% names(obj)){
-      val <- obj[[field]];
-      if(!is.null(parse)) val <- parse(val)      
-    } else {
-      val <- NULL
-    }
     
-    return(val)
+    bson <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), fields);
+    if(is.null(bson)) return(NULL);
+
+    iter <- mongo.bson.find(bson, field)
+    if(is.null(iter)) return(NULL);
+    
+    val  <- mongo.bson.iterator.value(iter)
+    
+    if(is.null(parse)) return(val);
+    
+    return(parse(val));
+    
   } else {
     
     upd <- list()

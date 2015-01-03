@@ -57,11 +57,9 @@ var channel = client.channel('triggers');
 client.on('error', console.error);
 channel.on('error', console.error);
 
-var change = false;
 channel.subscribe('update', function(message) {
   //console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': mubsub: ' + message);
-  //computeCycle();
-  change = true;
+  //compute();
 });
 
 /* R engine */
@@ -120,7 +118,8 @@ db.on('ready',function() {
   console.log('Connected to MongoDB.');
 });
 
-function computeCycle(){
+// 650 computations per second
+function compute(){
 
   var query  = { tags: { $all: ["computation"] } };
   var fields = { _id: 1, computation: 1 };
@@ -136,6 +135,37 @@ function computeCycle(){
 
 };
 
+// Use javascript instead of R to mark out-of-date computations
+
+function compute2(){
+
+  var query  = { tags: { $all: ["computation"] } };
+  var fields = { _id: 1, update: 1, dependencies: 1, computation: 1 };
+
+  db.collection('computations').find(query, fields).forEach(function(err, parent) {
+    if(!parent) return;
+    //console.log(parent._id + ' ' + parent.update + ' ' + parent.dependencies);
+
+    var collection = parent.dependencies.split('/')[0];
+    var id         = parent.dependencies.split('/')[1];
+
+    var query  = { _id: id };
+    var fields = { _id: 1, update: 1 };
+
+    db.collection(collection).findOne(query, fields, function(err, child){
+      if(!child) return;
+      //console.log(parent._id + ' -> ' + child._id);
+      if(moment(parent.update).isBefore(child.update)){
+        //console.log('need to compute parent: ' + parent._id)
+        var init   = 'context <- list(collection="' + 'computations' + '", id="' + parent._id + '");\n';
+        var script = parent.computation;
+        run(init + script);
+      }
+    });
+  });
+
+};
+
 // compute cycle
 setInterval(function(){
   var ready = 0;
@@ -144,15 +174,20 @@ setInterval(function(){
 
   var c = 0;
   for(var i = 0; i < rp.length; i++) c += rp[i].session.queue.length;
-  if(c == 0) {
-    console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': starting new compute cycle ...');
-    computeCycle();
+  if(c > 0) return;
+
+  if(true) {
+    //console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': starting new compute cycle ...');
+    compute();
   }
-}, 10*1000);
+}, 1000);
 
 // health check
+var c0 = 0;
 setInterval(function(){
   var c = 0;
   for(var i = 0; i < rp.length; i++) c += rp[i].session.queue.length;
-  console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': currently ' + c + ' computations in ' + rp.length + ' queues...');
-}, 1000);
+  var ns = Math.abs((c - c0) * 4)
+  c0 = c;
+  console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': currently ' + c + ' computations in ' + rp.length + ' queues ... n/s: ' + ns);
+}, 250);
