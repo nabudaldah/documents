@@ -1,5 +1,7 @@
 module.exports = function(app, config, db, trigger){
 
+  var moment  = require('moment'); require('twix');
+
   /* Get object including data (potentially large JSON) */
   app.get('/v1/:collection/:id/raw', function (req, res) {
     var collection = db.collection(req.params.collection);
@@ -28,8 +30,7 @@ module.exports = function(app, config, db, trigger){
       if(err || !data) { res.status(500).send('Database error.'); return; }
       res.status(200).end();
       var ref = req.params.collection;
-      console.log('socket.io: ' + req.params.collection);
-      trigger(ref, 'updated');
+      trigger(ref, 'update');
       return;
     });
   });
@@ -37,13 +38,13 @@ module.exports = function(app, config, db, trigger){
   /* Update object */
   app.put('/v1/:collection/:id', function (req, res) {
     if(req.body._id) delete req.body._id;
+    req.body.update = moment().format();
     var collection = db.collection(req.params.collection);
     collection.update({ _id: req.params.id }, { $set: req.body }, { upsert: false }, function(err, data){ 
       if(err || !data) { res.status(500).send('Database error.'); return; }
       res.status(200).end();
       var ref = req.params.collection + '/' + req.params.id;
-      console.log('socket.io: ' + req.params.collection + '/' + req.params.id);
-      trigger(ref, 'updated'); // should be array of names of values changed... 
+      trigger(ref, 'update'); // should be array of names of values changed... 
       return;
     });
   });
@@ -56,8 +57,7 @@ module.exports = function(app, config, db, trigger){
       res.status(200).end();
     });
     var ref = req.params.collection;
-    console.log('socket.io: ' + req.params.collection);
-    trigger(ref, 'updated'); // should be array of names of values changed... 
+    trigger(ref, 'update'); // should be array of names of values changed... 
   });
 
 };

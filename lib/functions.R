@@ -87,6 +87,7 @@ ts.ISOformat <- function(time){
 
 # Parse ISO8601 string into POSIXct object
 ts.ISOparse <- function(string){
+  if(is.null(string)) return(NULL)
   string <- gsub(" ", "T", string)
   
   format <- ''
@@ -172,15 +173,19 @@ ts.random <- function(from, to, interval = "1d"){
 
 trigger <- function(collection, id, property = NULL){
   if(is.null(property)){
-    trigger <- list(event=paste0("update", context$pid), message=paste0(collection, "/", id));    
+    trigger <- list(event="update", message=paste0(collection, "/", id));    
   } else { 
-    trigger <- list(event=paste0("update", context$pid), message=paste0(collection, "/", id, "/", property));
+    trigger <- list(event="update", message=paste0(collection, "/", id, "/", property));
   }
   mongo.insert(mongo, 'documents.triggers', trigger);
 } 
 
 trigger.my <- function(property = NULL){
   trigger(context$collection, context$id, property);
+}
+
+trigger.me <- function(){
+  trigger(context$collection, context$id, NULL);
 }
 
 # Load one document from database by ID
@@ -359,7 +364,7 @@ ts.rmean <- function(ts, na.rm=TRUE){
 # context <- list(collection='timeseries', id='nabi')                         #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-my <- function(property, value=NULL){
+my <- function(property, value = NULL, parse = NULL){
   
   if(!mongo.is.connected(mongo)) stop('my: not connected to mongodb.');
   
@@ -371,8 +376,15 @@ my <- function(property, value=NULL){
     projection[[property]] <- 1
     bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), projection);
     if(is.null(bson)) { warning('my: object not found.'); return(NULL); }
-    val <- mongo.bson.to.Robject(bson)[[property]]
-    if(!is.na(as.numeric(val))) val <- as.numeric(val)
+    obj <- mongo.bson.to.Robject(bson);
+    #val <- obj[[property]];
+    if(property %in% names(obj)){
+      val <- obj[[property]];
+      if(!is.null(parse)) val <- parse(val)      
+    } else {
+      val <- NULL
+    }
+    
     return(val)
   } else {
     
@@ -581,4 +593,72 @@ if(is.null(mongo)){
 
 if(is.null(mongo) || !mongo.is.connected(mongo)){
   stop('No database connection.')
+}
+
+
+
+
+
+
+
+
+
+
+
+# Check if 'update' field of other objects is newer than mine or absent 
+updates <- function(documents){
+  
+  t0 <- my('update', parse=ts.ISOparse)
+  
+  update <- FALSE
+  for(reference in documents) {
+    reference  <- unlist(strsplit(reference, "/"))
+    collection <- reference[1]
+    id         <- reference[2]
+          
+    document <- doc(collection, id);
+    if('update' %in% names(document)){
+      t1 <- ts.ISOparse(document[['update']])
+      if(t1 > t0){
+        print(paste0('document ', id, ' has newer data...'))
+        update <- TRUE
+      }
+    } else {
+      print(paste0('document ', id, ' has no update field... '))
+      update <- TRUE
+    }
+  }
+  
+  return(update)
+  
+}
+
+v <- function(collection, id, field, value = NULL, parse = NULL){
+  
+  if(!mongo.is.connected(mongo)) stop('Not connected to mongodb.');
+    
+  if(is.null(value)){
+    fields <- list()
+    fields[[field]] <- 1
+    bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), fields);
+    if(is.null(bson)) { warning('my: object not found.'); return(NULL); }
+    obj <- mongo.bson.to.Robject(bson);
+    if(field %in% names(obj)){
+      val <- obj[[field]];
+      if(!is.null(parse)) val <- parse(val)      
+    } else {
+      val <- NULL
+    }
+    
+    return(val)
+  } else {
+    
+    upd <- list()
+    upd[['$set']] <- list()
+    upd[['$set']][[field]] <- value
+    
+    ok <- mongo.update(mongo, paste0('documents.', collection), list('_id'=id), upd);
+    
+    return(ok);
+  }
 }
