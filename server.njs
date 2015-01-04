@@ -99,8 +99,12 @@ app.use(express.static(process.cwd() + '/pub'));
 /* MongoDB R triggers */ 
 // {"event" : "update", "message" : "timeseries/tstest"}
 var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
+client.on('error', function(err){
+  console.error('Mubsub client error: trying to reconnect... (' + err + ')');
+  client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
+});
+
 var channel = client.channel('triggers');  
-client.on('error', console.error);
 channel.on('error', console.error);
   
 channel.subscribe('update', function(message) {
