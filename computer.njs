@@ -65,7 +65,7 @@ channel.subscribe('update', function(message) {
 });
 
 /* R engine */
-var Rv3 = require('./temp/Rv3.js');
+var Rv3 = require('./lib/R.js');
 var R = new Rv3(config.R.exe);
 R.start(function(){
   R.init('source("../lib/functions.R");', function(err){

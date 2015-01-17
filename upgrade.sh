@@ -19,6 +19,8 @@ echo ""
 echo "### Pulling updates from Github repository."
 echo ""
 
+git fetch origin
+git reset --hard origin/master
 git pull origin
 
 echo ""
