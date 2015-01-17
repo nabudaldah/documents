@@ -15,11 +15,20 @@ CWD=$PWD
 
 cd /opt/documents
 
+echo ""
+echo "### Pulling updates from Github repository."
+echo ""
+
 git pull origin
+
+echo ""
+echo "### Restarting service."
+echo ""
+
+service documents restart
 
 echo ""
 echo "### All done."
 echo ""
 
 cd $CWD
-
