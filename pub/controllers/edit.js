@@ -82,14 +82,50 @@ ctrl.controller('edit',
     $location.path('/' + $scope.collection);
   }
 
+  $scope.changedProperties = {};
+  $scope.changedTimers     = {};
+  $scope.autosaveEventually = function(property){
+
+    if(property == undefined || $scope.doc[property] == undefined) return;
+
+    $scope.changedProperties[property] = true;
+
+    // Clear already running timers
+    if($scope.changedTimers[property]){
+      clearTimeout($scope.changedTimers[property]);
+      $scope.changedTimers[property] = null;
+      delete $scope.changedTimers[property]; 
+    }
+
+    // Autosave every second...
+    $scope.changedTimers[property] = setTimeout(function(){
+      $scope.autosave(property);
+    }, 1000);      
+
+  };
+
+  $scope.autosaveNow = function(property){
+    if($scope.changedTimers[property]){
+      clearTimeout($scope.changedTimers[property]);
+      $scope.changedTimers[property] = null;
+      delete $scope.changedTimers[property];
+    };
+    if($scope.changedProperties[property]){
+      $scope.autosave(property);
+    };
+  };
+
   $scope.autosave = function(property){
+
   	if(property == undefined || $scope.doc[property] == undefined) return;
 
   	var doc = {};
   	doc[property] = $scope.doc[property];
     $http.put('/v1/' + $scope.collection + '/' + $scope.doc._id, doc)
     .success(function (data, status, headers, config){
-    	// all ok
+    	// Success
+      $scope.changedProperties[property] = null;
+      delete $scope.changedProperties[property];
     }).error(function (data, status, headers, config){
       messageCenterService.add('danger', 'Error autosaving property "' + property + '" of doc "' + $scope.doc._id + '".');
     });  	

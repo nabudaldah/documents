@@ -129,11 +129,12 @@
       <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="field in doc.template track by field.name">
         <label class="control-label test">{{field.name}} <small>({{field.type}})</small></label>
 
-        <input      ng-blur="autosave(field.name)" ng-if="field.type == 'text'"       ng-model="doc[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
-        <input      ng-blur="autosave(field.name)" ng-if="field.type == 'number'"     ng-model="doc[field.name]" ng-disabled="!editing" type="number" class="form-control" placeholder="({{field.name}})">
-        <input      ng-blur="autosave(field.name)" ng-if="field.type == 'date'"       ng-model="doc[field.name]" ng-disabled="!editing" type="date" class="form-control">
-        <input      ng-blur="autosave(field.name)" ng-if="field.type == 'time'"       ng-model="doc[field.name]" ng-disabled="!editing" type="time" class="form-control">
-        <textarea   ng-blur="autosave(field.name)" ng-if="field.type == 'textarea'"   ng-model="doc[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px; font-size: small; font-family: monospace"></textarea>
+        <!-- Primitive data types (should autosave on changes) -->
+        <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'text'"       ng-model="doc[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
+        <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'number'"     ng-model="doc[field.name]" ng-disabled="!editing" type="number" class="form-control" placeholder="({{field.name}})">
+        <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'date'"       ng-model="doc[field.name]" ng-disabled="!editing" type="date" class="form-control">
+        <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'time'"       ng-model="doc[field.name]" ng-disabled="!editing" type="time" class="form-control">
+        <textarea   ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'textarea'"   ng-model="doc[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px; font-size: small; font-family: monospace"></textarea>
 
         <javascript ng-if="field.type == 'javascript'" ng-model="doc[field.name]" ng-disabled="!editing" col="{{collection}}" id="{{id}}" script="{{field.name}}"></javascript>
         <rscript    ng-if="field.type == 'rscript'"    ng-model="doc[field.name]" ng-disabled="!editing" col="{{collection}}" id="{{id}}" script="{{field.name}}"></rscript>
@@ -161,7 +162,7 @@
       <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="(key, value) in doc" ng-if="additional(key)">
         <label class="control-label">{{key}}</label>
         <div class="">
-          <input ng-blur="autosave(key)" type="text"   class="form-control" ng-model="doc[key]" ng-disabled="!editing" placeholder="({{key}})">
+          <input ng-change="autosaveEventually(key)" ng-blur="autosaveNow(key)" type="text"   class="form-control" ng-model="doc[key]" ng-disabled="!editing" placeholder="({{key}})">
         </div>
       </div>
       <!-- /Non-Template items -->

@@ -65,48 +65,17 @@ channel.subscribe('update', function(message) {
 });
 
 /* R engine */
-var R = require('./lib/Rv2.js');
-var N = require('os').cpus().length;
-
-console.log('Loading ' + N + ' R module(s)...');
-var rp = [];
-for(var i = 0; i < N; i++){
-	var r = R.new(config.R.exe);
-  rp.push(r);
-};
-
-rp.map(function(r){
-	r.start(function(){
-	  if(config.R.init) r.run(config.R.init);
-	  r.run('source("../lib/functions.R");', function(job){
-	    console.log('R ready');
-	  });
-	});
+var Rv3 = require('./temp/Rv3.js');
+var R = new Rv3(config.R.exe);
+R.start(function(){
+  R.init('source("../lib/functions.R");', function(err){
+    if(err) {
+      console.log('R.init(): Error: ' + err);
+      process.exit();
+    }
+    console.log('R: ' + R.ready() + ' instances ready to handle jobs. ')
+  });
 });
-
-// should have only 1 queue
-function run(script, callback){
-		
-	var l, id, preferred;
-	for(var i = 0; i < rp.length; i++){
-		if(rp[i].session.ready && rp[i].session.queue.length == 0){
-			preferred = rp[i];
-			break;
-		}		
-		if(!id || rp[i].session.queue.length < l){
-			id = rp[i].session.id;
-			l  = rp[i].session.queue.length;
-			preferred = rp[i];
-		}
-	}
-
-	if(preferred){
-		preferred.run(script, callback);		
-	} else {
-		console.error('No R instance ready to execute script.');		
-	}
-
-};
 
 /* Database */
 console.log('Connecting to MongoDB...');
@@ -121,86 +90,36 @@ db.on('ready',function() {
   console.log('Connected to MongoDB.');
 });
 
-// 650 computations per second
-function compute(){
-
-  var query  = { tags: { $all: ["computation"] } };
-  var fields = { _id: 1, computation: 1 };
-
-  // check datum...
-
-  db.collection('computations').find(query, fields).forEach(function(err, doc) {
-    if (!doc) return;
-    var init   = 'context <- list(collection="' + 'computations' + '", id="' + doc._id + '", pid="' + process.pid + '");\n';
-    var script = doc['computation'];
-    run(init + script);
+function compute(script){
+  R.run(script, function(err, job){
+    // console.log('executed: ' + job.id + ': ' + job.log)
   });
+}
 
-};
-
-// Use javascript instead of R to mark out-of-date computations
-
-function compute2(){
-
-  var query  = { tags: { $all: ["computation"] } };
-  var fields = { _id: 1, update: 1, dependencies: 1, computation: 1 };
-
-  db.collection('computations').find(query, fields).forEach(function(err, parent) {
-    if(!parent) return;
-    //console.log(parent._id + ' ' + parent.update + ' ' + parent.dependencies);
-
-    var collection = parent.dependencies.split('/')[0];
-    var id         = parent.dependencies.split('/')[1];
-
-    var query  = { _id: id };
-    var fields = { _id: 1, update: 1 };
-
-    db.collection(collection).findOne(query, fields, function(err, child){
-      if(!child) return;
-      //console.log(parent._id + ' -> ' + child._id);
-      if(moment(parent.update).isBefore(child.update)){
-        //console.log('need to compute parent: ' + parent._id)
-        var init   = 'context <- list(collection="' + 'computations' + '", id="' + parent._id + '");\n';
-        var script = parent.computation;
-        run(init + script);
-      }
-    });
-  });
-
-};
-
-function compute3(callback){
-
-  var verbose = true;
+// not time triggered, but recursive... might me memory hog
+function computeCycle(compute, callback){
 
   var query  = { tags: { $in: ["computation", "data"] } };
   var fields = { _id: 1, tags: 1, update: 1, dependencies: 1, computation: 1 };
 
   function getDocuments(callback){
-    var t0 = new Date();
     db.collection('computations').find(query, fields, function(err, data) {
       documentsList = data;
-      if(verbose) console.log('compute3: getDocuments: ' + (new Date() - t0))
-      if(verbose) console.log('compute3: getDocuments: data.length: ' + data.length)
       callback();
     });
   };
 
   function sortDocuments(callback){
-    var t0 = new Date();
     for(d in documentsList){
       var doc = documentsList[d];
       documents[doc._id] = doc;
       if(doc.tags[0] = "computation") computationDocuments[doc._id] = doc;
       if(doc.tags[0] = "data")        dataDocuments[doc._id] = doc;
     }
-    if(verbose) console.log('compute3: sortDocuments: ' + (new Date() - t0))
     callback();
   };
 
   function listComputations(callback){
-    var t0 = new Date();
-    var Nx = 0;
     for(c in computationDocuments){
       var parent = computationDocuments[c];
       if(!parent.dependencies) continue;
@@ -208,29 +127,22 @@ function compute3(callback){
       var child = documents[id];
       if(new Date(parent.update) < new Date(child.update)){
         computations[parent._id] = parent._id;
-        Nx++;
       }      
     }
-    if(verbose) console.log('compute3: listComputations: ' + (new Date() - t0))
-    if(verbose) console.log('compute3: listComputations: Nx: ' + Nx)
     callback();
   };
 
   function queueComputations(callback){
-    var t0 = new Date();
     for(id in computations){
       var computation = documents[id];
       var init   = 'context <- list(collection="' + 'computations' + '", id="' + computation._id + '");\n';
       var script = computation.computation;
-      //run(init + script);      
-      N++;
+      compute(init + script);      
     }
-    if(verbose) console.log('compute3: queueComputations: ' + (new Date() - t0));
     callback();
   };
 
   function finish(err){
-    if(verbose) console.log('compute3: done. need ' + N + ' computations');
     if(callback && typeof(callback) == 'function') callback();
   };
 
@@ -245,34 +157,58 @@ function compute3(callback){
 }
 
 // compute cycle
+var sorting = false;
 setInterval(function(){
   
-  var verbose = false;
+  if(R.ready() == 0 || R.queue.length) return;
 
-  var ready = 0;
-  for(var i = 0; i < rp.length; i++) if (rp[i].session.ready) ready++;
-  if(rp.length != ready) return;
-
-  var c = 0;
-  for(var i = 0; i < rp.length; i++) c += rp[i].session.queue.length;
-  if(c > 0) return;
-
-  if(change) {
-    if(verbose) console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': starting new compute cycle ...');
-    compute3(function(){
+  if(change && !sorting) {
+    sorting = true;
+    computeCycle(compute, function(){
+      sorting = false;
       change = false;
-      if(verbose) console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': finished compute cycle ...');
     });
   }
 
-}, 1000);
+}, 10);
+
+var os = require("os");
+
+var trigger = function(message, channel){
+  db.collection('triggers').insert({ event: channel, "message": message })
+  // io.sockets.emit(message, channel);
+};
 
 // health check
-var c0 = 0;
 setInterval(function(){
-  var c = 0;
-  for(var i = 0; i < rp.length; i++) c += rp[i].session.queue.length;
-  var ns = -(c - c0)
-  c0 = c;
-  console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': currently ' + c + ' computations in ' + rp.length + ' queues ... n/s: ' + ns);
-}, 1000);
+  
+  console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': queue: ' + R.queue.length + ', influx: ' + R.influx, ', efflux: ' + R.efflux);
+  R.influx = R.efflux = 0;
+  
+  var collection = db.collection('computations');
+
+  var id = os.hostname();
+
+  // console.log(R)
+
+  var processes = R.instances.map(function(instance){
+    return 'R[' + instance.process.pid + ']: ' + (instance.job?'working':'idle')
+  }).join('\n');
+
+  var status = {
+    _id: id,
+    tags: ["computer", "host", os.hostname()],
+    update: moment().format(),
+    queue: JSON.stringify(R.queue.length),
+    status: processes
+  };
+
+
+  collection.update({ _id: id }, { $set: status }, { upsert: true }, function(err, data){ 
+    if(err || !data) { console.error('Database error.'); return; }
+    var ref = 'computations' + '/' + id;
+    trigger(ref, 'update'); // should be array of names of values changed... 
+    return;
+  });
+
+}, 2000);

@@ -38,3 +38,5 @@ pub/bower_components
 config.json
 ssl
 
+# Temporary files (testing/dev)
+temp

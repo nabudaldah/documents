@@ -3,13 +3,16 @@ module.exports = function(app, config, db){
   /* R engine */
   console.log('Loading R module...');
   var R = require('../lib/R.js');
-  R.start(config.R.exe, function(){
-  	if(config.R.init) R.run(config.R.init);
-    R.run('source("../lib/functions.R");cat("ready");', function(job){
-	    console.log('R engine: ' + job.log)
+  var R = new R(config.R.exe);
+  R.start(function(){
+    R.init('source("../lib/functions.R");', function(err){
+      if(err) {
+        console.log('R.init(): Error: ' + err);
+      }
+      console.log('R: ' + R.ready() + ' instances ready to handle jobs. ')
     });
   });
-  
+
   app.get('/v1/:collection/:id/compute/:script', function (req, res) {
 
     if(!req.params.collection || !req.params.id || !req.params.script) {
@@ -28,7 +31,7 @@ module.exports = function(app, config, db){
 
       var init = 'context <- list(collection="' + req.params.collection + '", id="' + req.params.id + '", pid="' + process.pid + '");\n';
       var script = data[req.params.script];
-      R.run(init + script, function(job){ res.send(job.log); });
+      R.run(init + script, function(job){ if(job && job.log) { res.send(job.log); } else { res.send('done'); } });
 
     });
 
