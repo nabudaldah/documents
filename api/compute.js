@@ -31,7 +31,14 @@ module.exports = function(app, config, db){
 
       var init = 'context <- list(collection="' + req.params.collection + '", id="' + req.params.id + '", pid="' + process.pid + '");\n';
       var script = data[req.params.script];
-      R.run(init + script, function(job){ if(job && job.log) { res.send(job.log); } else { res.send('done'); } });
+      R.run(init + script, function(err, log){ 
+        console.log(log);
+        if(log) {
+          res.send(log);
+        } else {
+          res.send('done');
+        } 
+      });
 
     });
 

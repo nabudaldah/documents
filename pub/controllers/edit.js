@@ -172,9 +172,8 @@ ctrl.controller('edit',
   }
 
   $scope.addProperty = function(type){
-    $scope.newProperty = { type: type, name: $scope.newPropertyName, order: null } // default text field...
+    $scope.newProperty = { type: type, name: $scope.newPropertyName } // default text field...
     if(!$scope.doc.template) $scope.doc.template = [];
-    $scope.newProperty.order = $scope.doc.template.length + 1;
     $scope.doc.template.push($scope.newProperty);
     if(type == 'googlemaps'){
       $scope.doc[$scope.newPropertyName] = {
