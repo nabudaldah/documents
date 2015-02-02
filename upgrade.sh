@@ -19,9 +19,16 @@ echo ""
 echo "### Pulling updates from Github repository."
 echo ""
 
-git fetch origin
-git reset --hard origin/master
-git pull origin
+# Credits: http://stackoverflow.com/a/13242127
+git fetch
+
+for file in `git diff HEAD..origin/master --name-status | awk '/^A/ {print $2}'`
+	do rm -f -- "$file"; done
+
+for file in `git diff --name-status | awk '/^[CDMRTUX]/ {print $2}'`
+	do git checkout -- "$file"; done
+
+git pull
 
 echo ""
 echo "### Restarting service."

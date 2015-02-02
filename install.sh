@@ -61,10 +61,6 @@ echo ""
 
 git clone https://github.com/nabudaldah/documents.git
 cd /opt/documents
-chmod +x server.njs
-chmod +x install.sh
-chmod +x uninstall.sh
-chmod +x upgrade.sh
 
 echo ""
 echo "### Installing bower and forever with NPM ... "
@@ -79,7 +75,6 @@ echo ""
 
 Rscript -e "install.packages('rmongodb', repos='http://cran.rstudio.com/')"
 Rscript -e "install.packages('xts',      repos='http://cran.rstudio.com/')"
-#Rscript -e "install.packages('doSNOW',   repos='http://cran.rstudio.com/')"
 
 echo ""
 echo "### Starting MongoDB ... "
