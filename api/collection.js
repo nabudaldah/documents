@@ -9,11 +9,11 @@ module.exports = function(app, db){
 	  try     { regex = new RegExp(req.query.query, 'i'); }
 	  catch(e){ regex = req.query.query; }
 
-	  var tags = req.query.query?req.query.query.split(' '):[];
+	  var _tags = req.query.query?req.query.query.split(' '):[];
 
 	  collection.find(
-	    {$or: [{ _id: regex }, { name: regex }, { tags: { $all: tags } } ] },
-	    { _id: 1, name: 1, tags: 1 })
+	    {$or: [{ _id: regex }, { name: regex }, { _tags: { $all: _tags } } ] },
+	    { _id: 1, name: 1, _tags: 1 })
 	  .limit(limit)
 	  .skip(skip, function (err, data) { 
 	    if(err || !data) { res.status(500).send('Database error.'); return; }
@@ -28,9 +28,9 @@ module.exports = function(app, db){
 	  try     { regex = new RegExp(req.query.query, 'i'); }
 	  catch(e){ regex = req.query.query; }
 
-	  var tags = req.query.query?req.query.query.split(' '):[];
+	  var _tags = req.query.query?req.query.query.split(' '):[];
 
-	  collection.count({$or: [{ _id: regex }, { name: regex }, { tags: { $all: tags } } ] }, function (err, data) { 
+	  collection.count({$or: [{ _id: regex }, { name: regex }, { _tags: { $all: _tags } } ] }, function (err, data) { 
 	    if(err || !data) { res.status(500).send('Database error.'); return; }
 	    res.send({ count: data });
 	  });

@@ -99,8 +99,8 @@ function compute(script){
 // not time triggered, but recursive... might me memory hog
 function computeCycle(compute, callback){
 
-  var query  = { tags: { $in: ["computation", "data"] } };
-  var fields = { _id: 1, tags: 1, update: 1, dependencies: 1, computation: 1 };
+  var query  = { _tags: { $in: ["computation", "data"] } };
+  var fields = { _id: 1, _tags: 1, _update: 1, dependencies: 1, computation: 1 };
 
   function getDocuments(callback){
     db.collection('computations').find(query, fields, function(err, data) {
@@ -113,8 +113,8 @@ function computeCycle(compute, callback){
     for(d in documentsList){
       var doc = documentsList[d];
       documents[doc._id] = doc;
-      if(doc.tags[0] = "computation") computationDocuments[doc._id] = doc;
-      if(doc.tags[0] = "data")        dataDocuments[doc._id] = doc;
+      if(doc._tags[0] = "computation") computationDocuments[doc._id] = doc;
+      if(doc._tags[0] = "data")        dataDocuments[doc._id] = doc;
     }
     callback();
   };
@@ -125,7 +125,7 @@ function computeCycle(compute, callback){
       if(!parent.dependencies) continue;
       var id = parent.dependencies.split('/')[1];
       var child = documents[id];
-      if(new Date(parent.update) < new Date(child.update)){
+      if(new Date(parent._update) < new Date(child._update)){
         computations[parent._id] = parent._id;
       }      
     }
@@ -197,8 +197,8 @@ setInterval(function(){
 
   var status = {
     _id: id,
-    tags: ["computer", "host", os.hostname()],
-    update: moment().format(),
+    _tags: ["computer", "host", os.hostname()],
+    _update: moment().format(),
     queue: JSON.stringify(R.queue.length),
     status: processes
   };

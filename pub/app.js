@@ -29,3 +29,11 @@ app.config(['$routeProvider', function($routeProvider) { $routeProvider
   .otherwise({ redirectTo: '/'});
 
 }]);
+
+/* Relative time filter */
+// Credits: http://stackoverflow.com/questions/14774486/use-jquery-timeago-or-momentjs-and-angularjs-together
+app.filter('fromNow', function() {
+  return function(date) {
+    return moment(date).fromNow();
+  }
+});

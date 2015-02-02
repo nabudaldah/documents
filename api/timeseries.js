@@ -7,15 +7,15 @@ module.exports = function(app, config, db){
 
     var collection = db.collection(req.params.collection);
     var projection = {};
-    projection["data." + req.params.timeseries + ".base"]     = 1;
-    projection["data." + req.params.timeseries + ".interval"] = 1;
+    projection["_data." + req.params.timeseries + ".base"]     = 1;
+    projection["_data." + req.params.timeseries + ".interval"] = 1;
     collection.findOne({ _id: req.params.id }, projection, function (err, data) {
       if(err)   { res.status(500).send('Database error.');               return; }
       if(!data) { res.status(400).send('Object not found in database.'); return; }
-      if(!data.data) { res.status(400).send('Object has no data.'); return; }
-      if(!data.data[req.params.timeseries]) { res.status(400).send('Timeseries not found in object.'); return; }
+      if(!data._data) { res.status(400).send('Object has no _data field.'); return; }
+      if(!data._data[req.params.timeseries]) { res.status(400).send('Timeseries not found in object.'); return; }
 
-      var ts = new Timeseries(data.data[req.params.timeseries]);
+      var ts = new Timeseries(data._data[req.params.timeseries]);
       var from   = req.query.from, to = req.query.to;
       var vectorProjection = 1;
 
@@ -25,20 +25,20 @@ module.exports = function(app, config, db){
       }
 
       var projection = {};
-      projection["data." + req.params.timeseries] = 1;
-      projection["data." + req.params.timeseries + ".base"]     = 1;
-      projection["data." + req.params.timeseries + ".interval"] = 1;
-      //projection["data." + req.params.timeseries + ".vector"]   = vectorProjection;
-      if(vectorProjection) projection["data." + req.params.timeseries + ".vector"]   = vectorProjection;
+      projection["_data." + req.params.timeseries] = 1;
+      projection["_data." + req.params.timeseries + ".base"]     = 1;
+      projection["_data." + req.params.timeseries + ".interval"] = 1;
+      //projection["_data." + req.params.timeseries + ".vector"]   = vectorProjection;
+      if(vectorProjection) projection["_data." + req.params.timeseries + ".vector"]   = vectorProjection;
 
       collection.findOne({ _id: data._id }, projection, function (err, data) {
         if(err)   { res.status(500).send('Database error.');               return; }
         if(!data) { res.status(400).send('Object not found in database.'); return; }
 
-        if(!data.data[req.params.timeseries].vector)
-          data.data[req.params.timeseries].vector = [];
+        if(!data._data[req.params.timeseries].vector)
+          data._data[req.params.timeseries].vector = [];
 
-        var ts = new Timeseries(data.data[req.params.timeseries]);
+        var ts = new Timeseries(data._data[req.params.timeseries]);
         if(from && to) ts = ts.pad(from, to);
 
         res.send(ts);
@@ -57,33 +57,33 @@ module.exports = function(app, config, db){
     uploadedTimeseries = new Timeseries(uploadedTimeseries);
     var collection = db.collection(req.params.collection);
     var projection = {};
-    projection["data." + req.params.timeseries] = 1;
+    projection["_data." + req.params.timeseries] = 1;
     collection.findOne({ _id: req.params.id }, projection, function (err, data) {
 
       if(err)        { res.status(500).send('Database error.');               return; }
       //if(!data)      { res.status(400).send('Object not found in database.'); return; }
-      //if(!data.data) { res.status(400).send('Object has no data.');           return; }
+      //if(!data._data) { res.status(400).send('Object has no data.');           return; }
 
       var currentTimeseries;
-      if(data && data.data && data.data[req.params.timeseries]) currentTimeseries = data.data[req.params.timeseries];
+      if(data && data._data && data._data[req.params.timeseries]) currentTimeseries = data._data[req.params.timeseries];
       var mongoUpdate = {};
       if(currentTimeseries && currentTimeseries.base && currentTimeseries.interval && currentTimeseries.vector) { 
         currentTimeseries = new Timeseries(currentTimeseries);
         var overlayedTimeseries = currentTimeseries.overlay(uploadedTimeseries);
-        mongoUpdate["data." + req.params.timeseries] = overlayedTimeseries;
+        mongoUpdate["_data." + req.params.timeseries] = overlayedTimeseries;
       } else {
-        mongoUpdate["data." + req.params.timeseries] = uploadedTimeseries;        
+        mongoUpdate["_data." + req.params.timeseries] = uploadedTimeseries;        
       }
 
       // NaN handling... (always use NaN's, not null's)
-      if(mongoUpdate["data." + req.params.timeseries] && mongoUpdate["data." + req.params.timeseries].vector){
-        mongoUpdate["data." + req.params.timeseries].vector = mongoUpdate["data." + req.params.timeseries].vector.map(function(x){
+      if(mongoUpdate["_data." + req.params.timeseries] && mongoUpdate["_data." + req.params.timeseries].vector){
+        mongoUpdate["_data." + req.params.timeseries].vector = mongoUpdate["_data." + req.params.timeseries].vector.map(function(x){
           if(x === null || x == 'NaN') return NaN;
           return x;
         })        ;
       }
 
-      //console.log(mongoUpdate["data." + req.params.timeseries].vector);
+      //console.log(mongoUpdate["_data." + req.params.timeseries].vector);
 
       collection.update({ _id: req.params.id }, { $set: mongoUpdate }, { upsert: true }, function(err, data){ 
         if(err || !data) { res.status(500).send('Database error.'); return; }

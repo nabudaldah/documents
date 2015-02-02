@@ -2,6 +2,9 @@ ctrl.controller('edit',
 	['$scope', '$routeParams', '$http', '$location', '$window', 'socket', '$timeout', 'messageCenterService',
 	function ($scope, $routeParams, $http, $location, $window, socket, $timeout, messageCenterService) {
 
+  // Autosave time every 10 seconds (milliseconds)
+  var autosaveTime = 10000;
+
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 
   $scope.id  = $routeParams.id;
@@ -10,7 +13,7 @@ ctrl.controller('edit',
   $scope.api = '/v1/' + $scope.reference;
 
   $scope.doc   = {};
-  $scope.doc.template = [];
+  $scope.doc._template = [];
 
   $scope.new = !$scope.id;
   //$scope.ready = true;
@@ -21,14 +24,14 @@ ctrl.controller('edit',
     $scope.editing = true;
     $scope.doc = {
       _id: $scope.collection + '-' + uuid().split('-')[0],
-      tags: [$scope.collection],
-      template: []
+      _tags: [$scope.collection],
+      _template: []
     }
     
-    if($routeParams.template){
-      $http.get('/v1/' + $scope.collection + '/' + $routeParams.template)
+    if($routeParams._template){
+      $http.get('/v1/' + $scope.collection + '/' + $routeParams._template)
       .success(function (templateObject) {
-        $scope.doc.template = templateObject.template;
+        $scope.doc._template = templateObject._template;
         $scope.ready= true;
       }).error(function(error){
         $scope.ready = true;
@@ -53,8 +56,9 @@ ctrl.controller('edit',
   }
 
   $scope.additional = function(field){
-    if(field == '_id' || field == 'tags' || field == "template" || field == "data") return false;
-    for(t in $scope.doc.template) if($scope.doc.template[t].name == field) return false;
+    //if(field.charAt(0) == '_') return false;
+    if(field == '_id' || field == '_tags' || field == "_template" || field == "_data" || field == "_update") return false;
+    for(t in $scope.doc._template) if($scope.doc._template[t].name == field) return false;
     return true;
   }
 
@@ -100,7 +104,7 @@ ctrl.controller('edit',
     // Autosave every second...
     $scope.changedTimers[property] = setTimeout(function(){
       $scope.autosave(property);
-    }, 1000);      
+    }, autosaveTime);      
 
   };
 
@@ -165,16 +169,16 @@ ctrl.controller('edit',
 
   $scope.asTemplate = function(){
     if($scope.saveAsTemplate){
-      $scope.doc.tags.push('template');
+      $scope.doc._tags.push('template');
     } else {
-      $scope.doc.tags.splice($scope.doc.tags.indexOf('template'), 1);      
+      $scope.doc._tags.splice($scope.doc._tags.indexOf('template'), 1);      
     }
   }
 
   $scope.addProperty = function(type){
     $scope.newProperty = { type: type, name: $scope.newPropertyName } // default text field...
-    if(!$scope.doc.template) $scope.doc.template = [];
-    $scope.doc.template.push($scope.newProperty);
+    if(!$scope.doc._template) $scope.doc._template = [];
+    $scope.doc._template.push($scope.newProperty);
     if(type == 'googlemaps'){
       $scope.doc[$scope.newPropertyName] = {
         center: {
@@ -197,8 +201,8 @@ ctrl.controller('edit',
 
   $scope.newPropertyOk = function(){
     if(!$scope.newPropertyName) return false;
-    for(i in $scope.doc.template){
-      if($scope.doc.template[i].name == $scope.newPropertyName) return false;
+    for(i in $scope.doc._template){
+      if($scope.doc._template[i].name == $scope.newPropertyName) return false;
     }
     return true;
   }

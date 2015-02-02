@@ -7,7 +7,7 @@
             <a href="/#/{{item.type}}/{{item._id}}">{{item._id | limitTo : 20}}</a>
           </div>
           <div class="panel-body">
-            <p><ul class="taglist"><li ng-repeat="tag in item.tags" class="tag">{{tag}}</li></ul></p>
+            <p><ul class="taglist"><li ng-repeat="tag in item._tags" class="tag">{{tag}}</li></ul></p>
           </div>          
         </div>
       </div>

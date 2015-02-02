@@ -43,4 +43,53 @@ module.exports = function(app, db){
 
   });
 
+
+  /* Get timeseries in CSV format */
+  app.get('/v1/:collection/:id/timeseries/:timeseries/csv', function (req, res) {
+
+    var collection = db.collection(req.params.collection);
+    var projection = {};
+    projection["_data." + req.params.timeseries + ".base"]     = 1;
+    projection["_data." + req.params.timeseries + ".interval"] = 1;
+    collection.findOne({ _id: req.params.id }, projection, function (err, data) {
+      if(err)   { res.status(500).send('Database error.');               return; }
+      if(!data) { res.status(400).send('Object not found in database.'); return; }
+      if(!data._data) { res.status(400).send('Object has no _data field.'); return; }
+      if(!data._data[req.params.timeseries]) { res.status(400).send('Timeseries not found in object.'); return; }
+
+      var ts = new Timeseries(data._data[req.params.timeseries]);
+      var from   = req.query.from, to = req.query.to;
+      var vectorProjection = 1;
+
+      if(from && to){
+        var slice = ts.slice(from, to);
+        if(slice && slice.length == 2) vectorProjection = { $slice: slice };
+      }
+
+      var projection = {};
+      projection["_data." + req.params.timeseries] = 1;
+      projection["_data." + req.params.timeseries + ".base"]     = 1;
+      projection["_data." + req.params.timeseries + ".interval"] = 1;
+      //projection["_data." + req.params.timeseries + ".vector"]   = vectorProjection;
+      if(vectorProjection) projection["_data." + req.params.timeseries + ".vector"]   = vectorProjection;
+
+      collection.findOne({ _id: data._id }, projection, function (err, data) {
+        if(err)   { res.status(500).send('Database error.');               return; }
+        if(!data) { res.status(400).send('Object not found in database.'); return; }
+
+        if(!data._data[req.params.timeseries].vector)
+          data._data[req.params.timeseries].vector = [];
+
+        var ts = new Timeseries(data._data[req.params.timeseries]);
+        if(from && to) ts = ts.pad(from, to);
+
+        var csv = ts.toCSV(req.query.separator, req.query.format);
+
+        res.type('text/plain');
+        res.send(csv);
+
+      });
+    });
+  });
+
 };

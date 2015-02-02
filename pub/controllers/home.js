@@ -32,7 +32,7 @@ ctrl.controller('home', function ($scope, $http, $window, $location) {
         $http.get('/v1/' + item.type + '/' + item._id)
         .success(function (data, status, headers, config) {
           if(data){
-            item.tags = data.tags || [];
+            item._tags = data._tags || [];
             item.name = data.name || '';
             $scope.list.push(item);
           };

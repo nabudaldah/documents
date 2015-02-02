@@ -1,4 +1,4 @@
-app.directive('reference', function ($http) {
+app.directive('file', function ($http) {
 
   var link = function (scope, element, attr, ngModel) {
 
@@ -90,7 +90,7 @@ app.directive('reference', function ($http) {
   var directive =  {
       restrict: 'E',
       require: '^ngModel',
-      templateUrl: '/directives/reference.html',
+      templateUrl: '/directives/file.html',
       scope: { ngModel: '=', ngDisabled: '=' },
       transclude: true,
       link: link

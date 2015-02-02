@@ -15,7 +15,7 @@ module.exports = function(app, config, db, trigger){
   /* Get object */
   app.get('/v1/:collection/:id', function (req, res) {
     var collection = db.collection(req.params.collection);
-    collection.findOne({ _id: req.params.id }, { data: false }, function (err, data) {
+    collection.findOne({ _id: req.params.id }, { _data: false }, function (err, data) {
       if(err)   { res.status(500).send('Database error.');               return; }
       if(!data) { res.status(400).send('Object not found in database.'); return; }
       res.send(data);
@@ -38,7 +38,7 @@ module.exports = function(app, config, db, trigger){
   /* Update object */
   app.put('/v1/:collection/:id', function (req, res) {
     if(req.body._id) delete req.body._id;
-    req.body.update = moment().format();
+    req.body._update = moment().format();
     var collection = db.collection(req.params.collection);
     collection.update({ _id: req.params.id }, { $set: req.body }, { upsert: false }, function(err, data){ 
       if(err || !data) { res.status(500).send('Database error.'); return; }

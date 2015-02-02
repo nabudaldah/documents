@@ -122,10 +122,12 @@ require(process.cwd() + '/api/status.js')(app);
 require(process.cwd() + '/api/collection.js')(app, db);
 require(process.cwd() + '/api/pivot.js')(app, config);
 require(process.cwd() + '/api/document.js')(app, config, db, trigger);
+require(process.cwd() + '/api/file.js')(app, db);
 require(process.cwd() + '/api/csv.js')(app, db);
 require(process.cwd() + '/api/timeseries.js')(app, config, db);
 require(process.cwd() + '/api/compute.js')(app, config, db);
 require(process.cwd() + '/api/execute.js')(app, config, db);
+require(process.cwd() + '/api/schedule.js')(app, config, db, channel);
 require(process.cwd() + '/api/status.js')(app);
 require(process.cwd() + '/api/authenticate.js')(app, config, db);
 

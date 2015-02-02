@@ -10,10 +10,10 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location) {
   $http.get($scope.api + '/?query=template').success(function(list){
     for(var l in list){
       $http.get($scope.api + '/' + list[l]._id).success(function(template){
-        if(template.template){
-          console.log(template.template);
-          for(key in template.template){
-            var field = template.template[key].name;
+        if(template._template){
+          console.log(template._template);
+          for(key in template._template){
+            var field = template._template[key].name;
             if($scope.dimensions.indexOf(field) == -1)
               $scope.dimensions.push(field);
           };              

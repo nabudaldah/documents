@@ -214,14 +214,14 @@ ts <- function(timeseries = 'timeseries', id = NULL, collection = NULL){
   if(is.null(collection)) collection <- context$collection;  
   if(is.null(id)) id <- context$id;  
   
-  projection <- paste0('{ "data.', timeseries, '": 1 }')
+  projection <- paste0('{ "_data.', timeseries, '": 1 }')
   bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), projection);
   if(is.null(bson)) { warning('ts: object not found.'); return(NULL); }
   
-  vector <- mongo.bson.value(bson, paste0('data.', timeseries, '.vector'));  
+  vector <- mongo.bson.value(bson, paste0('_data.', timeseries, '.vector'));  
   
-  interval <- ts.intervalParse(mongo.bson.value(bson, paste0('data.', timeseries, '.interval')))
-  base <- ts.ISOparse(mongo.bson.value(bson, paste0('data.', timeseries, '.base')));
+  interval <- ts.intervalParse(mongo.bson.value(bson, paste0('_data.', timeseries, '.interval')))
+  base <- ts.ISOparse(mongo.bson.value(bson, paste0('_data.', timeseries, '.base')));
   time <- seq(from = base, by = interval, length.out = length(vector))
   ts <- xts(as.double(vector), time);
   colnames(ts) <- c(id);
@@ -248,8 +248,8 @@ ts.save <- function(ts, collection = 'timeseries', id = NULL, timeseries = 'time
   
   upd <- list()
   upd[['$set']] <- list()
-  upd[['$set']][['data']] <- list()
-  upd[['$set']][['data']][[timeseries]] <- list(base=base,interval=interval,vector=vector)
+  upd[['$set']][['_data']] <- list()
+  upd[['$set']][['_data']][[timeseries]] <- list(base=base,interval=interval,vector=vector)
   
   ok <- mongo.update(mongo, paste0('documents.', collection), list('_id'=id), upd, mongo.update.upsert);
   
@@ -292,14 +292,14 @@ ts.m <- function(regex, parse = FALSE, vectorize = TRUE){
   vector   <- list();
   
   cursor <- mongo.find(mongo, 'documents.timeseries', list('_id'=list('$regex'=regex)),
-                       list('_id'=1), list('_id'=1, 'tags'=1, 'data.timeseries'=1))
+                       list('_id'=1), list('_id'=1, '_tags'=1, '_data.timeseries'=1))
   while (mongo.cursor.next(cursor)) {
     bson <- mongo.cursor.value(cursor)
     id <- mongo.bson.value(bson, '_id')
     ids          <- c(ids, id)
-    base         <- c(base,     mongo.bson.value(bson, 'data.timeseries.base'))
-    interval     <- c(interval, mongo.bson.value(bson, 'data.timeseries.interval'))
-    vector[[id]] <-             mongo.bson.value(bson, 'data.timeseries.vector');
+    base         <- c(base,     mongo.bson.value(bson, '_data.timeseries.base'))
+    interval     <- c(interval, mongo.bson.value(bson, '_data.timeseries.interval'))
+    vector[[id]] <-             mongo.bson.value(bson, '_data.timeseries.vector');
     
     # In safety mode, reinterpret values properly (slow)
     if(parse) {
@@ -457,15 +457,15 @@ ts.v <- function(timeseries = "timeseries", id = NULL, collection = NULL){
   if(is.null(collection)) collection <- context$collection;  
   if(is.null(id))         id         <- context$id;  
   
-  projection <- paste0('{ "data.', timeseries, '": 1 }')
+  projection <- paste0('{ "_data.', timeseries, '": 1 }')
   bson  <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), projection);
   if(is.null(bson)) stop('ts: object not found.');
   
-  vector <- mongo.bson.value(bson, paste0('data.', timeseries, '.vector'));
+  vector <- mongo.bson.value(bson, paste0('_data.', timeseries, '.vector'));
   vector <- as.double(vector)
   
-  interval <- mongo.bson.value(bson, paste0('data.', timeseries, '.interval'))
-  base     <- mongo.bson.value(bson, paste0('data.', timeseries, '.base'))
+  interval <- mongo.bson.value(bson, paste0('_data.', timeseries, '.interval'))
+  base     <- mongo.bson.value(bson, paste0('_data.', timeseries, '.base'))
   
   attr(vector, "reference")  <- paste0(collection, '/', id, '/', timeseries);
   attr(vector, "base")       <- base
@@ -494,8 +494,8 @@ ts.vsave <- function(vector){
   
   upd <- list()
   upd[['$set']] <- list()
-  upd[['$set']][['data']] <- list()
-  upd[['$set']][['data']][[timeseries]] <- list(base=base, interval=interval, vector=vector)
+  upd[['$set']][['_data']] <- list()
+  upd[['$set']][['_data']][[timeseries]] <- list(base=base, interval=interval, vector=vector)
   
   ok <- mongo.update(mongo, paste0('documents.', collection), list('_id'=id), upd, mongo.update.upsert);
   
@@ -605,14 +605,14 @@ if(is.null(mongo) || !mongo.is.connected(mongo)){
 
 
 
-# Check if 'update' field of other objects is newer than mine
+# Check if '_update' field of other objects is newer than mine
 updates <- function(documents){
-  t0 <- my('update', parse=ts.ISOparse)
+  t0 <- my('_update', parse=ts.ISOparse)
   for(reference in documents) {
     reference  <- unlist(strsplit(reference, "/"))
     collection <- reference[1]
     id         <- reference[2]    
-    t1 <- v(collection, id, 'update', parse = ts.ISOparse);
+    t1 <- v(collection, id, '_update', parse = ts.ISOparse);
     if(!is.null(t1) && t1 > t0) return(TRUE);      
   }
   return(FALSE)

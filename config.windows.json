@@ -18,10 +18,10 @@
     "_id" : "admin@localhost",
     "name" : "Administrator",
     "password" : "$2a$10$LR8Rws//j0.w9fEtNs/2Jubfryco8vUV8UBQOnsIizFu2C8jXpvjK",
-    "tags" : [ "admin" ]
+    "_tags" : [ "admin" ]
   },
   "collections": [{
     "_id": "documents",
-    "tags" : [ "collection" ]
+    "_tags" : [ "collection" ]
   }]
 }
