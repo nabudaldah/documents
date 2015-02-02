@@ -22,6 +22,12 @@ export DEBIAN_FRONTEND=noninteractive
 cd /opt
 
 echo ""
+echo "### Installing NTP time synchronization service ... "
+echo ""
+
+apt-get -q -y install ntp
+
+echo ""
 echo "### Installing MongoDB ... "
 echo ""
 

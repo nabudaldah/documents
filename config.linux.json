@@ -23,5 +23,14 @@
   "collections": [{
     "_id": "documents",
     "_tags" : [ "collection" ]
-  }]
+  }],
+  "computer": {
+    "parallel": null
+  },
+  "scheduler": {
+    "_id": "scheduler",
+    "_tags": [ "settings", "scheduler" ],
+    "_template": [ { "type": "textarea", "name": "schedule" } ], 
+    "schedule": "#\n# Scheduling scripts in crontab style (google for 'crontab'):\n#\n# [minute] [hour] [day] [month] [weekday] [collection/document/script]\n#\n\n# Run every minute\n#* * * * * documents/doc01/script01\n\n# Run every hour\n#0 * * * * documents/doc01/script01\n\n# Run every day at 14:30\n#30 14 * * * documents/doc01/script01"
+  }
 }
