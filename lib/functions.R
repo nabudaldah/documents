@@ -647,3 +647,24 @@ v <- function(collection, id, field, value = NULL, parse = NULL){
     return(ok);
   }
 }
+
+# From irregular timeseries to regular timeseries
+ts.vectorize <- function(ts, interval){
+  t0 <- ts.ISOformat(index(ts)[1])
+  t1 <- ts.ISOformat(index(ts)[length(ts)])
+  t <- ts.seq(t0, t1, interval)
+  x <- xts(x = rep(NA, length(t)), order.by = t)
+  x <- merge(x, ts)
+  x <- na.locf(x)
+  return(x);
+}
+
+#ts <- xts(c(1,2,3),order.by = c(as.POSIXct("2014-01-01"), as.POSIXct("2014-01-07"), as.POSIXct("2014-01-14")))
+#interval <- "1d"
+#ts.vectorize(ts, interval) * 2
+
+# From regular timeseries to irregular timeseries
+ts.devectorize <- function(ts){
+  
+}
+

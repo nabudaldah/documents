@@ -1,0 +1,18 @@
+<div style="margin-top: 4em">
+	
+</div>
+
+<h1 ng-hide="edit">{{ngModel}}
+<button type="button" class="btn btn-link" ng-click="edit=true">edit</button>
+</h1>
+
+
+<div class="input-group" ng-show="edit">
+  <input type="text" class="form-control" ng-model="ngModel" placeholder="({{name}})">
+  <div class="input-group-btn">
+		<button type="button" class="btn btn-link" ng-click="edit=false">OK</button>
+	</div>
+
+</div>
+
+<hr/>

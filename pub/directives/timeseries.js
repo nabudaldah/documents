@@ -2,74 +2,39 @@ app.directive('timeseries', function($http, socket) {
 
   var link = function (scope, element, attr, ngModel) {
 
-    scope.showGraph = true;
-    scope.showData  = false;
+    // Context
+    scope.collection = attr.collection;
+    scope.id         = attr.id;
+    scope.timeseries = attr.timeseries;
 
-    scope.name = attr.timeseries;
-    var isdirty = false; 
+    // Variables
+    scope.changed    = false; 
+    scope.offset     = 0;
 
-    scope.timeseries = {
+    // Default object
+    scope.ts = {
       base: moment().startOf('day').format(),
       interval: "1h",
       vector: []
     }
 
-    /* Bind inputs (for increased control of UX) */
-    element.find('input#base').change(function(event){
-      isdirty = true; 
-      scope.timeseries.base = $(this).val().trim();
-      bind();
-      scope.$apply();
-    });
+    // New object?
+    scope.new = scope.$eval(attr.new); // because this might not be simply "true" or "false", but an expression ...
 
-    element.find('select#interval').change(function(event){
-      isdirty = true; 
-      scope.timeseries.interval = $(this).val().trim();
-      bind();
-      scope.$apply();
-    });
+    scope.shiftOffset = function(d){ scope.offset += d; scope.fetchData();}
 
-    element.find('select#format').change(function(event){
-      scope.format = $(this).val();
-      view();
-      //bind();
-      //scope.$apply();
-    });
-
-    element.find('textarea#csv').change(function(event){
-      isdirty = true; 
-      scope.timeseries.vector = $(this).val().trim().split('\n').map(function(x){ return parseFloat(x); });
-      bind();
-      scope.$apply();
-    });
-
-    element.find('select#show').val("All data");
-    scope.show = "All data";
-    element.find('select#show').change(function(event){
-      scope.show = $(this).val();
-      load();
-    });
-
-    scope.offset = 0;
-
-    scope.offsetUp = function(){
-      scope.offset += 1;
-      load();
+    scope.nextUnit = function(){
+      var next = { "hour": "day", "day": "week", "week": "month", "month": "quarter", "quarter": "year", "year": "hour" };
+      if(!scope.unit) scope.unit = "hour";
+      else scope.unit = next[scope.unit];
+      scope.fetchData();
     }
 
-    scope.offsetDown = function(){
-      scope.offset -= 1;
-      load()
-    }
-
-    scope.span = function(unit){
-      scope.unit = unit;
-      load();
-    }
-
-    var load = function(){
+    scope.fetchData = function(){
+      var code = { "hour": "H", "day": "D", "week": "W", "month": "M", "quarter": "Q", "year": "Y" };
+      if(scope.unit) scope.unitCode = code[scope.unit];
+      else scope.unitCode = code["hour"];
       var url = '/v1/' + attr.collection + '/' + attr.id + '/timeseries/' + attr.timeseries;
-
       var from, to;
       if(scope.unit){
         from = moment().startOf(scope.unit).add(scope.offset, scope.unit);
@@ -79,30 +44,10 @@ app.directive('timeseries', function($http, socket) {
       var query = "";
       if(from && to) query = "?from=" + encodeURIComponent(from.format()) + "&to=" + encodeURIComponent(to.format());
       $http.get(url + query).success(function(data){ 
-        scope.timeseries = data;
-        view();
+        scope.ts = data;
+        scope.csv        = data.vector.join('\n');
       });
     }
-
-    var view = function(){
-      element.find('input#base').val(scope.timeseries.base);
-      element.find('select#interval').val(scope.timeseries.interval);
-      //element.find('textarea#csv').val(scope.timeseries.vector.map(function(x){ return parseFloat(x); }).join('\n'));
-      // if(scope.format){
-      //   element.find('textarea#csv').val(scope.timeseries.vector.map(function(x){ return parseFloat(x); }).join('\n'));
-      // }
-      //scope.$apply();
-    };
-
-    scope.offset = 0;
-
-    var bind = function(){
-      if(scope.new){ scope.ngModel = scope.timeseries; }
-    }
-
-    scope.new = scope.$eval(attr.new);
-    if(scope.new){ bind(); }
-      else { load(); }
 
     /* Enable and disable inputs */
     scope.$watch('ngDisabled', function(){
@@ -110,29 +55,28 @@ app.directive('timeseries', function($http, socket) {
         else                element.find('textarea, select, button, input').removeAttr("disabled");
     });
 
-    /* Listen for save data call from parent controller */
-    if(!scope.new){
-      scope.$watch('saving', function(){
-        if(isdirty) save();
-      });
+    // New objects are not yet saved, so no data to retrieve ... while existing objects need to be "watched" for updates
+    if(scope.new) scope.ngModel = scope.ts;
+    else {
+      scope.fetchData();
+      scope.$watch('saving', function(){ if(scope.changed) save(); });  // Socket.io
     }
 
     var save = function(){
       var url = '/v1/' + attr.collection + '/' + attr.id + '/timeseries/' + attr.timeseries;
-      $http.put(url, scope.timeseries);        
+      $http.put(url, scope.ts);        
     }
-
-    view();
 
     /* Socket.io bindings */
     var ref = attr.collection + '/' + attr.id + '/' + attr.timeseries;
     socket.on(ref, function (data) {
-      load();
+      scope.fetchData();
     });
     
+    // Free memory (garbage collect) when closing scope
     scope.$on('$locationChangeStart', function (event, next, current) {
       socket.close(ref);
-      scope.timeseries = undefined;
+      scope.ts = undefined;
     });
 
   }

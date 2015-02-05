@@ -17,11 +17,11 @@
 	  </button>
 	  <ul class="dropdown-menu" role="menu">
 
-	    <li><a href="" ng-click="labels=!labels" ng-hide="labels">
-      	<span class="glyphicon glyphicon-tag"/> &nbsp; Show names
+	    <li><a href="" ng-click="editTemplateStart()" ng-hide="editTemplate">
+      	<span class="glyphicon glyphicon-tag"/> &nbsp; Edit template
 	    </a></li>
-	    <li><a href="" ng-click="labels=!labels" ng-show="labels">
-      	<span class="glyphicon glyphicon-tag"/> &nbsp; Hide names
+	    <li><a href="" ng-click="editTemplateStop()" ng-show="editTemplate">
+      	<span class="glyphicon glyphicon-tag"/> &nbsp; Done editing template
 	    </a></li>
 	    <li><a href="" ng-click="columnsUp()">
 	      <span class="glyphicon glyphicon-th-large"/> &nbsp; Columns view
@@ -68,7 +68,7 @@
     }
     </style>
 
-    <style ng-if="!labels">label {display: none;}</style>
+    <style ng-if="!editTemplate">label {display: none;}</style>
 
     <h4 class="hidden-xs">{{doc._id}}
     <small ng-if="doc._update" title="{{doc._update}}">updated {{doc._update | fromNow}}</small>
@@ -91,6 +91,19 @@
       opacity: 1;
     }
 
+  </style>
+
+  <style ng-if="editTemplate">
+    .templateField0:hover {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 1em;
+    }
+
+    .templateField0:hover {
+      background-color: white;
+      box-shadow: 1px 1px 10px 1px rgba(0,0,0,0.2);
+    }
   </style>
 
   <!-- Google Maps -->
@@ -128,8 +141,20 @@
       </div>
 
       <!-- Template items -->
-      <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="field in doc._template track by field.name">
-        <label class="control-label test">{{field.name}} <small>({{field.type}})</small></label>
+      <div class="form-group clean-inputs col-sm-{{columns}} templateField" ng-repeat="field in doc._template track by field.name">
+
+        <div ng-show="editTemplate">
+          <label class="control-label" title="{{field.type}}">{{field.name}}</label>
+          <div class="btn-group pull-right">
+            <button type="button" title="Move {{field.name}} up" class="btn btn-xs btn-default" ng-click="shiftTemplateField($index, -1)" ng-disabled="$index == 0">
+              <span class="glyphicon glyphicon-chevron-up"></span>
+            </button>          
+            <button type="button" title="Move {{field.name}} down" class="btn btn-xs btn-default" ng-click="shiftTemplateField($index, +1)"  ng-disabled="$index == doc._template.length - 1">
+              <span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+          </div>
+
+        </div>
 
         <!-- Primitive data types (should autosave on changes) -->
         <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'text'"       ng-model="doc[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
@@ -145,6 +170,7 @@
         <tree       ng-if="field.type == 'tree'"       ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></tree>
         <process    ng-if="field.type == 'process'"    ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></process>
         <file       ng-if="field.type == 'file'"       ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></file>
+        <header     ng-if="field.type == 'header'"     ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></header>
 
         <!-- Google Maps -->
         <ui-gmap-google-map ng-if="field.type == 'googlemaps'" center="doc[field.name].center" zoom="doc[field.name].zoom" options="doc[field.name].options"></ui-gmap-google-map>
@@ -171,7 +197,7 @@
       <!-- /Non-Template items -->
 
       <!-- New doc properties -->
-      <div class="form-group col-sm-{{columns}}" ng-show="editing">
+      <div class="form-group col-sm-{{columns}}" ng-show="new || editTemplate">
         <label class="control-label">
           new property:
         </label>
@@ -196,6 +222,7 @@
                 <li><a href="" ng-click="addProperty('tree')">tree</a></li>
                 <li><a href="" ng-click="addProperty('process')">process</a></li>
                 <li><a href="" ng-click="addProperty('file')">file</a></li>
+                <li><a href="" ng-click="addProperty('header')">header</a></li>
                 <li><a href="" ng-click="addProperty('hidden')">hidden</a></li>
               </ul>
             </div><!-- /btn-group -->
