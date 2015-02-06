@@ -10,6 +10,13 @@ ctrl.controller('list',
 
   $scope.col = parseInt($window.localStorage.col) || 3;
 
+  $scope.open = function(id){
+    console.log(id);
+    var path = $location.path() + '/' + id;
+    console.log(path);
+    $location.path(path);
+  }
+
   $scope.colInit = function(){
     setTimeout(function(){
       $('.col-var').removeClass('col-sm-3');
@@ -45,6 +52,23 @@ ctrl.controller('list',
     }).error(function(error){
       messageCenterService.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
+
+    var url = $scope.api + '/count';
+    $http.get(url).success(function(data) { 
+      $scope.totalCount = data.count;
+    }).error(function(error){
+      console.log(error);
+      messageCenterService.add('danger', 'Error retrieving count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+    });
+
+    var url = $scope.api + '/count?query=' + $scope.query;
+    $http.get(url).success(function(data) { 
+      $scope.queryCount = data.count;
+    }).error(function(error){
+      console.log(error);
+      messageCenterService.add('danger', 'Error retrieving query result count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+    });
+
   };
 
   $scope.search = function(){

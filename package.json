@@ -4,6 +4,7 @@
   "author": "Nabi Abudaldah <nabi.abudaldah@gen.nl>",
   "dependencies": {
     "async": "latest",
+    "basic-auth": "latest",
     "bcrypt-nodejs": "latest",
     "body-parser": "latest",
     "chai": "latest",

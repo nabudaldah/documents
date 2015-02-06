@@ -2,12 +2,12 @@
 
 // Token based authentication
 // https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
-ctrl.controller('main',
+ctrl.controller('index',
   ['$scope', '$http', '$window', '$location', '$route', '$interval', 'messageCenterService',
   function ($scope, $http, $window, $location, $route, $interval, messageCenterService) {
 
-  $scope.authUser = "admin@localhost";
-  $scope.authPass = "admin";
+  // $scope.authUser = "admin@localhost";
+  // $scope.authPass = "admin";
 
   $scope.loadCollections = function(){
     $http.get('/v1/settings?query=collection').success(function (data) { 
@@ -60,8 +60,8 @@ ctrl.controller('main',
     $scope.showAuthentication();
   }
   
-  $scope.login = function () {
-
+  $scope.login = function() {
+            
     var authentication = { username: $scope.authUser, password: $scope.authPass };
 
     $http
@@ -93,6 +93,7 @@ ctrl.controller('main',
   }
 
   $scope.checkStatus = function(){
+    if(!$scope.authenticated()) return;
     $http
       .get('/v1/status')
       .success(function(data, status, headers, config){
@@ -115,7 +116,9 @@ ctrl.controller('main',
   //   $scope.checkStatus();
   // }, statusInterval);
 
-  $scope.checkStatus();
+  setInterval(function(){
+    $scope.checkStatus();
+  }, 5000)
 
   $('[data-toggle="tooltip"]').tooltip();
 

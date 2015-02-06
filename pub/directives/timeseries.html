@@ -8,7 +8,13 @@
   </div>
 </div>
 
-<div class="row form-group" ng-show="!new" style="margin-bottom: -10px;">
+<style>
+  /* Does this work on touch devices? */
+  .lightup       { opacity: 0.5; }
+  .lightup:hover { opacity: 1.0; }
+</style>
+
+<div class="row form-group lightup" ng-show="!new" style="margin-bottom: -10px;">
   <div class="col-sm-12">
 
     <div class="btn-group">

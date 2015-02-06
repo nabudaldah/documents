@@ -1,52 +1,59 @@
-<div class="input-group">
+<!-- 
+<h1>{{object}}
+	<small>
+		<span ng-if="query">{{queryCount}} / </span>{{totalCount}}
+	</small>
+</h1>
+ -->
+	<div class="input-group">
 
-	<span class="input-group-btn">
+		<span class="input-group-btn">
 
-		<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-			Menu &nbsp; 
-			<span class="caret" style="font-size: small;"></span>
-			<span class="sr-only">Toggle Dropdown</span>
-		</button>
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+				New &nbsp; 
+				<span class="caret" style="font-size: small;"></span>
+				<span class="sr-only">Toggle Dropdown</span>
+			</button>
 
-		<ul class="dropdown-menu" role="menu">
-			<li ng-repeat="template in templates"><a ng-click="new(template._id)">New: {{::template._id}}</a></li>
-			<li ng-if="templates.length" class="divider"></li>
-			<li><a href="{{::route}}/new">New document</a></li>
+			<ul class="dropdown-menu" role="menu">
 
-			<li class="divider"></li>
+				<li><a href="{{::route}}/new">New empty document</a></li>
+				<li ng-if="templates.length" class="divider"></li>
+				<li ng-repeat="template in templates"><a href="" ng-click="new(template._id)">Template: {{::template._id}}</a></li>
 
-			<li><a ng-click="colDown()" ng-hide="" class="lnk lnk-default hidden-xs" tabindex="-1">
-				<span class="glyphicon glyphicon-zoom-out"></span> &nbsp; Smaller documents
-			</a></li>
+			</ul>
 
-			<li><a ng-click="colUp()" class="lnk lnk-default hidden-xs" tabindex="-1">
-				<span class="glyphicon glyphicon-zoom-in"></span> &nbsp; Larger documents
-			</a></li>
+		</span>
+		<input ng-model="query" ondragover="drop(event)" ng-change="search()" name="search" type="search" class="form-control" placeholder="Search...">
+		<span class="input-group-btn">
 
-			<li><a ng-click="upload()" class="lnk lnk-default" title="Upload data">
-				<span class="glyphicon glyphicon-cloud-upload"></span> &nbsp; Upload data
-			</a></li>
+			<a href="" class="btn btn-default">
+				<span ng-if="query">found {{queryCount}} of </span>{{totalCount}} docs
+			</a>
 
-			<li><a ng-click="download()" class="lnk lnk-default" title="Download data">
-				<span class="glyphicon glyphicon-cloud-download"></span> &nbsp; Download data
-			</a></li>
+			<a href="{{::route}}/pivot" class="btn btn-default">
+				<span class="glyphicon glyphicon-stats"></span>
+			</a>
 
-			<li><a href="{{::route}}/pivot" class="lnk lnk-default">
-				<span class="glyphicon glyphicon-stats"></span> &nbsp; Pivot data
-			</a></li>
-		</ul>
+			<a ng-click="colDown()" ng-hide="" class="btn btn-default hidden-xs">
+				<span class="glyphicon glyphicon-zoom-out"></span>
+			</a>
 
-	</span>
-	<input ng-model="query" ondragover="drop(event)" ng-change="search()" name="search" type="search" class="form-control" placeholder="Search...">
+			<a ng-click="colUp()" class="btn btn-default hidden-xs">
+				<span class="glyphicon glyphicon-zoom-in"></span>
+			</a>
+
+		</span>
+
+	</div>
 
 </div>
 
-<hr/>
-
 <style>
-	.item1:hover { 
+	.item:hover { 
 		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
 		border-color: rgb(106, 176, 232);
+		cursor: pointer;
 	}
 	.selected { 
 		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
@@ -54,9 +61,11 @@
 	}
 </style>
 
-<div class="fade" ng-class="{in:list.length}">
+
+<!-- infinite-scroll="loadmore()" -->
+<div class="fade row" style="margin-top: 1em" ng-class="{in:list.length}">
 	<div ng-repeat="item in list" class="col-var col-sm-3">
-		<div class="panel panel-default item" id="{{::object}}/{{::item._id}}" style="overflow: hidden; min-height: 200px" draggable="true" ondragstart="dragstart(event)">
+		<div ng-click="open(item._id)" class="panel panel-default item" id="{{::object}}/{{::item._id}}" style="overflow: hidden; min-height: 200px;" draggable="true" ondragstart="dragstart(event)">
 			<div class="panel-heading">
 				<a href="{{::route}}/{{::item._id}}">{{::item._id}}</a>
 			</div>
@@ -68,19 +77,6 @@
 	</div>
 </div>
 
-<style>
-	.pointer {
-		background-image: url('/images/arrows.png');
-		padding-left: 90px;
-		margin-left: 50px;
-		height: 90px;
-		background-repeat: no-repeat;
-		padding-top: 75px;
-	}
-</style>
-
-<div class="pointer" ng-show="start">
-	<em>Start up here by creating a new document or template!</em>
+<div class="col-md-12 btn-group btn-group-justified" role="group" ng-show="list.length < queryCount">
+	<a href="" ng-click="loadmore()" class="btn btn-link btn-default" role="button">Load more ...</a>
 </div>
-
-<div infinite-scroll="loadmore()" infinite-scroll-distance="10"></div>

@@ -16,9 +16,6 @@ app.config(['$routeProvider', function($routeProvider) { $routeProvider
 
   .when('/',          { templateUrl: '/views/home.html', controller: 'home' })
 
-  .when('/error/0',   { template: '<div class="jumbotron"><h1>Connection lost</h1><p>Please try again later.</p></div>' })
-  .when('/error/401', { template: '<div class="jumbotron"><h1>Unauthorized</h1><p>Please login.</p></div>' })
-
   .when('/:collection',               { templateUrl: '/views/list.html',  controller: 'list' })
   .when('/:collection/pivot',         { templateUrl: '/views/pivot.html', controller: 'pivot'})
   .when('/:collection/new',           { templateUrl: '/views/edit.html',  controller: 'edit' })

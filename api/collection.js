@@ -31,7 +31,8 @@ module.exports = function(app, db){
 	  var _tags = req.query.query?req.query.query.split(' '):[];
 
 	  collection.count({$or: [{ _id: regex }, { name: regex }, { _tags: { $all: _tags } } ] }, function (err, data) { 
-	    if(err || !data) { res.status(500).send('Database error.'); return; }
+	    if(err) { res.status(500).send('Database error.'); return; }
+	    if(!data) data = 0;
 	    res.send({ count: data });
 	  });
 	});

@@ -57,7 +57,9 @@ module.exports = function(app, config, db, channel){
           // /v1/:collection/:id/execute/:script
           var execute = reference.split('/')[0] + '/' + reference.split('/')[1] + '/execute/' + reference.split('/')[2];
           console.log('executing "' + execute + '" ...');
-          request('http://localhost:3000/v1/' + execute);
+
+          executeByReference(reference.split('/')[0], reference.split('/')[1], reference.split('/')[2]);
+          
         });
         jobs.push(job);
       });
@@ -68,5 +70,115 @@ module.exports = function(app, config, db, channel){
 
   // Initial schedule
   update();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	/* Javascript execute */
+	var fs      = require('fs');
+	var Fiber   = require('fibers'); // 0.1s
+	var vm      = require('vm');
+	var moment  = require('moment'); require('twix');
+	var request = require('request');
+	var xmldoc  = require('xmldoc');
+	var mongo   = require('mongojs');
+	var edi     = require(__dirname + '/../lib/edi.js');
+	var Timeseries = require(__dirname + '/../lib/Timeseries.js');
+
+	var executeJavascriptContext = fs.readFileSync(__dirname + '/../lib/context.js', { encoding : 'utf8' });
+	var executeJavascript = function (javascript, context, callback){
+
+	  var vmContext = {
+	  	console: console,
+	    Fiber: Fiber,
+	    mongo: mongo,
+	    fs: fs,
+	    request: request,
+	    moment: moment,
+	    xmldoc: xmldoc,
+	    edi: edi,
+	    Timeseries: Timeseries,
+	    context: context
+	  };
+
+	  var vmScript = executeJavascriptContext.replace('/* SCRIPT */', javascript);
+	  var ref = context.collection + '/' + context.id + '/' + context.script;
+	  console.log('executing: ' + ref);
+	  try {
+	  	vm.runInContext(vmScript, vm.createContext(vmContext), {timeout: 1000});
+	  } catch(exception) {
+	  	console.error('error executing: ' + ref + ' (' + exception + ')'); 
+	    if(context.response) {
+	      context.response.status(400).send("" + exception);
+	    }
+  	}
+
+	};	 
+
+	var executeByReference = function(collection, id, script){
+
+	  if(!collection || !id || !script) {
+	    console.error('Missing collection, id and script parameters.');
+	    return;
+	  }
+
+	  var fields = { _id: 1 };
+	  fields[script] = 1;
+
+	  var dbc = db.collection(collection);
+	  dbc.findOne({ _id: id }, fields, function (err, data) {
+
+	    if(err)          { console.error('Database error.'); }
+	    if(!data)        { console.error('Object not found in database.'); }
+	    if(!data[script]) { console.error('Script not found.'); }
+
+	    var javascript = data[script];
+	    var context = {
+	    	database:   config.mongo.database,
+	    	collection: collection,
+	    	id:         id,
+	    	script:     script,
+	    	//response:   res,
+	    	pid:        process.pid // for mubsub triggers
+	    };
+	    
+	    // executeJavascript = function (javascript, context, callback)
+	    executeJavascript(javascript, context);
+
+	  });
+
+	  // Responde from inside of VM or in error catch
+	  // res.end();
+
+	};
+
+	executeByReference("timeseries","","");
+
+
+
+
+
+
+
+
+
+
+
+
 
 };

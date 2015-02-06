@@ -28,8 +28,8 @@ ctrl.controller('edit',
       _template: []
     }
     
-    if($routeParams._template){
-      $http.get('/v1/' + $scope.collection + '/' + $routeParams._template)
+    if($routeParams.template){
+      $http.get('/v1/' + $scope.collection + '/' + $routeParams.template)
       .success(function (templateObject) {
         $scope.doc._template = templateObject._template;
         $scope.ready= true;
@@ -300,31 +300,42 @@ ctrl.controller('edit',
 
   $scope.editTemplateStop = function(){
     $scope.editTemplate = false;
-    $scope.autosaveNow('_template');
+    $scope.autosave('_template');
+  }
+
+  $scope.widthTemplateField = function(index, width){
+    if(index < 0 || index > $scope.doc._template.length - 1) return;
+    $scope.doc._template[index].width = width;    
+    $scope.autosave('_template');
   }
 
   $scope.shiftTemplateField = function(index, shift){
 
     // Credits: http://stackoverflow.com/a/5306832
     Array.prototype.move = function (old_index, new_index) {
-        if (new_index >= this.length) {
-            var k = new_index - this.length;
-            while ((k--) + 1) {
-                this.push(undefined);
-            }
+      if (new_index >= this.length) {
+        var k = new_index - this.length;
+        while ((k--) + 1) {
+          this.push(undefined);
         }
-        this.splice(new_index, 0, this.splice(old_index, 1)[0]);
-        return this; // for testing purposes
+      }
+      this.splice(new_index, 0, this.splice(old_index, 1)[0]);
+      return this; // for testing purposes
     };
-
-    console.log(index);
-    console.log(shift);
 
     if(index < 0 || index > $scope.doc._template.length - 1) return;
 
     $scope.doc._template.move(index, index + shift);
 
-    $scope.autosaveEventually('_template');
+    $scope.autosave('_template');
+
+  }
+
+  $scope.removeTemplateField = function(index){
+
+    if(index < 0 || index > $scope.doc._template.length - 1) return;
+    $scope.doc._template.splice(index, 1);
+    $scope.autosave('_template');
 
   }
 
@@ -334,8 +345,8 @@ ctrl.controller('edit',
     $timeout(function(){ $(window).trigger('resize') }, 0);
   }
 
-  $scope.$on("$destroy", function() {
-    console.log('destroy')
-  });
+  // $scope.$on("$destroy", function() {
+  //   console.log('destroy');
+  // });
 
 }]);
