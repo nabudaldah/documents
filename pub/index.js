@@ -65,23 +65,34 @@ ctrl.controller('index',
     });
   };
 
+  $scope.updateStars = function(){
+
+    $http
+      .get('/v1/settings/' + $scope.user._id)
+      .success(function(data, status, headers, config){
+        $scope.stars = data.starred;
+      }).error(function(data, status, headers, config){
+        $scope.stars = [];        
+      });
+  }
+
   $scope.showContent = function(){
     $scope.updateCollections();
-    $("#page-content").removeClass("hidden")
-    $("#page-authentication").addClass("hidden")
-    $("#wrapper").removeClass("toggled");
-    $("#menubtn").removeClass("toggled");    
+    $scope.updateStars();
+    
+    socket.on('settings/' + $scope.user._id, function (data) {
+      $scope.updateStars();
+    });
+
+    $scope.$on('$destroy', function () {
+      socket.close('settings/' + $scope.user._id);
+    });
   }
 
   $scope.showAuthentication = function(){
     delete $scope.collections;
     delete $window.localStorage.token;
     delete $window.localStorage.user;
-    console.log('not authenticated...')
-    $("#page-content").addClass("hidden")
-    $("#page-authentication").removeClass("hidden")
-    $("#wrapper").addClass("toggled");
-    $("#menubtn").addClass("toggled");    
   }
 
   $scope.authenticated = function(){
@@ -121,20 +132,7 @@ ctrl.controller('index',
         $window.localStorage.user  = JSON.stringify(data.profile);
         $scope.user = JSON.parse($window.localStorage.user);
         $scope.showContent();
-
         $scope.authenticating = false;
-
-        $scope.updateStars();
-        
-        socket.on('settings/' + $scope.user._id, function (data) {
-          $scope.updateStars();
-        });
-
-        $scope.$on('$destroy', function () {
-          socket.close('settings/' + $scope.user._id);
-        });
-
-
       })
       .error(function (data, status, headers, config) {
         $scope.showAuthentication();
@@ -176,19 +174,5 @@ ctrl.controller('index',
 
   $('[data-toggle="tooltip"]').tooltip();
   $('[data-toggle="popover"]').popover()
-
-  
-  $scope.updateStars = function(){
-
-    if(!$scope.user || !$scope.user._id) return;
-
-    $http
-      .get('/v1/settings/' + $scope.user._id)
-      .success(function(data, status, headers, config){
-        $scope.stars = data.starred;
-      }).error(function(data, status, headers, config){
-        $scope.stars = [];        
-      });
-  }
 
 }]);
