@@ -9,6 +9,7 @@ app.directive('process', function () {
 
     scope.current = function(index){
       var item = scope.ngModel[index];
+      if(!item) return false;
       if(item.skip   || item.done || item.fail) return false;
       if(index == 0) return true;
       var before = scope.ngModel[index - 1]; 
@@ -17,6 +18,7 @@ app.directive('process', function () {
 
     scope.passed = function(index){
       var item = scope.ngModel[index];
+      if(!item) return false;
       if(item.skip   || item.done || item.fail) return true;
       else return false;
     }

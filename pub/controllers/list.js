@@ -122,12 +122,26 @@ ctrl.controller('list',
     $scope.refresh();
   });
 
-  $scope.$on('$locationChangeStart', function (event, next, current) {
+  // $scope.$on('$locationChangeStart', function (event, next, current) {
+  // });
+
+  $scope.$on("$destroy", function() {
+    // console.log('list.js: destroy');
     socket.close($scope.object);
+    // scrollHandler.off();
   });
+
 
   $scope.refresh = function(){
     $scope.load();
   }
+
+  // var scrollHandler = $(window).scroll(function () {
+  //    if ($(window).scrollTop() >= $(document).height() - $(window).height() - 10) {
+  //       $scope.loadmore();
+  // 			$scope.$apply();
+  //    }
+  // });
+
 
 }]);

@@ -31,6 +31,20 @@ for file in `git diff --name-status | awk '/^[CDMRTUX]/ {print $2}'`
 git pull
 
 echo ""
+echo "### Upgrading NPM packages."
+echo ""
+
+npm update
+
+echo ""
+echo "### Upgrading Bower packages."
+echo ""
+
+cd pub
+bower update
+cd ..
+
+echo ""
 echo "### Restarting service."
 echo ""
 

@@ -1,23 +1,34 @@
-ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window) {
+ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window, socket, $timeout, messageCenterService) {
 
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 
-  $scope.objectId  = $routeParams.id;
-  $scope.objectCol = $location.path().split('/')[1];
-  $scope.objectRef = $scope.objectCol + '/' + $scope.objectId;
-  $scope.objectApi = '/v1/' + $scope.objectRef;
-  $scope.objectUrl = '/' + $scope.objectRef;
+  $scope.docId  = $routeParams.id;
+  $scope.docCol = $location.path().split('/')[1];
+  $scope.docRef = $scope.docCol + '/' + $scope.docId;
+  $scope.docApi = '/v1/' + $scope.docRef;
+  $scope.docUrl = '/' + $scope.docRef;
 
-  $scope.object   = {};
+  $scope.doc   = {};
 
-  $http.get($scope.objectApi + '/raw').success(function (data, status, headers, config) {
-    $scope.object = data;
-    $scope.text = JSON.stringify($scope.object, undefined, 2);
-    $scope.ready = true;
-  });
+  $scope.refresh = function(){  
+    $http.get($scope.docApi + '/raw').success(function (data, status, headers, config) {
+
+      $('#main-panel').addClass('panel-update');
+      $timeout(function(){
+        $('#main-panel').removeClass('panel-update');
+      }, 100)
+
+      $scope.doc   = data;
+      $scope.text  = JSON.stringify($scope.doc, undefined, 2);
+      $scope.ready = true;
+    });
+  }
+
+  // Load data
+  $scope.refresh();
 
   $scope.close =function(){
-    $location.path($scope.objectUrl);
+    $location.path($scope.docUrl);
   }
 
   $scope.save = function(){
@@ -30,21 +41,25 @@ ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window)
     }
 
     if(json){
-      $scope.object = json;
-      $http.put($scope.objectApi, $scope.object);
+      $scope.doc = json;
+      $http.put($scope.docApi, $scope.doc);
       $scope.editing = false;      
     } else {
-      messages.add('danger', 'Invalid JSON string. Object not saved.');
+      messageCenterService.add('danger', 'Invalid JSON string. Object not saved.');
     }
   };
 
-  $scope.delete = function(){
-    $http.delete($scope.objectApi);
-    $location.path($scope.objectUrl);
-  };
-
   $scope.form = function(){
-    $location.path('/' + $scope.objectCol + '/' + $scope.objectId);
+    $location.path('/' + $scope.docCol + '/' + $scope.docId);
   }
+
+  socket.on($scope.docRef, function (data) {
+    $scope.refresh();
+  });
+
+  $scope.$on('$destroy', function () {
+    socket.close($scope.docRef);
+    $scope.doc = null;
+  });
 
 });

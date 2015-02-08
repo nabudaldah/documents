@@ -1,54 +1,42 @@
-<div class="panel panel-default fade" ng-class="{in:ready}">
+<style>
+  .panel-update {
+    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
+    border-color: rgb(106, 176, 232);
+  }
+</style>
+
+<div style="margin: 20px;" id="main-panel" class="panel panel-default fade" ng-class="{in:ready}">
+
   <div class="panel-heading clearfix">
 
 
-    <button class="btn btn-default pull-right" ng-click="close()">
+  <h3 style="padding-left: 0.6em; padding-right: 0.5em; margin: 0; margin-top: 0.2em" class="pull-left">{{doc._id}}</h3>
+
+    <button class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()">
       <span class="glyphicon glyphicon-remove"></span>
     </button>
 
-    <h4 class="pull-left">{{object._id}}</h4>
-
-    <button style="margin-left: 20px" ng-hide="editing" ng-click="editing=1" class="btn btn-default">
-      <span class="glyphicon glyphicon-pencil"/>
+    <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="save()">
+      <span class="glyphicon glyphicon-floppy-disk"/>
     </button>
 
   </div>
 
-  <div class="panel-body">
 
-    <div class="container-fluid">
+  <!-- panel-body -->
+  <div class="panel-body doc">
 
-      <!-- Read only mode -->
-      <div ng-show="!editing">
-        <pre class="code" style="font-size: small">{{text}}</pre>
-      </div>
-
-      <!-- Editing mode -->
-      <div ng-show="editing">
-        <textarea class="form-control code" style="font-size: small" rows="20" ng-model="text"></textarea>
-      </div>
-
-    </div> <!-- container-fluid -->
+    <textarea class="form-control code" style="font-size: small" rows="26" ng-model="text"></textarea>
 
   </div> <!-- panel-body -->
 
-  <div class="panel-footer clearfix" ng-show="editing">
+<!-- 
+  <div class="panel-body doc">
 
-    <button ng-click="deleting=1" type="button" class="btn btn-default">
-      <span class="glyphicon glyphicon-trash"></span>
-    </button>
+    <json-formatter json="doc"></json-formatter>
 
-    <span ng-show="deleting">
-      <button style="margin-left: 20px" ng-click="deleting=0" type="button" class="btn btn-success">
-        Keep
-      </button>
-      <button style="margin-left: 20px" ng-click="delete()" type="button" class="btn btn-danger">
-        Delete
-      </button>
-    </span>
-
-    <button ng-click="save()" type="submit" class="pull-right btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Save</button>
   </div>
+ -->
 
 </div>
-</form>
+

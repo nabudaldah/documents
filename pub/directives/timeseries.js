@@ -74,7 +74,7 @@ app.directive('timeseries', function($http, socket) {
     });
     
     // Free memory (garbage collect) when closing scope
-    scope.$on('$locationChangeStart', function (event, next, current) {
+    scope.$on('$destroy', function (event, next, current) {
       socket.close(ref);
       scope.ts = undefined;
     });

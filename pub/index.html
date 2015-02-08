@@ -2,6 +2,8 @@
 <html lang="en" ng-app="app">
 <head>
 
+  <base href="/">
+
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -24,40 +26,44 @@
   <script src="/bower_components/bootstrap/js/tooltip.js"></script>
 
   <!-- Angular UI: Bootstrap UI Popover plugin depends on Angular 1.2 !!! no go -->
-<!--
-  <script src="/bower_components/bootstrap-ui/src/popover/popover.js"></script>
-  <script src="/bower_components/bootstrap-ui/src/tooltip/tooltip.js"></script>
--->
-<!-- Angular Google Maps -->
-  <!-- 
-  <script src="/bower_components/lodash/dist/lodash.min.js"></script>
-  <script src="/bower_components/bluebird/js/browser/bluebird.js"></script>
-  <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
-  <script src="/bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
--->
+  <!--
+    <script src="/bower_components/bootstrap-ui/src/popover/popover.js"></script>
+    <script src="/bower_components/bootstrap-ui/src/tooltip/tooltip.js"></script>
+  -->
+  <!-- Angular Google Maps -->
+    <!-- 
+    <script src="/bower_components/lodash/dist/lodash.min.js"></script>
+    <script src="/bower_components/bluebird/js/browser/bluebird.js"></script>
+    <script src='//maps.googleapis.com/maps/api/js?sensor=false'></script>
+    <script src="/bower_components/angular-google-maps/dist/angular-google-maps.min.js"></script>
+  -->
 
-<!-- Moment.js /w Twix component and Numeral.js -->
-<script src="/bower_components/moment/min/moment.min.js"></script>
-<script src="/bower_components/twix/bin/twix.min.js"></script>
-<script src="/bower_components/numeral/min/numeral.min.js"></script>
+  <!-- Moment.js /w Twix component and Numeral.js -->
+  <script src="/bower_components/moment/min/moment.min.js"></script>
+  <script src="/bower_components/twix/bin/twix.min.js"></script>
+  <script src="/bower_components/numeral/min/numeral.min.js"></script>
 
-<!-- Timeseries graphs: Highstock -->
-<script src="/bower_components/highstock-release/highstock.js"></script>
-<script>Highcharts.setOptions({global: { useUTC: false }});</script>
+  <!-- Timeseries graphs: Highstock -->
+  <script src="/bower_components/highstock-release/highstock.js"></script>
+  <script>Highcharts.setOptions({global: { useUTC: false }});</script>
 
-<!-- JavaScript editing: CodeMirror + JSHint (2.5.6 needed?) -->
-<link  href="/bower_components/codemirror/lib/codemirror.css" rel="stylesheet">
-<link  href="/bower_components/codemirror/theme/elegant.css" rel="stylesheet">
-<script src="/bower_components/codemirror/lib/codemirror.js"></script>
-<script src="/bower_components/codemirror/mode/javascript/javascript.js"></script>
-<script src="/bower_components/codemirror/mode/r/r.js"></script>
-<script src="/bower_components/codemirror/addon/edit/matchbrackets.js"></script>
-<script src="/bower_components/codemirror/addon/edit/closebrackets.js"></script>
-<script src="/bower_components/codemirror/addon/lint/lint.js"></script>
-<script src="/bower_components/codemirror/addon/lint/javascript-lint.js"></script>
-<script src="/bower_components/jshint/dist/jshint.js"></script>
+  <!-- JavaScript editing: CodeMirror + JSHint (2.5.6 needed?) -->
+  <link  href="/bower_components/codemirror/lib/codemirror.css" rel="stylesheet">
+  <link  href="/bower_components/codemirror/theme/elegant.css" rel="stylesheet">
+  <script src="/bower_components/codemirror/lib/codemirror.js"></script>
+  <script src="/bower_components/codemirror/mode/javascript/javascript.js"></script>
+  <script src="/bower_components/codemirror/mode/r/r.js"></script>
+  <script src="/bower_components/codemirror/addon/edit/matchbrackets.js"></script>
+  <script src="/bower_components/codemirror/addon/edit/closebrackets.js"></script>
+  <script src="/bower_components/codemirror/addon/lint/lint.js"></script>
+  <script src="/bower_components/codemirror/addon/lint/javascript-lint.js"></script>
+  <script src="/bower_components/jshint/dist/jshint.js"></script>
 
-<!-- Angular UI Bootstrap -->
+  <link  href="/bower_components/json-formatter/dist/json-formatter.css" rel="stylesheet">
+  <script src="/bower_components/json-formatter/dist/json-formatter.js"></script>
+
+
+  <!-- Angular UI Bootstrap -->
 <!-- 
   <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 -->
@@ -74,7 +80,6 @@
 <script src="/socket.io/socket.io.js"></script>
 
 <!-- AngularJS App -->
-<script src="/app.js"></script>
 <script src="/index.js"></script>
 <script src="/auth.js"></script>
 
@@ -99,9 +104,10 @@
 <script src="/directives/file.js"></script>
 <script src="/directives/header.js"></script>
 <script src="/directives/password.js"></script>
+<script src="/directives/progressbar.js"></script>
 
 <!-- AngularJS Controllers -->
-<script src="/controllers/home.js"></script>
+<script src="/controllers/dashboard.js"></script>
 <script src="/controllers/list.js"></script>
 <script src="/controllers/edit.js"></script>
 <script src="/controllers/pivot.js"></script>
@@ -109,89 +115,112 @@
 
 
 </head>
+
+<style>
+
+  #menu {
+    /*background-color: #428bca;*/
+  }
+
+  body {
+    padding-bottom: 80px;
+  }
+</style>
+
+
 <body ng-controller="index">
 
-  <div id="wrapper">
+  <!-- Top menu -->
+  <nav id="menu" class="navbar navbar-default navbar-fixed-bottom" ng-show="authenticated()">
+    <div class="container-fluid">
 
-    <!-- Sidebar, Credits: http://ironsummitmedia.github.io/startbootstrap-simple-sidebar/ -->
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+      </div>
 
-    <div id="sidebar-wrapper">
-        <ul class="sidebar-nav" style="position: relative; padding-top: 20px">
-          <li><a href="/#/">
-            <span class="glyphicon glyphicon-home">
-            </span> &nbsp; Home</a>
-          </li>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-          <li ng-repeat="collection in collections">
-            <a href="/#/{{collection}}">
-                <span class="glyphicon glyphicon-list"></span> &nbsp; {{collection}}
-            </a>
-          </li>
+        <ul class="nav navbar-nav">
+          <li ng-class="{active:currentCollection() == ''}"><a href="/#/">Dashboard</a></li>
+          <li ng-repeat="collection in collections" ng-class="{active:collection==currentCollection()}"><a href="/#/{{collection}}">{{collection}}</a></li>
+        </ul>
 
-          <hr/>
+        <form class="navbar-form navbar-right" role="form">
 
-          <li><a href="/#/settings/{{user._id}}"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
-          <li><a href="/#/settings/"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
-          <li><a href="" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> &nbsp; Sign out</a></li>
-      </ul>
+          <!-- Single button -->
+          <div class="btn-group dropup">
+            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+              {{user.name}} &nbsp; <span class="glyphicon glyphicon-user"></span>
+            </button>
+            <ul class="dropdown-menu" role="menu">
+              
+              <li ng-repeat="star in stars"><a href="/#/{{star}}"><span class="glyphicon glyphicon-star"></span> &nbsp; {{star}}</a></li>
 
-      <div style="padding: 20px; position: absolute; bottom: 0px; color: white;" ng-click="checkStatus()">
-        <span ng-if="!status">
-            <span class="label label-danger">Server not responding</span>
-        </span>
-        <span ng-if="status">
-            <span class="label label-success" data-toggle="tooltip" data-placement="top" title="{{status}}" data-original-title="{{status}}">Server up-and-running</span>
-        </span>
+              <li class="divider"></li>
+              
+              <li><a href="/#/settings/{{user._id}}"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
+              <li><a href="/#/settings"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
+              
+              <li class="divider"></li>
+
+              <li><a href="" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> &nbsp; Log off</a></li>
+            </ul>
+          </div>
+
+          
+        </form>
+
+      </div><!-- /.navbar-collapse -->
     </div>
+  </nav>
 
-</div>
-
-<!-- /#sidebar-wrapper -->
-
-<!-- Page Content -->
-<div id="page-content-wrapper">
-
-    <div style="position: absolute; top: -3px;" ng-show="authenticated()">
-      <a style="position: relative; left: -40px; z-index: 1000" href="#menu-toggle" class="btn btn-default" id="menu-toggle">
-      <span class="glyphicon glyphicon-menu-hamburger"></span></a>
-        
-    </div>
+  <div id="messages">
+    <mc-messages></mc-messages>  
+  </div>
 
 
-  <div class="container-fluid">
-    <div class="row">
-      <div class="col-lg-12">
+  <div ng-show="!authenticated()" class="col-sm-6 col-sm-offset-3" style="margin-top: 10%">
 
-        
-        <!-- <h1>Simple Sidebar</h1> -->
-        <mc-messages></mc-messages>
-        <div ng-show="authenticated()" ng-view></div>
-
-        <div ng-show="!authenticated()" class="container-fluid"  id="page-authentication">
-          <form ng-submit="login()" class="form-signin" role="form">
-            <h2 class="form-signin-heading">Please sign in</h2>
-            <input ng-model="authUser" type="text"    class="form-control" placeholder="User" required autofocus/>
-            <input ng-model="authPass" type="password" class="form-control" placeholder="Password"      required/>
-            <button type="submit" value="Login" class="btn btn-lg btn-primary btn-block">Sign in</button>
-          </form>
+    <form class="form">
+      <div class="form-group">
+        <h2 class="col-sm-12" style="margin-bottom: 0.7em">Please sign in</h2>
+      </div>
+      <div class="form-group">
+        <div class="col-sm-5">
+          <input ng-model="username" ng-disabled="authenticating" type="token" class="form-control" id="inputUsername" placeholder="Username" required autofocus>
         </div>
+        <div class="col-sm-5">
+          <input ng-model="password" ng-disabled="authenticating" type="password" class="form-control" id="inputPassword" placeholder="Password" required>
+        </div>
+        <div class="col-sm-2">
+          <button ng-click="login()" ng-show="!authenticating" ng-disabled="!username || !password || authenticating" type="submit" value="Login" class="btn btn-primary">Sign in</button>
+          <button ng-show="authenticating" type="button" class="btn btn-default"><img src="/images/loading.gif"/></button>
+        </div>
+      </div>
 
-    </div>
-</div>
-</div>
-</div>
-<!-- /#page-content-wrapper -->
+      <div class="form-group">
+        <div class="col-sm-12">
+          <hr/>
+          <p class="text-muted">Copyright &copy; 2014 - 2015, Energy21 B.V.</p>
+        </div>
+      </div>
 
-</div>
-<!-- /#wrapper -->
+    </form>
 
-<!-- Menu Toggle Script -->
-<script>
-    $("#menu-toggle").click(function(e) {
-      e.preventDefault();
-      $("#wrapper").toggleClass("toggled");
-  });
-</script>
+
+  </div>  
+
+
+  <div id="view" ng-if="authenticated()">
+    <div ng-view></div>
+  </div>
 
 </body>
 </html>

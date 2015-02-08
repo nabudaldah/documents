@@ -40,3 +40,4 @@ ssl
 
 # Temporary files (testing/dev)
 temp
+*.dmp

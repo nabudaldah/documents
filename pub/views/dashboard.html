@@ -1,0 +1,26 @@
+
+<style>
+  .item:hover { 
+    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
+    border-color: rgb(106, 176, 232);
+    cursor: pointer;
+  }
+  .selected { 
+    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
+    border-color: rgb(106, 176, 232);
+  }
+</style>
+
+
+<div style="margin: 20px; margin-top: 80px" class="row fade" ng-class="{in:list.length}">
+  <div ng-repeat="item in list" class="col-sm-3">
+    <div class="panel panel-default item" ng-click="open(item.type+'/'+item._id)" style="overflow: hidden; min-height: 200px" >
+      <div class="panel-heading">
+        <a href="/#/{{item.type}}/{{item._id}}">{{item._id | limitTo : 20}}</a>
+      </div>
+      <div class="panel-body">
+        <p><ul class="taglist"><li ng-repeat="tag in item._tags" class="tag">{{tag}}</li></ul></p>
+      </div>          
+    </div>
+  </div>
+</div>

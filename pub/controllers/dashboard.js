@@ -1,4 +1,4 @@
-ctrl.controller('home', function ($scope, $http, $window, $location) {
+ctrl.controller('dashboard', function ($scope, $http, $window, $location) {
 
   if($window.localStorage.user){
     $scope.user = JSON.parse($window.localStorage.user);
@@ -13,6 +13,14 @@ ctrl.controller('home', function ($scope, $http, $window, $location) {
         $scope.ready = true;
       }
     });
+
+    $scope.open = function(id){
+      console.log(id);
+      var path = $location.path() + '/' + id;
+      var path = id;
+      console.log(path);
+      $location.path(path);
+    }
 
     $scope.fetchStars = function(starred){
 

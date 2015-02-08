@@ -1,0 +1,12 @@
+
+<div class="progress">
+  <div
+  	class="progress-bar"
+  	role="progressbar"
+  	aria-valuenow="{{ngModel}}"
+  	aria-valuemin="{{min}}"
+  	aria-valuemax="{{max}}"
+  	style="width: {{(ngModel - min)/(max - min) * 100 | number : 1 }}%;">
+                  {{(ngModel - min)/(max - min) * 100 | number : 1 }}%
+  </div>
+</div>

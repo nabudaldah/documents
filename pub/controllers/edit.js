@@ -128,6 +128,11 @@ ctrl.controller('edit',
     $http.put('/v1/' + $scope.collection + '/' + $scope.doc._id, doc)
     .success(function (data, status, headers, config){
     	// Success
+      $('#save').addClass('btn-success');
+      $timeout(function(){
+        $('#save').removeClass('btn-success');
+      }, 100)
+
       $scope.changedProperties[property] = null;
       delete $scope.changedProperties[property];
     }).error(function (data, status, headers, config){
@@ -229,18 +234,23 @@ ctrl.controller('edit',
     $scope.refresh();
   });
 
-  $scope.$on('$locationChangeStart', function (event, next, current) {
+  $scope.$on('$destroy', function () {
     socket.close($scope.reference);
     $scope.doc = null;
   });
 
   $scope.refresh = function(){
     $http.get($scope.api).success(function (newObject) {
-
-    	$('#main-panel').addClass('panel-update');
-    	$timeout(function(){
-  	  	$('#main-panel').removeClass('panel-update');
-    	}, 500)
+/*
+      $('#main-panel').addClass('panel-update');
+      $timeout(function(){
+        $('#main-panel').removeClass('panel-update');
+      }, 100)
+*/
+      $('#refresh').addClass('btn-success');
+      $timeout(function(){
+        $('#refresh').removeClass('btn-success');
+      }, 100)
 
       var oldObject = $scope.doc;
       //var newObject = newObject)

@@ -8,7 +8,7 @@
 	}
 </style>
 
-<div id="main-panel" class="panel panel-default fade" ng-class="{in:ready}">
+<div style="margin: 20px;" id="main-panel" class="panel panel-default fade" ng-class="{in:ready}">
   <div class="panel-heading clearfix">
 
 <!-- style="background-color: white; opacity: 0.8; border-radius: 4px; padding: 0.5em" -->
@@ -17,16 +17,16 @@
   <h3 style="padding-left: 0.6em; padding-right: 0.5em; margin: 0; margin-top: 0.2em" class="pull-left">{{doc._id}} <small ng-if="doc._update" title="{{doc._update}}">updated {{doc._update | fromNow}}</small>
 </h3>
 
-    <button class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()">
+    <a href="/#/{{collection}}" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()">
       <span class="glyphicon glyphicon-remove"></span>
-    </button>
+    </a>
 
     <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="deleting=!deleting" ng-show="!new">
       <span class="glyphicon glyphicon-trash"/>
     </button>
 
     <button type="button" class="btn btn-danger pull-right" style="margin-right: 0.3em" ng-show="deleting" ng-click="delete()">
-      Delete?
+      DELETE
     </button>
 
     <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="raw()" ng-show="!new">
@@ -40,10 +40,13 @@
       <span class="glyphicon glyphicon-pencil"/>
     </button>
 
-    <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="save()">
+    <button id="save" type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="save()">
       <span class="glyphicon glyphicon-floppy-disk"/>
     </button>
 
+    <button id="refresh" type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="refresh()">
+      <span class="glyphicon glyphicon-refresh"/>
+    </button>
 
     <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!starred && !new" ng-click="star()">
       <span class="glyphicon glyphicon-star-empty"/>
@@ -107,6 +110,35 @@
 
   </style>
 
+<style ng-if="editTemplate">
+
+  .editTemplateContainer {
+    padding: 1em;
+    opacity: 0.5;
+  }
+  .editTemplateContainer:hover {
+    opacity: 1.0;
+  }
+
+  .editTemplateControls {
+    padding-bottom: 1em;
+  }
+
+  .editTemplateItem {
+    display: block;
+    border: 1px dashed #ccc;
+    padding: 1em;
+    border-radius: 10px;
+  }
+
+  .newTemplateItem {
+    border: 1px dashed #ccc;
+    padding: 1em;
+    border-radius: 10px;
+  }
+
+
+</style>
 
   <!-- panel-body -->
   <div class="panel-body doc">
@@ -132,27 +164,21 @@
           <taginput ng-model="doc._tags" ng-disabled="!editing"></taginput>
       </div>
 
-      <!-- Template items -->
-      <div class="form-group clean-inputs col-sm-{{field.width || 12}} templateField" ng-repeat="field in doc._template track by field.name">
 
-        <div ng-show="editTemplate">
+
+      <!-- Template items -->
+      <div class="editTemplateContainer form-group clean-inputs col-sm-{{field.width || 12}} templateField" ng-repeat="field in doc._template track by field.name">
+
+        <div ng-show="editTemplate" class="editTemplateControls">
+
+          <label class="control-label" title="{{field.type}}">{{field.name}}</label>
+
+          <div class="btn-group pull-right">
 
           <button type="button" title="Remove {{field.name}}" class="btn btn-xs btn-danger" ng-click="removeTemplateField($index)">
             <span class="glyphicon glyphicon-trash"></span>
           </button>          
 
-          <label class="control-label" title="{{field.type}}">{{field.name}}</label>
-
-          <div class="btn-group pull-right">
-            <button type="button" title="Move {{field.name}} up" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, -1)" ng-disabled="$index == 0">
-              <span class="glyphicon glyphicon-chevron-up"></span>
-            </button>          
-            <button type="button" title="Move {{field.name}} down" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, +1)"  ng-disabled="$index == doc._template.length - 1">
-              <span class="glyphicon glyphicon-chevron-down"></span>
-            </button>
-          </div>
-
-          <div class="btn-group pull-right">
             <button type="button" title="Make {{field.name}} 1 width" class="btn btn-xs btn-success" ng-click="widthTemplateField($index, 12)">
               1
             </button>          
@@ -165,42 +191,58 @@
             <button type="button" title="Make {{field.name}} 1/4 width" class="btn btn-xs btn-success" ng-click="widthTemplateField($index, 3)">
               1/4
             </button>
+
+            <button type="button" title="Move {{field.name}} up" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, -1)" ng-disabled="$index == 0">
+              <span class="glyphicon glyphicon-chevron-up"></span>
+            </button>          
+            <button type="button" title="Move {{field.name}} down" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, +1)"  ng-disabled="$index == doc._template.length - 1">
+              <span class="glyphicon glyphicon-chevron-down"></span>
+            </button>
+
           </div>
 
         </div>
 
-        <!-- Primitive data types (should autosave on changes) -->
-        <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'text'"       ng-model="doc[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
-        <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'number'"     ng-model="doc[field.name]" ng-disabled="!editing" type="number" class="form-control" placeholder="({{field.name}})">
-        <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'date'"       ng-model="doc[field.name]" ng-disabled="!editing" type="date" class="form-control">
-        <input      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'time'"       ng-model="doc[field.name]" ng-disabled="!editing" type="time" class="form-control">
-        <textarea   ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'textarea'"   ng-model="doc[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px; font-size: small; font-family: monospace"></textarea>
+        <span class="editTemplateItem">
 
-        <!-- Fields that contact the API directly -->
-        <javascript ng-if="field.type == 'javascript'" ng-model="doc[field.name]" ng-disabled="!editing" col       ="{{collection}}" id="{{id}}" script="{{field.name}}"></javascript>
-        <rscript    ng-if="field.type == 'rscript'"    ng-model="doc[field.name]" ng-disabled="!editing" col       ="{{collection}}" id="{{id}}" script="{{field.name}}"></rscript>
-        <password   ng-if="field.type == 'password'"   ng-model="doc[field.name]" ng-disabled="!editing" collection="{{collection}}" id="{{id}}" name  ="{{field.name}}"></password>
+          <!-- Primitive data types (should autosave on changes) -->
+          <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'text'"       ng-model="doc[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
+          <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'number'"     ng-model="doc[field.name]" ng-disabled="!editing" type="number" class="form-control" placeholder="({{field.name}})">
+          <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'date'"       ng-model="doc[field.name]" ng-disabled="!editing" type="date" class="form-control">
+          <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'time'"       ng-model="doc[field.name]" ng-disabled="!editing" type="time" class="form-control">
+          <textarea      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'textarea'"   ng-model="doc[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px; font-size: small; font-family: monospace; border: 1px solid #ccc; border-radius: 4px"></textarea>
 
-        <!-- Fields that are simply using ngModel of current scope -->
-        <timeslice  ng-if="field.type == 'timeslice'"  ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></timeslice>
-        <reference  ng-if="field.type == 'reference'"  ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></reference>
-        <tree       ng-if="field.type == 'tree'"       ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></tree>
-        <process    ng-if="field.type == 'process'"    ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></process>
-        <file       ng-if="field.type == 'file'"       ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></file>
-        <header     ng-if="field.type == 'header'"     ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></header>
+          <!-- Fields that contact the API directly -->
+          <javascript    ng-if="field.type == 'javascript'"   ng-model="doc[field.name]" ng-disabled="!editing" col       ="{{collection}}" id="{{id}}" script="{{field.name}}"></javascript>
+          <rscript       ng-if="field.type == 'rscript'"      ng-model="doc[field.name]" ng-disabled="!editing" col       ="{{collection}}" id="{{id}}" script="{{field.name}}"></rscript>
+          <password      ng-if="field.type == 'password'"     ng-model="doc[field.name]" ng-disabled="!editing" collection="{{collection}}" id="{{id}}" name  ="{{field.name}}"></password>
 
-        <!-- Google Maps -->
-        <ui-gmap-google-map ng-if="field.type == 'googlemaps'" center="doc[field.name].center" zoom="doc[field.name].zoom" options="doc[field.name].options"></ui-gmap-google-map>
+          <!-- Fields that are simply using ngModel of current scope -->
+          <timeslice     ng-if="field.type == 'timeslice'"    ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></timeslice>
+          <reference     ng-if="field.type == 'reference'"    ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></reference>
+          <tree          ng-if="field.type == 'tree'"         ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></tree>
+          <process       ng-if="field.type == 'process'"      ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></process>
+          <file          ng-if="field.type == 'file'"         ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></file>
+          <header        ng-if="field.type == 'header'"       ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></header>
+          <progressbar   ng-if="field.type == 'progressbar'"  ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></progressbar>
 
-        <!-- Timeseries -->
-        <timeseries ng-if="field.type == 'timeseries'" ng-model="doc.data[field.name]"
-          new         = "{{new}}"
-          collection  = "{{collection}}"
-          id          = "{{doc._id}}"
-          timeseries  = "{{field.name}}"
-          saving      = "saving"
-          ng-disabled = "!editing">
-        </timeseries>
+          <!-- Google Maps -->
+          <ui-gmap-google-map ng-if="field.type == 'googlemaps'" center="doc[field.name].center" zoom="doc[field.name].zoom" options="doc[field.name].options"></ui-gmap-google-map>
+
+          <!-- Timeseries -->
+          <timeseries ng-if="field.type == 'timeseries'" ng-model="doc.data[field.name]"
+            new         = "{{new}}"
+            collection  = "{{collection}}"
+            id          = "{{doc._id}}"
+            timeseries  = "{{field.name}}"
+            saving      = "saving"
+            ng-disabled = "!editing">
+          </timeseries>
+
+          <!-- JSON object: credits: https://github.com/mohsen1/json-formatter -->
+          <json-formatter ng-if="field.type == 'json'" json="doc[field.name]" open="1" style="font-size: small; border: 1px solid #ccc; border-radius: 4px; padding: 1em;"></json-formatter>
+
+        </span>
 
       </div>
 
@@ -214,7 +256,7 @@
       <!-- /Non-Template items -->
 
       <!-- New doc properties -->
-      <div class="form-group col-sm-{{columns}}" ng-show="new || editTemplate">
+      <div class="form-group col-sm-{{columns}} newTemplateItem" ng-show="new || editTemplate">
         <label class="control-label">
           new property:
         </label>
@@ -241,6 +283,8 @@
                 <li><a href="" ng-click="addProperty('file')">file</a></li>
                 <li><a href="" ng-click="addProperty('header')">header</a></li>
                 <li><a href="" ng-click="addProperty('password')">password</a></li>
+                <li><a href="" ng-click="addProperty('json')">json</a></li>
+                <li><a href="" ng-click="addProperty('progressbar')">progressbar</a></li>
                 <li><a href="" ng-click="addProperty('hidden')">hidden</a></li>
               </ul>
             </div><!-- /btn-group -->
