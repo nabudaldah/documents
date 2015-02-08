@@ -120,9 +120,21 @@ ctrl.controller('index',
         $window.localStorage.token = data.token;
         $window.localStorage.user  = JSON.stringify(data.profile);
         $scope.user = JSON.parse($window.localStorage.user);
-        $route.reload();
-        $scope.showContent(); 
+        $scope.showContent();
+
         $scope.authenticating = false;
+
+        $scope.updateStars();
+        
+        socket.on('settings/' + $scope.user._id, function (data) {
+          $scope.updateStars();
+        });
+
+        $scope.$on('$destroy', function () {
+          socket.close('settings/' + $scope.user._id);
+        });
+
+
       })
       .error(function (data, status, headers, config) {
         $scope.showAuthentication();
@@ -134,14 +146,6 @@ ctrl.controller('index',
     $location.path('/');
     $scope.showAuthentication();
   };
-
-  $scope.menu = function(){
-    if($scope.authenticated()){
-      $("#wrapper").toggleClass("toggled");
-      $("#menubtn").toggleClass("toggled");
-      setTimeout(function(){ $(window).resize(); }, 500);
-    }
-  }
 
   $scope.checkStatus = function(){
     if(!$scope.authenticated()) return;
@@ -175,7 +179,9 @@ ctrl.controller('index',
 
   
   $scope.updateStars = function(){
-    console.log('updateStars');
+
+    if(!$scope.user || !$scope.user._id) return;
+
     $http
       .get('/v1/settings/' + $scope.user._id)
       .success(function(data, status, headers, config){
@@ -184,15 +190,5 @@ ctrl.controller('index',
         $scope.stars = [];        
       });
   }
-
-  $scope.updateStars();
-
-  socket.on('settings/' + $scope.user._id, function (data) {
-    $scope.updateStars();
-  });
-
-  $scope.$on('$destroy', function () {
-    socket.close('settings/' + $scope.user._id);
-  });
 
 }]);
