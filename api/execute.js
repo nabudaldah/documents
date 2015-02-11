@@ -4,7 +4,8 @@ module.exports = function(app, config, db){
 	var fs      = require('fs');
 	var Fiber   = require('fibers'); // 0.1s
 	var vm      = require('vm');
-	var moment  = require('moment'); require('twix');
+	// var moment  = require('moment'); require('twix');
+	var moment  = require('moment-timezone'); var twix = require('twix');
 	var request = require('request');
 	var xmldoc  = require('xmldoc');
 	var mongo   = require('mongojs');
