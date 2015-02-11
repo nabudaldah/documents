@@ -107,7 +107,10 @@
 	</div>
 </div>
 
-<div class="col-md-12 btn-group btn-group-justified" role="group" ng-show="list.length < queryCount">
+<div class="col-md-4 col-md-offset-4">
+<div class="btn-group btn-group-justified" role="group" ng-show="list.length < queryCount" style="padding-bottom: 6em">
 	<a href="" ng-click="loadmore()" ng-show="list.length < queryCount" class="btn btn-default" role="button">{{queryCount - list.length}} more</a>
+</div>
+	
 </div>
 

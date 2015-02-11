@@ -1,6 +1,6 @@
 ctrl.controller('list',
-  ['$scope', '$http', '$window', '$location', 'socket', 'messageCenterService',
-  function ($scope, $http, $window, $location, socket, messageCenterService) {
+  ['$scope', '$http', '$window', '$location', 'socket', 'messages',
+  function ($scope, $http, $window, $location, socket, messages) {
 
   $scope.object = $location.path().split('/')[1];
   $scope.api  = '/v1/' + $scope.object;
@@ -50,7 +50,7 @@ ctrl.controller('list',
       $scope.colInit();
       if(!$scope.list.length) $scope.start = true;
     }).error(function(error){
-      messageCenterService.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+      messages.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
 
     var url = $scope.api + '/count';
@@ -58,7 +58,7 @@ ctrl.controller('list',
       $scope.totalCount = data.count;
     }).error(function(error){
       console.log(error);
-      messageCenterService.add('danger', 'Error retrieving count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+      messages.add('danger', 'Error retrieving count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
 
     var url = $scope.api + '/count?query=' + $scope.query;
@@ -66,7 +66,7 @@ ctrl.controller('list',
       $scope.queryCount = data.count;
     }).error(function(error){
       console.log(error);
-      messageCenterService.add('danger', 'Error retrieving query result count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+      messages.add('danger', 'Error retrieving query result count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
 
   };
@@ -105,7 +105,7 @@ ctrl.controller('list',
         $scope.list = $scope.list.concat(data); 
         $scope.colInit(); 
       }).error(function(error){
-        messageCenterService.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+        messages.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
       });
     }
   }

@@ -22,6 +22,7 @@
 
   <!-- Twitter Bootstrap -->
   <link  href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link  href="/include/animate.css" rel="stylesheet">
   <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>  
   <script src="/bower_components/bootstrap/js/tooltip.js"></script>
 
@@ -87,7 +88,7 @@
 <script src="/services/socket.io.js"></script>
 
 <!-- Credits: https://github.com/mateu-aguilo-bosch/message-center -->
-<script src="/include/message-center.js"></script>
+<script src="/include/messages.js"></script>
 
 <!-- AngularJS Directives -->
 <script src="/directives/taginput.js"></script>
@@ -154,10 +155,12 @@
 
         <form class="navbar-form navbar-right" role="form">
 
+          <mc-messages></mc-messages>  
+
           <!-- Single button -->
           <div class="btn-group dropup">
             <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              {{user.name}} &nbsp; <span class="glyphicon glyphicon-user"></span>
+              <span class="glyphicon glyphicon-user"></span>
             </button>
             <ul class="dropdown-menu" role="menu">
               
@@ -181,16 +184,22 @@
     </div>
   </nav>
 
-  <div id="messages">
-    <mc-messages></mc-messages>  
-  </div>
+<style>
+  #login {
+    -webkit-animation-duration: 0.5s;
+    /*-webkit-animation-delay: 2s;*/
+    /*-webkit-animation-iteration-count: infinite;*/
+    -moz-animation-duration: 0.5s;
+    /*-moz-animation-delay: 2s;*/
+    /*-moz-animation-iteration-count: infinite;*/
+  }
+</style>
 
-
-  <div ng-show="!authenticated()" class="col-sm-6 col-sm-offset-3" style="margin-top: 10%">
+  <div ng-show="!authenticated()" class="col-sm-6 col-sm-offset-3" style="margin-top: 10%" id="login">
 
     <form class="form">
       <div class="form-group">
-        <h2 class="col-sm-12" style="margin-bottom: 0.7em">Please sign in</h2>
+        <h2 class="col-sm-12" style="margin-bottom: 0.7em">{{error || "Please sign in"}}</h2>
       </div>
       <div class="form-group">
         <div class="col-sm-5">

@@ -2,11 +2,11 @@
 'use strict';
 
 // Create a new angular module.
-var MessageCenterModule = angular.module('MessageCenterModule', []);
+var Messages = angular.module('Messages', []);
 
 // Define a service to inject.
-MessageCenterModule.
-  service('messageCenterService', ['$rootScope', '$sce', '$timeout',
+Messages.
+  service('messages', ['$rootScope', '$sce', '$timeout',
     function ($rootScope, $sce, $timeout) {
       return {
         mcMessages: this.mcMessages || [],
@@ -79,8 +79,9 @@ MessageCenterModule.
       };
     }
   ]);
-MessageCenterModule.
-  directive('mcMessages', ['$rootScope', 'messageCenterService', function ($rootScope, messageCenterService) {
+
+Messages.
+  directive('mcMessages', ['$rootScope', 'messages', function ($rootScope, messages) {
     /*jshint multistr: true */
     var templateString = '\
     <div id="mc-messages-wrapper">\
@@ -96,21 +97,28 @@ MessageCenterModule.
       </div>\
     </div>\
     ';
+    var templateString = '\
+    <a ng-show="mcMessages.length" class="btn btn-{{mcMessages[0].type}}" trigger="hover" data-container="body" data-toggle="popover" data-placement="top" data-content="{{mcMessages[0].message}}" data-title="Message">\
+      <span class="glyphicon glyphicon-exclamation-sign"></span>\
+    </a>\
+    ';
     return {
       restrict: 'EA',
       template: templateString,
       link: function(scope, element, attrs) {
         // Bind the messages from the service to the root scope.
-        messageCenterService.flush();
+        messages.flush();
         var changeReaction = function (event, to, from) {
           // Update 'unseen' messages to be marked as 'shown'.
-          messageCenterService.markShown();
+          messages.markShown();
           // Remove the messages that have been shown.
-          messageCenterService.removeShown();
-          $rootScope.mcMessages = messageCenterService.mcMessages;
-          messageCenterService.flush();
+          messages.removeShown();
+          $rootScope.mcMessages = messages.mcMessages;
+          messages.flush();
         };
         $rootScope.$on('$locationChangeStart', changeReaction);
+
+        $('[data-toggle="popover"]').popover()
 
         scope.animation = attrs.animation || 'fade in';
       }

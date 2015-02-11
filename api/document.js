@@ -49,6 +49,20 @@ module.exports = function(app, config, db, trigger){
     });
   });
 
+  /* Insert *or* update object */
+  app.post('/v1/:collection/:id', function (req, res) {
+    if(req.body._id) delete req.body._id;
+    req.body._update = moment().format();
+    var collection = db.collection(req.params.collection);
+    collection.update({ _id: req.params.id }, { $set: req.body }, { upsert: true }, function(err, data){ 
+      if(err || !data) { res.status(500).send('Database error.'); return; }
+      res.status(200).end();
+      var ref = req.params.collection + '/' + req.params.id;
+      trigger(ref, 'update'); // should be array of names of values changed... 
+      return;
+    });
+  });
+
   /* Delete object */
   app.delete('/v1/:collection/:id', function (req, res) {
     var collection = db.collection(req.params.collection);

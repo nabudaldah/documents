@@ -1,6 +1,6 @@
 ctrl.controller('edit',
-	['$scope', '$routeParams', '$http', '$location', '$window', 'socket', '$timeout', 'messageCenterService',
-	function ($scope, $routeParams, $http, $location, $window, socket, $timeout, messageCenterService) {
+	['$scope', '$routeParams', '$http', '$location', '$window', 'socket', '$timeout', 'messages',
+	function ($scope, $routeParams, $http, $location, $window, socket, $timeout, messages) {
 
   // Autosave time every 10 seconds (milliseconds)
   var autosaveTime = 10000;
@@ -50,7 +50,7 @@ ctrl.controller('edit',
       $scope.ready = true;
 
     }).error(function(error){
-      messageCenterService.add('danger', 'Error retrieving doc "' + $scope.reference + '".');
+      messages.add('danger', 'Error retrieving doc "' + $scope.reference + '".');
     });
 
   }
@@ -70,7 +70,7 @@ ctrl.controller('edit',
       $scope.starred = data.starred.indexOf($scope.reference) != -1;
     }
   }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error retrieving user settings "/v1/settings/' + $scope.user._id + '".');  	
+      messages.add('danger', 'Error retrieving user settings "/v1/settings/' + $scope.user._id + '".');  	
   });
 
   $scope.edit = function(){
@@ -136,7 +136,7 @@ ctrl.controller('edit',
       $scope.changedProperties[property] = null;
       delete $scope.changedProperties[property];
     }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error autosaving property "' + property + '" of doc "' + $scope.doc._id + '".');
+      messages.add('danger', 'Error autosaving property "' + property + '" of doc "' + $scope.doc._id + '".');
     });  	
   }
 
@@ -146,7 +146,7 @@ ctrl.controller('edit',
     .success(function (data, status, headers, config){
     	// all ok
     }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error saving doc "' + $scope.doc._id + '".');
+      messages.add('danger', 'Error saving doc "' + $scope.doc._id + '".');
     });
   };
 
@@ -155,7 +155,7 @@ ctrl.controller('edit',
     .success(function (data, status, headers, config){
     	$scope.close();
     }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error deleting document "' + $scope.doc._id + '".');
+      messages.add('danger', 'Error deleting document "' + $scope.doc._id + '".');
     });
   };
 
@@ -168,7 +168,7 @@ ctrl.controller('edit',
         var url = '/' + $scope.collection + '/' + $scope.doc._id;
         $location.path(url);
     }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error creating doc "' + $scope.doc._id + '".');
+      messages.add('danger', 'Error creating doc "' + $scope.doc._id + '".');
     });
   }
 
@@ -226,7 +226,7 @@ ctrl.controller('edit',
         $http.put('/v1/settings/' + $scope.user._id, {starred: data.starred});
       }
     }).error(function (data, status, headers, config){
-      messageCenterService.add('danger', 'Error starring doc.');
+      messages.add('danger', 'Error starring doc.');
     });
   };
 

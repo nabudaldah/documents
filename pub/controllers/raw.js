@@ -1,4 +1,4 @@
-ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window, socket, $timeout, messageCenterService) {
+ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window, socket, $timeout, messages) {
 
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 
@@ -45,7 +45,7 @@ ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window,
       $http.put($scope.docApi, $scope.doc);
       $scope.editing = false;      
     } else {
-      messageCenterService.add('danger', 'Invalid JSON string. Object not saved.');
+      messages.add('danger', 'Invalid JSON string. Object not saved.');
     }
   };
 

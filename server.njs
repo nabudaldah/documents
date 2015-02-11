@@ -40,30 +40,30 @@ assert(config.admin && config.collections, 'Default users and collections should
 console.log('Connecting to MongoDB...');
 var db  = mongo.connect(config.mongo.database);
 
-db.on('error',function(err) {
-  console.error('MongoDB error: ', err);
-  process.exit();
-});
+// db.on('error',function(err) {
+//   console.error('MongoDB error: ', err);
+//   process.exit();
+// });
 
-db.on('ready',function() {
-  console.log('Connected to MongoDB.');
+// db.on('ready',function() {
+//   console.log('Connected to MongoDB.');
 
-  /* Check if settings exists and if not -> install default super user from config.json */
-  db.getCollectionNames(function(err, data){
+//   /* Check if settings exists and if not -> install default super user from config.json */
+//   db.getCollectionNames(function(err, data){
 
-    if(err) {
-      console.error('Error getting collection names from database.');
-      process.exit();
-    }
+//     if(err) {
+//       console.error('Error getting collection names from database.');
+//       process.exit();
+//     }
 
-    if(!data || !data.length || data.indexOf('settings') == -1){
-      console.log('Initializing MongoDB: creating admin user and default collections.');
-      db.collection('settings').insert(config.admin);
-      db.collection('settings').insert(config.collections);
-    }
+//     if(!data || !data.length || data.indexOf('settings') == -1){
+//       console.log('Initializing MongoDB: creating admin user and default collections.');
+//       db.collection('settings').insert(config.admin);
+//       db.collection('settings').insert(config.collections);
+//     }
 
-  });
-});
+//   });
+// });
 
 console.log('Initializing Express.io app...');
 var app = express();

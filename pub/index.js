@@ -4,7 +4,7 @@
 var app = angular.module('app', [
   'ngRoute',
   'ctrl',
-  'MessageCenterModule',
+  'Messages',
   'jsonFormatter'
 ]);
 
@@ -41,8 +41,8 @@ app.filter('fromNow', function() {
 // Token based authentication
 // https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/
 ctrl.controller('index',
-  ['$scope', '$http', '$window', '$location', '$route', '$interval', 'messageCenterService', 'socket',
-  function ($scope, $http, $window, $location, $route, $interval, messageCenterService, socket) {
+  ['$scope', '$http', '$window', '$location', '$route', '$interval', 'messages', 'socket',
+  function ($scope, $http, $window, $location, $route, $interval, messages, socket) {
 
   // $scope.username = "admin@localhost";
   // $scope.password = "admin";
@@ -93,6 +93,7 @@ ctrl.controller('index',
     delete $scope.collections;
     delete $window.localStorage.token;
     delete $window.localStorage.user;
+
   }
 
   $scope.authenticated = function(){
@@ -122,6 +123,8 @@ ctrl.controller('index',
   $scope.login = function() {
             
     var authentication = { username: $scope.username, password: $scope.password };
+    delete $scope.username;
+    delete $scope.password;
 
     $scope.authenticating = true;
 
@@ -135,8 +138,16 @@ ctrl.controller('index',
         $scope.authenticating = false;
       })
       .error(function (data, status, headers, config) {
+        $scope.authenticating = false;
         $scope.showAuthentication();
-        messageCenterService.add('danger', 'Invalid username or password. Please try again.', { timeout: 5000 });
+        $scope.error = "Sorry, try again";
+        $('#login').addClass('animated wobble');
+        $('#login').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+          $('#login').removeClass('animated wobble');
+          $('#inputUsername').focus();
+        });
+
+        // messages.add('danger', 'Invalid username or password. Please try again.', { timeout: 5000 });
       });
   };
 

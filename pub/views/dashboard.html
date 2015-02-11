@@ -1,26 +1,85 @@
 
-<style>
-  .item:hover { 
-    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
-    border-color: rgb(106, 176, 232);
-    cursor: pointer;
-  }
-  .selected { 
-    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
-    border-color: rgb(106, 176, 232);
-  }
-</style>
+<div class="container-fluid" style="padding-left: 2em; padding-right: 2em">
+  
 
+<div class="page-header">
 
-<div style="margin: 20px; margin-top: 80px" class="row fade" ng-class="{in:list.length}">
-  <div ng-repeat="item in list" class="col-sm-3">
-    <div class="panel panel-default item" ng-click="open(item.type+'/'+item._id)" style="overflow: hidden; min-height: 200px" >
-      <div class="panel-heading">
-        <a href="/#/{{item.type}}/{{item._id}}">{{item._id | limitTo : 20}}</a>
-      </div>
-      <div class="panel-body">
-        <p><ul class="taglist"><li ng-repeat="tag in item._tags" class="tag">{{tag}}</li></ul></p>
-      </div>          
-    </div>
-  </div>
+  <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="add()">
+    <span class="glyphicon glyphicon-plus"/>
+  </button>
+
+  <button type="button" class="btn pull-right" ng-class="{'btn-warning':edit,'btn-default':!edit}" style="margin-right: 0.3em" ng-click="edit=!edit">
+    <span class="glyphicon glyphicon-pencil"/>
+  </button>
+
+  <h1>Dashboard <small>logged in as {{user.name}}</small></h1>
+
 </div>
+<!-- 
+<div ng-if="!edit" ng-repeat="item in items" class="col-xs-{{item.columns}}" style="height: {{item.height}}px; margin: 0; padding: 0;">
+  {{$index}} details
+</div>
+
+<div id="item-{{$index}}" ng-if="edit" ng-repeat="item in items" class="col-xs-{{item.columns}}" style="height: {{item.height}}px; border-radius: 8px; border: 1px dashed #ccc; margin: 0; padding: 0;" draggable="true" 
+
+ondragstart = "dragstart(event)" ondragend = "dragend(event)" ondragenter = "dragenter(event)" ondragover = "dragover(event)" ondragleave = "dragleave(event)">
+  {{$index}}
+
+  <a href=""><span class="glyphicon glyphicon-move" style="position: absolute; right: 0; bottom: 0;"></span></a>
+
+</div> -->
+
+
+<!-- ondragstart: to: item-0 -->
+<!-- ondragleave: to: item-0 -->
+<!-- ondragenter: to: item-1 -->
+<!-- ondragover:  to: item-1 -->
+<!-- ondragleave: to: item-1 -->
+<!-- ondragend:   to: item-0 -->
+
+<script type="text/javascript">
+
+  var latestId = null;
+
+  function dragstart(event){
+    var id = event.toElement.id;
+    console.log('ondragstart: ' + id);
+    var element = $("#" + id);
+    if(element) element.css('background-color','blue');
+  }
+
+  function dragenter(event){
+    var id = event.toElement.id;
+    console.log('ondragenter: ' + id);
+    var element = $("#" + id);
+    if(element) element.css('background-color','red');
+    latestId = id;
+  }
+
+  function dragover(event){
+    var id = event.toElement.id;
+    console.log('ondragover: ' + id);
+    var element = $("#" + id);
+    if(element) element.css('background-color','red');
+  }
+
+  function dragleave(event){
+    var id = event.toElement.id;
+    console.log('ondragleave: ' + id);
+    var element = $("#" + id);
+    if(element) element.css('background-color','white');
+  }
+
+  function dragend(event){
+    var id = event.toElement.id;
+    console.log('ondragend: ' + id);
+    var element = $("#" + id);
+    if(element) element.css('background-color','yellow');
+    console.log('dropped at: ' + latestId);
+    var element = $("#" + latestId);
+    if(element) element.css('background-color','green');
+
+  }
+
+
+</script>

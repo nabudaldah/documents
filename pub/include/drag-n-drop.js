@@ -10,6 +10,7 @@ function dragstart(event){
   // var data = "nabi abudaldah";
   event.dataTransfer.setData("Text", data);
   console.log(event.dataTransfer.getData("Text"));
+  console.log('hoi');
 };
 
 function drop(event){
@@ -20,3 +21,4 @@ function drop(event){
   event.target.value = data;
   console.log(event)
 };
+
