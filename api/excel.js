@@ -83,7 +83,8 @@ module.exports = function(app, db){
         var ts = new Timeseries(data._data[req.params.timeseries]);
         if(from && to) ts = ts.pad(from, to);
 
-        var csv = ts.toCSV('\t', 'YYYY-MM-DD\tHH:mm');
+        //var csv = ts.toCSV('\t', 'YYYY-MM-DD\tHH:mm', req.query.timezone);
+        var csv = ts.toCSV('\t', 'YYYY-MM-DD\tHH:mm', req.query.timezone);
 
         res.type('text/plain');
         res.send(csv);
