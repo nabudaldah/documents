@@ -1,123 +1,49 @@
 
-
-
-<style>
-	.panel-update {
-		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
-		border-color: rgb(106, 176, 232);
-	}
+<style ng-if="!editTemplate">
+  label {
+    display: none;
+  }
 </style>
 
-<div style="margin: 20px;" id="main-panel" class="panel panel-default fade" ng-class="{in:ready}">
-  <div class="panel-heading clearfix">
+<style>
 
-<!-- style="background-color: white; opacity: 0.8; border-radius: 4px; padding: 0.5em" -->
+  .clean-inputs > div > .form-control {
+    border: 0px solid white;
+    box-shadow: none;
+    border-bottom: 1px dashed #ddd;
+    border-radius: 0;
+  }
 
+  .clean-inputs > div > .form-control[disabled="disabled"]{
+    cursor: default;
+    background-color: white;
+    opacity: 1;
+  }
 
-  <h3 style="padding-left: 0.6em; padding-right: 0.5em; margin: 0; margin-top: 0.2em" class="pull-left">{{doc._id}} <small ng-if="doc._update" title="{{doc._update}}">updated {{doc._update | fromNow}}</small>
-</h3>
+</style>
 
-    <a href="/#/{{collection}}" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()">
-      <span class="glyphicon glyphicon-remove"></span>
-    </a>
-
-    <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="deleting=!deleting" ng-show="!new">
-      <span class="glyphicon glyphicon-trash"/>
-    </button>
-
-    <button type="button" class="btn btn-danger pull-right" style="margin-right: 0.3em" ng-show="deleting" ng-click="delete()">
-      DELETE
-    </button>
-
-    <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="raw()" ng-show="!new">
-      RAW
-    </button>
-
-    <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="editTemplateStart()" ng-hide="editTemplate">
-      <span class="glyphicon glyphicon-pencil"/>
-    </button>
-    <button type="button" class="btn btn-warning pull-right" style="margin-right: 0.3em" ng-click="editTemplateStop()" ng-show="editTemplate">
-      <span class="glyphicon glyphicon-pencil"/>
-    </button>
-
-    <button id="save" type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="save()">
-      <span class="glyphicon glyphicon-floppy-disk"/>
-    </button>
-
-    <button id="refresh" type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="refresh()">
-      <span class="glyphicon glyphicon-refresh"/>
-    </button>
-
-    <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!starred && !new" ng-click="star()">
-      <span class="glyphicon glyphicon-star-empty"/>
-    </button>
-    <button type="button" class="btn btn-success pull-right" style="margin-right: 0.3em" ng-show="starred  && !new" ng-click="star()">
-      <span class="glyphicon glyphicon-star"/>
-    </button>
-
-
-
-    <style ng-if="!editTemplate">label {display: none;}</style>
-
-    <h4 class="hidden-xs" ng-hide="1">{{doc._id}}
-    <small ng-if="doc._update" title="{{doc._update}}">updated {{doc._update | fromNow}}</small>
-    </h4>
-
-  </div>
-
-  <style>
-    
-    .clean-inputs > div > .form-control {
-      border: 0px solid white;
-      box-shadow: none;
-      border-bottom: 1px dashed #ddd;
-      border-radius: 0;
-    }
-
-    .clean-inputs > div > .form-control[disabled="disabled"]{
-      cursor: default;
-      background-color: white;
-      opacity: 1;
-    }
-
-  </style>
-
-  <style ng-if="editTemplate">
-    .templateField0:hover {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 1em;
-    }
-
-    .templateField0:hover {
-      background-color: white;
-      box-shadow: 1px 1px 10px 1px rgba(0,0,0,0.2);
-    }
-  </style>
-
-  <!-- Google Maps -->
-  <style>
-    .angular-google-map-container { height: 200px; }
-
-    .angular-google-map {
-
-    }
-
-    .angular-google-map-container {
-      border-radius: 8px;
-      border: 1px solid black;
-    }
-
-  </style>
+<!-- Google Maps -->
+<style>
+  .angular-google-map-container {
+    height: 200px;
+    border-radius: 8px;
+    border: 1px solid black;
+  }
+</style>
 
 <style ng-if="editTemplate">
 
+  .templateField {
+    background-color: white;
+  }
+
+  .templateField:hover {
+    background-color: white;
+    box-shadow: 1px 1px 10px 1px rgba(0,0,0,0.2);
+  }
+
   .editTemplateContainer {
     padding: 1em;
-    opacity: 0.5;
-  }
-  .editTemplateContainer:hover {
-    opacity: 1.0;
   }
 
   .editTemplateControls {
@@ -136,49 +62,97 @@
     padding: 1em;
     border-radius: 10px;
   }
-
-
 </style>
 
-  <!-- panel-body -->
-  <div class="panel-body doc">
-  
-    <!-- ID of document -->
-    <div class="form-group col-sm-12" ng-hide="1">
-      <label class="control-label">_id</label>
-      <h3>{{doc._id}}</h3>
+<!-- panel -->
+<div style="margin: 20px;" id="main-panel" class="panel panel-default fade" ng-class="{in:ready}">
+
+  <!-- panel-heading -->
+  <div class="panel-heading clearfix">
+
+    <!-- title -->
+    <h3 style="padding-left: 0.6em; padding-right: 0.5em; margin: 0; margin-top: 0.2em" class="pull-left">{{doc._id}} <small ng-if="doc._update" title="{{doc._update}}">updated {{doc._update | fromNow}}</small></h3>
+
+    <!-- buttons -->
+    <div id="buttons">
+
+      <!-- remove + confirm -->
+      <a href="/#/{{collection}}" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()"><span class="glyphicon glyphicon-remove"></span></a>
+      <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="deleting=!deleting" ng-show="!new"><span class="glyphicon glyphicon-trash"/></button>
+      <button type="button" class="btn btn-danger pull-right" style="margin-right: 0.3em" ng-show="deleting" ng-click="delete()">DELETE</button>
+      <!-- /remove -->
+
+      <!-- create -->
+      <button ng-show="editing && new" ng-click="create()" type="submit" style="margin-right: 0.3em" class="pull-right btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> &nbsp; SAVE </button>
+
+      <!-- create template -->
+      <button ng-show="editing && new" ng-click="createTemplate()" type="submit" style="margin-right: 0.3em" class="pull-right btn btn-success"><span class="glyphicon glyphicon-duplicate"></span> &nbsp; TEMPLATE</button>
+
+      <!-- raw -->
+      <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="raw()" ng-show="!new">RAW</button>
+
+      <!-- edit -->
+      <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="editTemplateStart()" ng-hide="editTemplate"><span class="glyphicon glyphicon-pencil"/></button>
+      <button type="button" class="btn btn-warning pull-right" style="margin-right: 0.3em" ng-click="editTemplateStop()" ng-show="editTemplate"><span class="glyphicon glyphicon-pencil"/></button>
+      <!-- /edit -->
+
+      <!-- save -->
+      <button id="save" type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="save()"><span class="glyphicon glyphicon-floppy-disk"/></button>
+
+      <!-- refresh -->
+      <button id="refresh" type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="refresh()"><span class="glyphicon glyphicon-refresh"/></button>
+
+      <!-- start + unstar -->
+      <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!starred && !new" ng-click="star()"><span class="glyphicon glyphicon-star-empty"/></button>
+      <button type="button" class="btn btn-success pull-right" style="margin-right: 0.3em" ng-show="starred  && !new" ng-click="star()"><span class="glyphicon glyphicon-star"/></button>
+      <!-- /start + unstar -->
+      
     </div>
+    <!-- /buttons -->
 
+  </div>
+  <!-- /panel-heading -->
 
-    <!-- New documents can assign an id -->
-      <div class="form-group col-sm-12" ng-show="new">
-        <label class="control-label">_id</label>
-        <div class="">
-          <input type="text" class="form-control" ng-model="doc._id" ng-disabled="!new">
-        </div>
+  <!-- panel-body -->
+  <div class="panel-body">
+
+    <!-- _id (only new documents) -->
+    <div class="form-group col-sm-12" ng-show="new">
+      <label class="control-label">_id</label>
+      <div class="">
+        <input type="text" class="form-control" ng-model="doc._id" ng-disabled="!new">
       </div>
+    </div>
+    <!-- /_id (only new documents) -->
 
-      <!-- Tag list -->
-      <div class="form-group col-sm-12" style="margin-top: 0.5em">
-        <label class="control-label">tags</label>
-          <taginput ng-model="doc._tags" ng-disabled="!editing"></taginput>
-      </div>
+    <!-- _tags -->
+    <div class="form-group col-sm-12" style="margin-top: 0.5em">
+      <label class="control-label">tags</label>
+      <taginput ng-model="doc._tags" ng-disabled="!editing"></taginput>
+    </div>
+    <!-- /_tags -->
 
+    <!-- _template -->
+    <div ng-repeat="field in doc._template track by field.name">
 
+      <!-- before field, visual helper for drag-and-drop -->
+      <div id="before-field-{{field.name}}" class="before-field" style="display: none; background-color: green; opacity: 0.5"></div>
 
-      <!-- Template items -->
-      <div class="editTemplateContainer form-group clean-inputs col-sm-{{field.width || 12}} templateField" ng-repeat="field in doc._template track by field.name">
+      <!-- _template[i] -->
+      <div class="editTemplateContainer form-group clean-inputs col-sm-{{field.width || 12}} templateField" id="field-{{field.name}}">
 
+        <!-- template field controls -->
         <div ng-show="editTemplate" class="editTemplateControls">
 
           <label class="control-label" title="{{field.type}}">{{field.name}}</label>
 
+          <!-- align left -->
           <div class="btn-group pull-right">
 
-          <button type="button" title="Remove {{field.name}}" class="btn btn-xs btn-danger" ng-click="removeTemplateField($index)">
-            <span class="glyphicon glyphicon-trash"></span>
-          </button>          
+            <!-- remove template field -->
+            <button type="button" title="Remove {{field.name}}" class="btn btn-xs btn-danger" ng-click="removeTemplateField($index)"><span class="glyphicon glyphicon-trash"></span></button>          
 
+            <!-- change width of template field -->
             <button type="button" title="Make {{field.name}} 1 width" class="btn btn-xs btn-success" ng-click="widthTemplateField($index, 12)">
               1
             </button>          
@@ -194,18 +168,21 @@
             <button type="button" title="Make {{field.name}} 1/6 width" class="btn btn-xs btn-success" ng-click="widthTemplateField($index, 2)">
               1/6
             </button>
+            <!-- /change width of template field -->
 
-            <button type="button" title="Move {{field.name}} up" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, -1)" ng-disabled="$index == 0">
-              <span class="glyphicon glyphicon-chevron-up"></span>
-            </button>          
-            <button type="button" title="Move {{field.name}} down" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, +1)"  ng-disabled="$index == doc._template.length - 1">
-              <span class="glyphicon glyphicon-chevron-down"></span>
-            </button>
+            <!-- change position of template field -->
+            <button type="button" title="Move BE_DA_PRICE_FORECAST up" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, -1)" ng-disabled="$index == 0" disabled="disabled"><span class="glyphicon glyphicon-chevron-up"></span></button>          
+            <button type="button" title="Move BE_DA_PRICE_FORECAST down" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, +1)" ng-disabled="$index == doc._template.length - 1"><span class="glyphicon glyphicon-chevron-down"></span></button>
+            <!-- /change position of template field -->
+
 
           </div>
+          <!-- /align left -->
 
         </div>
+        <!-- /template field controls -->
 
+        <!-- template field -->
         <span class="editTemplateItem">
 
           <!-- Primitive data types (should autosave on changes) -->
@@ -234,86 +211,73 @@
 
           <!-- Timeseries -->
           <timeseries ng-if="field.type == 'timeseries'" ng-model="doc.data[field.name]"
-            new         = "{{new}}"
-            collection  = "{{collection}}"
-            id          = "{{doc._id}}"
-            timeseries  = "{{field.name}}"
-            saving      = "saving"
-            ng-disabled = "!editing">
-          </timeseries>
+          new         = "{{new}}"
+          collection  = "{{collection}}"
+          id          = "{{doc._id}}"
+          timeseries  = "{{field.name}}"
+          saving      = "saving"
+          ng-disabled = "!editing"></timeseries>
 
           <!-- JSON object: credits: https://github.com/mohsen1/json-formatter -->
           <json-formatter ng-if="field.type == 'json'" json="doc[field.name]" open="1" style="font-size: small; border: 1px solid #ccc; border-radius: 4px; padding: 1em;"></json-formatter>
 
         </span>
+        <!-- /template field -->
 
       </div>
+      <!-- /_template[i] -->
 
-      <!-- Non-Template items -->
-      <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="(key, value) in doc" ng-if="additional(key)">
-        <label class="control-label">{{key}}</label>
-        <div class="">
-          <input ng-change="autosaveEventually(key)" ng-blur="autosaveNow(key)" type="text"   class="form-control" ng-model="doc[key]" ng-disabled="!editing" placeholder="({{key}})">
-        </div>
-      </div>
-      <!-- /Non-Template items -->
-
-      <!-- New doc properties -->
-      <div class="form-group col-sm-{{columns}} newTemplateItem" ng-show="new || editTemplate">
-        <label class="control-label">
-          new property:
-        </label>
-        <div class="">
-
-          <div class="input-group">
-            <input type="text" class="form-control" ng-model="newPropertyName" placeholder="(new property)">
-            <div class="input-group-btn">
-              <button type="submit" class="btn btn-default" ng-click="addProperty('text')" ng-disabled="!newPropertyOk()">Add</button>
-              <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="!newPropertyOk()"><span class="caret"></span></button>
-              <ul class="dropdown-menu dropdown-menu-right" role="menu">
-                <li><a href="" ng-click="addProperty('textarea')">textarea</a></li>
-                <li><a href="" ng-click="addProperty('number')">number</a></li>
-                <li><a href="" ng-click="addProperty('date')">date</a></li>
-                <li><a href="" ng-click="addProperty('time')">time</a></li>
-                <li><a href="" ng-click="addProperty('timeslice')">timeslice</a></li>
-                <li><a href="" ng-click="addProperty('reference')">reference</a></li>
-                <li><a href="" ng-click="addProperty('timeseries')">timeseries</a></li>
-                <li><a href="" ng-click="addProperty('javascript')">javascript</a></li>
-                <li><a href="" ng-click="addProperty('rscript')">rscript</a></li>
-                <li><a href="" ng-click="addProperty('googlemaps')">googlemaps</a></li>
-                <li><a href="" ng-click="addProperty('tree')">tree</a></li>
-                <li><a href="" ng-click="addProperty('process')">process</a></li>
-                <li><a href="" ng-click="addProperty('file')">file</a></li>
-                <li><a href="" ng-click="addProperty('header')">header</a></li>
-                <li><a href="" ng-click="addProperty('password')">password</a></li>
-                <li><a href="" ng-click="addProperty('json')">json</a></li>
-                <li><a href="" ng-click="addProperty('progressbar')">progressbar</a></li>
-                <li><a href="" ng-click="addProperty('hidden')">hidden</a></li>
-              </ul>
-            </div><!-- /btn-group -->
-          </div><!-- /input-group -->
-
-        </div>
-      </div>
-      <!-- /New doc properties -->
-
-  </div> <!-- panel-body -->
-
-  <!-- panel-footer -->
-  <div class="panel-footer clearfix" ng-show="editing && new">
-
-
-    <button ng-click="create()" type="submit" class="pull-right btn btn-primary">
-      <span class="glyphicon glyphicon-floppy-disk"></span> Create
-    </button>
-
-    <div class="checkbox pull-right" style="margin-right: 20px">
-        <input type="checkbox" ng-model="saveAsTemplate" ng-change="asTemplate()"> Create as template?
     </div>
+    <!-- /_template -->
+
+    <!-- non _template fields -->
+    <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="(key, value) in doc" ng-if="additional(key)">
+      <label class="control-label">{{key}}</label>
+      <div class="">
+        <input ng-change="autosaveEventually(key)" ng-blur="autosaveNow(key)" type="text"   class="form-control" ng-model="doc[key]" ng-disabled="!editing" placeholder="({{key}})">
+      </div>
+    </div>
+    <!-- /non _template fields -->
+
+    <!-- new _template field -->
+    <div class="form-group col-sm-{{columns}} newTemplateItem" ng-show="new || editTemplate">
+      <label class="control-label">
+        new property:
+      </label>
+
+      <div class="input-group">
+        <input type="text" class="form-control" ng-model="newPropertyName" placeholder="(new property)">
+        <div class="input-group-btn">
+          <button type="submit" class="btn btn-default" ng-click="addProperty('text')" ng-disabled="!newPropertyOk()">Add</button>
+          <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="!newPropertyOk()"><span class="caret"></span></button>
+          <ul class="dropdown-menu dropdown-menu-right" role="menu">
+            <li><a href="" ng-click="addProperty('textarea')">textarea</a></li>
+            <li><a href="" ng-click="addProperty('number')">number</a></li>
+            <li><a href="" ng-click="addProperty('date')">date</a></li>
+            <li><a href="" ng-click="addProperty('time')">time</a></li>
+            <li><a href="" ng-click="addProperty('timeslice')">timeslice</a></li>
+            <li><a href="" ng-click="addProperty('reference')">reference</a></li>
+            <li><a href="" ng-click="addProperty('timeseries')">timeseries</a></li>
+            <li><a href="" ng-click="addProperty('javascript')">javascript</a></li>
+            <li><a href="" ng-click="addProperty('rscript')">rscript</a></li>
+            <li><a href="" ng-click="addProperty('googlemaps')">googlemaps</a></li>
+            <li><a href="" ng-click="addProperty('tree')">tree</a></li>
+            <li><a href="" ng-click="addProperty('process')">process</a></li>
+            <li><a href="" ng-click="addProperty('file')">file</a></li>
+            <li><a href="" ng-click="addProperty('header')">header</a></li>
+            <li><a href="" ng-click="addProperty('password')">password</a></li>
+            <li><a href="" ng-click="addProperty('json')">json</a></li>
+            <li><a href="" ng-click="addProperty('progressbar')">progressbar</a></li>
+            <li><a href="" ng-click="addProperty('hidden')">hidden</a></li>
+          </ul>
+        </div><!-- /btn-group -->
+      </div><!-- /input-group -->
+
+    </div>
+    <!-- /new _template field -->
 
   </div>
-  <!-- /panel-footer -->
+  <!-- /panel-body -->
 
 </div>
-
-<!-- <pre>{{doc}}</pre> -->
+<!-- /panel -->

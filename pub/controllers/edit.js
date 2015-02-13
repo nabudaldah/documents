@@ -172,12 +172,9 @@ ctrl.controller('edit',
     });
   }
 
-  $scope.asTemplate = function(){
-    if($scope.saveAsTemplate){
-      $scope.doc._tags.push('template');
-    } else {
-      $scope.doc._tags.splice($scope.doc._tags.indexOf('template'), 1);      
-    }
+  $scope.createTemplate = function(){
+    $scope.doc._tags.push('template');
+    $scope.create();
   }
 
   $scope.addProperty = function(type){
@@ -306,11 +303,13 @@ ctrl.controller('edit',
 
   $scope.editTemplateStart = function(){
     $scope.editTemplate = true;
+    $scope.bindFields();
   }
 
   $scope.editTemplateStop = function(){
     $scope.editTemplate = false;
     $scope.autosave('_template');
+    $(".templateField").draggable("option", "disabled", true);
   }
 
   $scope.widthTemplateField = function(index, width){
@@ -358,5 +357,147 @@ ctrl.controller('edit',
   // $scope.$on("$destroy", function() {
   //   console.log('destroy');
   // });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    $scope.bindField = function(name){
+
+      var id = nameId(name);
+
+      console.log('binding field: ' + id);
+
+      // Anonymous function to copy id, instead of referencing it: credits: http://stackoverflow.com/a/5226333
+      (function(id){
+        setTimeout(function(){
+
+          //Set the draggable elements
+          $("#" + id).draggable({
+            helper: 'clone',
+            appendTo: 'body',
+            start: function(){
+              $(this).css({display: 'none'});
+              $scope.dragging = fieldById(this.id);
+              $scope.$apply();
+            },
+            stop: function(){
+              $(this).css({display: 'block'});
+              $scope.squeezeBefore($scope.dragging, $scope.hovering);
+              $scope.$apply();
+            }
+          });
+
+          $("#" + id).droppable({
+            over: function (event, ui) {
+              //$(this).css('border', '1px solid red');
+              $scope.hovering = fieldById(this.id);
+              $scope.previewBefore($scope.dragging, $scope.hovering);
+              $scope.$apply();
+
+            },
+            out: function(event, ui ) {
+              // $(this).css('border', '2px solid blue');
+              $scope.$apply();
+            }
+          });
+
+        }, 10);
+      })(id);
+
+    }
+
+    var fieldIndex = function(id){
+      for(var i = 0; i < $scope.doc._template.length; i++)
+        if(nameId($scope.doc._template[i].name) == id) return(i);      
+      return(null);
+    }
+
+    var fieldById = function(id){
+      var i = fieldIndex(id);
+      if(i != null) return($scope.doc._template[i]);
+      else return(null);
+    }
+
+    $scope.moveItem = function(fromId, toId){
+
+      if(!fromId || !toId) return;
+
+      var fromIdx  = fieldIndex(fromId);
+      var fromItem = fieldById(fromId);
+
+      $scope.doc._template.splice(fromIdx, 1);
+
+      //var toIdx    = fieldIndex(toId) + 1;
+      var toIdx    = fieldIndex(toId);
+      $scope.doc._template.splice(toIdx, 0, fromItem);
+
+    }
+
+    var nameId = function(name){
+      return('field-' + name);
+    }
+
+    $scope.previewBefore = function(dragging, hovering){
+      if(!dragging || !hovering) return;
+      console.log('previewBefore: ' + nameId(dragging.name) + ' -> ' + nameId(hovering.name));
+      $('.before-field').css('display', 'none');
+      var before = $('#before-' + nameId(hovering.name));
+      before.css('display', 'block');
+      before.addClass('col-md-' + dragging.width);
+      before.css('height', 150 + 'px');
+    }
+
+    $scope.squeezeBefore = function(dragging, hovering){
+      $('.before-field').css('display', 'none');      
+      if(!dragging || !hovering) return;
+      console.log('squeezeBefore: ' + nameId(dragging.name) + ' -> ' + nameId(hovering.name));
+      $scope.moveItem(nameId(dragging.name), nameId(hovering.name));
+      $('.before-field').css('display', 'none');      
+    }
+
+
+    $scope.bindFields = function(){
+      $scope.doc._template.map(function(field){
+        // $scope.addItem(field.name);
+        $scope.bindField(field.name);
+      })
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }]);

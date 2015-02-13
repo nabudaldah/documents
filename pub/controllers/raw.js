@@ -2,9 +2,9 @@ ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window,
 
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 
-  $scope.docId  = $routeParams.id;
-  $scope.docCol = $location.path().split('/')[1];
-  $scope.docRef = $scope.docCol + '/' + $scope.docId;
+  $scope.id  = $routeParams.id;
+  $scope.collection = $location.path().split('/')[1];
+  $scope.docRef = $scope.collection + '/' + $scope.id;
   $scope.docApi = '/v1/' + $scope.docRef;
   $scope.docUrl = '/' + $scope.docRef;
 
@@ -50,7 +50,7 @@ ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window,
   };
 
   $scope.form = function(){
-    $location.path('/' + $scope.docCol + '/' + $scope.docId);
+    $location.path('/' + $scope.collection + '/' + $scope.id);
   }
 
   socket.on($scope.docRef, function (data) {

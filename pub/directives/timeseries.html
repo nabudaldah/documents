@@ -14,7 +14,7 @@
   .lightup:hover { opacity: 1.0; }
 </style>
 
-<div class="row form-group lightup" ng-show="!new" style="margin-bottom: -10px;">
+<div class="row form-group lightup form-inline" ng-show="!new" style="margin-bottom: -10px;">
   <div class="col-sm-12">
 
     <div class="btn-group">
@@ -41,7 +41,11 @@
     </button>
 
     <a class="btn btn-default" href="/v1/{{collection}}/{{id}}/timeseries/{{timeseries}}/csv" target="new">
-      <span class="glyphicon glyphicon-new-window"></span>
+      CSV
+    </a>
+
+    <a class="btn btn-default" href="/v1/{{collection}}/{{id}}/timeseries/{{timeseries}}/excel?timezone={{timezone}}&period={{unitCode}}{{offset>=0?'+':''}}{{offset}}" target="new">
+      <img src="/images/xls.png" width="16" height="16"/>
     </a>
 
   </div>

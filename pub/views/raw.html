@@ -1,42 +1,58 @@
-<style>
-  .panel-update {
-    box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
-    border-color: rgb(106, 176, 232);
-  }
-</style>
-
+<!-- panel -->
 <div style="margin: 20px;" id="main-panel" class="panel panel-default fade" ng-class="{in:ready}">
 
+  <!-- panel-heading -->
   <div class="panel-heading clearfix">
 
+    <!-- title -->
+    <h3 style="padding-left: 0.6em; padding-right: 0.5em; margin: 0; margin-top: 0.2em" class="pull-left">{{doc._id}} <small ng-if="doc._update" title="{{doc._update}}">updated {{doc._update | fromNow}}</small></h3>
 
-  <h3 style="padding-left: 0.6em; padding-right: 0.5em; margin: 0; margin-top: 0.2em" class="pull-left">{{doc._id}}</h3>
+    <!-- buttons -->
+    <div id="buttons">
 
-    <button class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()">
-      <span class="glyphicon glyphicon-remove"></span>
-    </button>
+      <!-- create -->
+      <button ng-show="editing && new" ng-click="create()" type="submit" class="pull-right btn btn-primary"><span class="glyphicon glyphicon-floppy-disk"></span> Create</button>
 
-    <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="save()">
-      <span class="glyphicon glyphicon-floppy-disk"/>
-    </button>
+      <!-- template? -->
+      <div ng-show="editing && new" class="checkbox pull-right" style="margin-right: 20px"><input type="checkbox" ng-model="saveAsTemplate" ng-change="asTemplate()"> Create as template?</div>
+
+      <!-- remove + confirm -->
+      <a href="/#/{{collection}}/{{id}}" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()">
+        <span class="glyphicon glyphicon-remove"></span>
+      </a>
+      <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="deleting=!deleting" ng-show="!new">
+        <span class="glyphicon glyphicon-trash"/>
+      </button>
+      <button type="button" class="btn btn-danger pull-right" style="margin-right: 0.3em" ng-show="deleting" ng-click="delete()">
+        DELETE
+      </button>
+      <!-- /remove -->
+
+      <!-- save -->
+      <button id="save" type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="save()"><span class="glyphicon glyphicon-floppy-disk"/></button>
+
+      <!-- refresh -->
+      <button id="refresh" type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!new" ng-click="refresh()"><span class="glyphicon glyphicon-refresh"/></button>
+
+      <!-- start + unstar -->
+      <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-show="!starred && !new" ng-click="star()"><span class="glyphicon glyphicon-star-empty"/></button>
+      <button type="button" class="btn btn-success pull-right" style="margin-right: 0.3em" ng-show="starred  && !new" ng-click="star()"><span class="glyphicon glyphicon-star"/></button>
+      <!-- /start + unstar -->
+      
+    </div>
+    <!-- /buttons -->
 
   </div>
-
+  <!-- /panel-heading -->
 
   <!-- panel-body -->
-  <div class="panel-body doc">
+  <div class="panel-body">
 
     <textarea class="form-control code" style="font-size: small" rows="26" ng-model="text"></textarea>
 
-  </div> <!-- panel-body -->
-
-<!-- 
-  <div class="panel-body doc">
-
-    <json-formatter json="doc"></json-formatter>
-
   </div>
- -->
+  <!-- /panel-body -->
 
 </div>
+<!-- /panel -->
 

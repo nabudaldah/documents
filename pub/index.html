@@ -15,6 +15,7 @@
 
   <!-- jQuery -->
   <script src="/bower_components/jquery/dist/jquery.min.js"></script>
+  <script src="/bower_components/jquery-ui/jquery-ui.min.js"></script>
 
   <!-- AngularJS -->
   <script src="/bower_components/angular/angular.min.js"></script>
@@ -63,56 +64,48 @@
   <link  href="/bower_components/json-formatter/dist/json-formatter.css" rel="stylesheet">
   <script src="/bower_components/json-formatter/dist/json-formatter.js"></script>
 
+  <!-- Drag & Drop support -->
+  <script src="/include/drag-n-drop.js"></script>
 
-  <!-- Angular UI Bootstrap -->
-<!-- 
-  <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
--->
-<!-- Infinite Scroll -->
-<script src="/bower_components/ngInfiniteScroll/build/ng-infinite-scroll.min.js"></script>
+  <!-- Generate valid UUID's -->
+  <script src="/include/uuid.js"></script>
 
-<!-- Drag & Drop support -->
-<script src="/include/drag-n-drop.js"></script>
+  <!-- Socket.io -->
+  <script src="/socket.io/socket.io.js"></script>
 
-<!-- Generate valid UUID's -->
-<script src="/include/uuid.js"></script>
+  <!-- AngularJS App -->
+  <script src="/index.js"></script>
+  <script src="/auth.js"></script>
 
-<!-- Socket.io -->
-<script src="/socket.io/socket.io.js"></script>
+  <!-- AngularJS Socket.io Service -->
+  <script src="/services/socket.io.js"></script>
 
-<!-- AngularJS App -->
-<script src="/index.js"></script>
-<script src="/auth.js"></script>
+  <!-- Credits: https://github.com/mateu-aguilo-bosch/message-center -->
+  <script src="/include/messages.js"></script>
 
-<!-- AngularJS Socket.io Service -->
-<script src="/services/socket.io.js"></script>
+  <!-- AngularJS Directives -->
+  <script src="/directives/taginput.js"></script>
+  <script src="/directives/taglist.js"></script>
+  <script src="/directives/graph.js"></script>
+  <script src="/directives/pivottable.js"></script>
+  <script src="/directives/timeseries.js"></script>
+  <script src="/directives/javascript.js"></script>
+  <script src="/directives/rscript.js"></script>
+  <script src="/directives/timeslice.js"></script>
+  <script src="/directives/reference.js"></script>
+  <script src="/directives/tree.js"></script>
+  <script src="/directives/process.js"></script>
+  <script src="/directives/file.js"></script>
+  <script src="/directives/header.js"></script>
+  <script src="/directives/password.js"></script>
+  <script src="/directives/progressbar.js"></script>
 
-<!-- Credits: https://github.com/mateu-aguilo-bosch/message-center -->
-<script src="/include/messages.js"></script>
-
-<!-- AngularJS Directives -->
-<script src="/directives/taginput.js"></script>
-<script src="/directives/taglist.js"></script>
-<script src="/directives/graph.js"></script>
-<script src="/directives/pivottable.js"></script>
-<script src="/directives/timeseries.js"></script>
-<script src="/directives/javascript.js"></script>
-<script src="/directives/rscript.js"></script>
-<script src="/directives/timeslice.js"></script>
-<script src="/directives/reference.js"></script>
-<script src="/directives/tree.js"></script>
-<script src="/directives/process.js"></script>
-<script src="/directives/file.js"></script>
-<script src="/directives/header.js"></script>
-<script src="/directives/password.js"></script>
-<script src="/directives/progressbar.js"></script>
-
-<!-- AngularJS Controllers -->
-<script src="/controllers/dashboard.js"></script>
-<script src="/controllers/list.js"></script>
-<script src="/controllers/edit.js"></script>
-<script src="/controllers/pivot.js"></script>
-<script src="/controllers/raw.js"></script>
+  <!-- AngularJS Controllers -->
+  <script src="/controllers/dashboard.js"></script>
+  <script src="/controllers/list.js"></script>
+  <script src="/controllers/edit.js"></script>
+  <script src="/controllers/pivot.js"></script>
+  <script src="/controllers/raw.js"></script>
 
 
 </head>
@@ -184,16 +177,16 @@
     </div>
   </nav>
 
-<style>
-  #login {
-    -webkit-animation-duration: 0.5s;
-    /*-webkit-animation-delay: 2s;*/
-    /*-webkit-animation-iteration-count: infinite;*/
-    -moz-animation-duration: 0.5s;
-    /*-moz-animation-delay: 2s;*/
-    /*-moz-animation-iteration-count: infinite;*/
-  }
-</style>
+  <style>
+    #login {
+      -webkit-animation-duration: 0.5s;
+      /*-webkit-animation-delay: 2s;*/
+      /*-webkit-animation-iteration-count: infinite;*/
+      -moz-animation-duration: 0.5s;
+      /*-moz-animation-delay: 2s;*/
+      /*-moz-animation-iteration-count: infinite;*/
+    }
+  </style>
 
   <div ng-show="!authenticated()" class="col-sm-6 col-sm-offset-3" style="margin-top: 10%" id="login">
 

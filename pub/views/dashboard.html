@@ -1,7 +1,8 @@
 
+
+
 <div class="container-fluid" style="padding-left: 2em; padding-right: 2em">
   
-
 <div class="page-header">
 
   <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="add()">
@@ -15,20 +16,20 @@
   <h1>Dashboard <small>logged in as {{user.name}}</small></h1>
 
 </div>
-<!-- 
-<div ng-if="!edit" ng-repeat="item in items" class="col-xs-{{item.columns}}" style="height: {{item.height}}px; margin: 0; padding: 0;">
+
+<div ng-if="!edit" ng-repeat="item in items" class="col-md-{{item.columns}}" style="height: {{item.height}}px; margin: 0; padding: 0;">
   {{$index}} details
 </div>
 
-<div id="item-{{$index}}" ng-if="edit" ng-repeat="item in items" class="col-xs-{{item.columns}}" style="height: {{item.height}}px; border-radius: 8px; border: 1px dashed #ccc; margin: 0; padding: 0;" draggable="true" 
+<div ng-repeat="item in items" ng-if="edit">
 
-ondragstart = "dragstart(event)" ondragend = "dragend(event)" ondragenter = "dragenter(event)" ondragover = "dragover(event)" ondragleave = "dragleave(event)">
-  {{$index}}
+  <div id="before-{{item.id}}" class="before-item" style="display: none; background-color: green; opacity: 0.5"></div>  
 
-  <a href=""><span class="glyphicon glyphicon-move" style="position: absolute; right: 0; bottom: 0;"></span></a>
+  <div id="{{item.id}}" class="col-md-{{item.columns}}" style="height: {{item.height}}px; background-color: inherit">
+    <!-- {{item.id}} -->
+  </div>
 
-</div> -->
-
+</div>
 
 <!-- ondragstart: to: item-0 -->
 <!-- ondragleave: to: item-0 -->
@@ -36,50 +37,3 @@ ondragstart = "dragstart(event)" ondragend = "dragend(event)" ondragenter = "dra
 <!-- ondragover:  to: item-1 -->
 <!-- ondragleave: to: item-1 -->
 <!-- ondragend:   to: item-0 -->
-
-<script type="text/javascript">
-
-  var latestId = null;
-
-  function dragstart(event){
-    var id = event.toElement.id;
-    console.log('ondragstart: ' + id);
-    var element = $("#" + id);
-    if(element) element.css('background-color','blue');
-  }
-
-  function dragenter(event){
-    var id = event.toElement.id;
-    console.log('ondragenter: ' + id);
-    var element = $("#" + id);
-    if(element) element.css('background-color','red');
-    latestId = id;
-  }
-
-  function dragover(event){
-    var id = event.toElement.id;
-    console.log('ondragover: ' + id);
-    var element = $("#" + id);
-    if(element) element.css('background-color','red');
-  }
-
-  function dragleave(event){
-    var id = event.toElement.id;
-    console.log('ondragleave: ' + id);
-    var element = $("#" + id);
-    if(element) element.css('background-color','white');
-  }
-
-  function dragend(event){
-    var id = event.toElement.id;
-    console.log('ondragend: ' + id);
-    var element = $("#" + id);
-    if(element) element.css('background-color','yellow');
-    console.log('dropped at: ' + latestId);
-    var element = $("#" + latestId);
-    if(element) element.css('background-color','green');
-
-  }
-
-
-</script>
