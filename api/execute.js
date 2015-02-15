@@ -41,7 +41,11 @@ module.exports = function(app, config, db){
 	    }
   	}
 
-	};	 
+	};
+
+	// List of currently running scripts
+	// See issue: http://stackoverflow.com/q/14302512 and http://stackoverflow.com/a/14345476
+	var running = {};
 
 	app.get('/v1/:collection/:id/execute/:script', function (req, res) {
 
@@ -60,23 +64,37 @@ module.exports = function(app, config, db){
 	    if(!data)        { console.error('Object not found in database.'); }
 	    if(!data[req.params.script]) { console.error('Script not found.'); }
 
+	    var end = (function(req, res) {
+		    var ref = req.params.collection + '/' + req.params.id + '/' + req.params.script;
+	    	var f = function(exception){
+	    		running[ref] = null;
+	    		delete running[ref];
+	    		if(exception) res.status(400).send("" + exception);
+	        else          res.status(200).send("Ok");
+		    };
+		    return(f);
+	  	})(req, res);
+
 	    var javascript = data[req.params.script];
 	    var context = {
 	    	database:   config.mongo.database,
 	    	collection: req.params.collection,
 	    	id:         req.params.id,
 	    	script:     req.params.script,
-	    	response:   res,
+	    	end:        end,
 	    	pid:        process.pid // for mubsub triggers
 	    };
-	    
+
+	    var ref = req.params.collection + '/' + req.params.id + '/' + req.params.script;
 	    // executeJavascript = function (javascript, context, callback)
-	    executeJavascript(javascript, context);
+	    if(!running[ref]) {
+		    running[ref] = true;
+	    	executeJavascript(javascript, context);
+	    } else{
+	    	res.status(400).send('already running');
+	    }
 
 	  });
-
-	  // Responde from inside of VM or in error catch
-	  // res.end();
 
 	});
 	 

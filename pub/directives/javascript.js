@@ -37,7 +37,7 @@ app.directive('javascript', function ($http) {
     });
 
     editor.on('blur', function(){
-      scope.$apply();
+      //scope.$apply();
     });
 
     scope.name = attr.script;
@@ -85,6 +85,10 @@ app.directive('javascript', function ($http) {
         });
       });
     }*/
+
+    scope.insert = function(string){
+      editor.replaceSelection(string);
+    }
 
     var ngModelChanged = function(){
       if(scope.ngModel)

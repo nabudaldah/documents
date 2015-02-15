@@ -21,7 +21,7 @@ app.directive('rscript', function ($http) {
     });
 
     editor.on('blur', function(){
-      scope.$apply();
+      // scope.$apply();
     });
 
     scope.name = attr.script;
@@ -48,6 +48,10 @@ app.directive('rscript', function ($http) {
           scope.computing = false;
       });
     };
+
+    scope.insert = function(string){
+      editor.replaceSelection(string);
+    }
 
     var ngModelChanged = function(){
       if(scope.ngModel)

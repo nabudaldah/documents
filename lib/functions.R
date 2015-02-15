@@ -62,7 +62,7 @@ ts.periodicity <- function (x, ...) {
 
 # Parse interval specification (15m, 1h, 1d, etc) into interval format
 # as expected by seq( ... by = ... ) function
-ts.intervalParse <- function(interval){
+parseInterval <- function(interval){
   delta <- gsub("([0-9]+)(m|h|d)", "\\1", interval)
   unit  <- gsub("([0-9]+)(m|h|d)", "\\2", interval)
   unit  <- list('m'='mins', 'h'='hour', 'd'='DSTday')[[unit]]
@@ -71,7 +71,7 @@ ts.intervalParse <- function(interval){
 
 # Calculate interval in seconds from interval specification (e.g. 1h to 3600sec
 # or 15m to 900sec)
-ts.intervalSeconds <- function(interval){
+secondsInInterval <- function(interval){
   delta   <- gsub("([0-9]+)(m|h|d)", "\\1", interval)
   unit    <- gsub("([0-9]+)(m|h|d)", "\\2", interval)
   seconds <- list('m'=60, 'h'=60*60, 'd'=60*60*24)[[unit]] * as.numeric(delta)
@@ -79,14 +79,14 @@ ts.intervalSeconds <- function(interval){
 }
 
 # Convert POSIXct to ISO8601 string (e.g. 2014-01-01T00:00:00+01:00)
-ts.ISOformat <- function(time){
+formatISOtime <- function(time){
   s <- format(as.POSIXct(time), format="%Y-%m-%dT%H:%M:%S%z");
   s <- gsub("([^+-]+[+-][0-9]{2})([0-9]{2})", "\\1:\\2", s)
   return(s);
 }
 
 # Parse ISO8601 string into POSIXct object
-ts.ISOparse <- function(string){
+parseISOtime <- function(string){
   if(is.null(string)) return(NULL)
   string <- gsub(" ", "T", string)
   
@@ -138,9 +138,9 @@ ts.len <- function(ts){
 
 # to should be optional and length too...
 ts.seq <- function(from, to, interval = "1d"){
-  interval <- ts.intervalParse(interval)
-  from <- ts.ISOparse(from);
-  to   <- ts.ISOparse(to);
+  interval <- parseInterval(interval)
+  from <- parseISOtime(from);
+  to   <- parseISOtime(to);
   #time <- seq(from = from, to=to, by = interval, length.out = length(vector))
   time <- seq(from = from, to=to, by = interval)
   return(time)
@@ -220,8 +220,8 @@ ts <- function(timeseries = 'timeseries', id = NULL, collection = NULL){
   
   vector <- mongo.bson.value(bson, paste0('_data.', timeseries, '.vector'));  
   
-  interval <- ts.intervalParse(mongo.bson.value(bson, paste0('_data.', timeseries, '.interval')))
-  base <- ts.ISOparse(mongo.bson.value(bson, paste0('_data.', timeseries, '.base')));
+  interval <- parseInterval(mongo.bson.value(bson, paste0('_data.', timeseries, '.interval')))
+  base <- parseISOtime(mongo.bson.value(bson, paste0('_data.', timeseries, '.base')));
   time <- seq(from = base, by = interval, length.out = length(vector))
   ts <- xts(as.double(vector), time);
   colnames(ts) <- c(id);
@@ -239,7 +239,7 @@ ts.save <- function(ts, collection = 'timeseries', id = NULL, timeseries = 'time
   
   if(is.null(id)) id <- colnames(ts);
   
-  base     <- ts.ISOformat(index(ts)[1]);
+  base     <- formatISOtime(index(ts)[1]);
   
   ts.periodicity   <- ts.periodicity(ts);
   unit     <- list('mins'='m', 'hours'='h', 'days'='d')[[ts.periodicity$units]] 
@@ -261,8 +261,8 @@ ts.save <- function(ts, collection = 'timeseries', id = NULL, timeseries = 'time
 # Create one XTS timeseries object from a base date (ISO8601 string), 
 # an interval specification (1m, 15m, 1h, 1d) and a R atomic vector
 ts.new <- function(base, interval, vector){
-  interval <- ts.intervalParse(interval)
-  base     <- ts.ISOparse(base)
+  interval <- parseInterval(interval)
+  base     <- parseISOtime(base)
   time     <- seq(from = base, by = interval, length.out = length(vector))
   ts       <- xts(as.double(vector), time)
   return(ts)
@@ -320,11 +320,11 @@ ts.m <- function(regex, parse = FALSE, vectorize = TRUE){
   
   interval <- interval[1]
   
-  seconds <- ts.intervalSeconds(interval)
+  seconds <- secondsInInterval(interval)
   
-  to <- ts.ISOparse(minBase)
+  to <- parseISOtime(minBase)
   for(i in 1:(length(ids)-1)){
-    from <- ts.ISOparse(base[i])
+    from <- parseISOtime(base[i])
     padding <- as.double(difftime(from, to, units="secs")) / seconds;
     if(padding) vector[i] <- c(rep(NaN, padding), vector);
   }
@@ -336,8 +336,8 @@ ts.m <- function(regex, parse = FALSE, vectorize = TRUE){
     return(x)
   })
   
-  interval <- ts.intervalParse(interval)  
-  minBase  <- ts.ISOparse(minBase)
+  interval <- parseInterval(interval)  
+  minBase  <- parseISOtime(minBase)
   tm <- seq(from = minBase, by = interval, length.out = maxLength)
   
   vector <- do.call(cbind, vector)
@@ -487,7 +487,7 @@ ts.vsave <- function(vector){
   
   if(!mongo.is.connected(mongo))
     stop('Not connected to mongodb.');
-    
+  
   base     <- attr(vector, "base")
   interval <- attr(vector, "interval")
   #vector   <- as.double(vector);
@@ -516,11 +516,11 @@ ts.vmatrix <- function(vlist){
   
   interval <- interval[1]
   
-  seconds <- ts.intervalSeconds(interval)
+  seconds <- secondsInInterval(interval)
   
-  to <- ts.ISOparse(minBase)
+  to <- parseISOtime(minBase)
   for(i in 1:(length(vlist)-1)){
-    from <- ts.ISOparse(base[i])
+    from <- parseISOtime(base[i])
     padding <- as.double(difftime(from, to, units="secs")) / seconds;
     if(padding) vlist[i] <- c(rep(NaN, padding), vlist);
   }
@@ -549,7 +549,7 @@ vtree.compute <- function(tree){
   nodes <- tree$nodes
   data  <- tree$data
   N     <- length(nodes)
-    
+  
   reference <- unlist(strsplit(unlist(data), "/"))
   
   if(N == 0){
@@ -607,12 +607,12 @@ if(is.null(mongo) || !mongo.is.connected(mongo)){
 
 # Check if '_update' field of other objects is newer than mine
 updates <- function(documents){
-  t0 <- my('_update', parse=ts.ISOparse)
+  t0 <- my('_update', parse=parseISOtime)
   for(reference in documents) {
     reference  <- unlist(strsplit(reference, "/"))
     collection <- reference[1]
     id         <- reference[2]    
-    t1 <- v(collection, id, '_update', parse = ts.ISOparse);
+    t1 <- v(collection, id, '_update', parse = parseISOtime);
     if(!is.null(t1) && t1 > t0) return(TRUE);      
   }
   return(FALSE)
@@ -626,7 +626,7 @@ v <- function(collection, id, field, value = NULL, parse = NULL){
     
     bson <- mongo.find.one(mongo, paste0('documents.', collection), list('_id'=id), fields);
     if(is.null(bson)) return(NULL);
-
+    
     iter <- mongo.bson.find(bson, field)
     if(is.null(iter)) return(NULL);
     
@@ -650,8 +650,8 @@ v <- function(collection, id, field, value = NULL, parse = NULL){
 
 # From irregular timeseries to regular timeseries
 ts.vectorize <- function(ts, interval){
-  t0 <- ts.ISOformat(index(ts)[1])
-  t1 <- ts.ISOformat(index(ts)[length(ts)])
+  t0 <- formatISOtime(index(ts)[1])
+  t1 <- formatISOtime(index(ts)[length(ts)])
   t <- ts.seq(t0, t1, interval)
   x <- xts(x = rep(NA, length(t)), order.by = t)
   x <- merge(x, ts)
@@ -667,4 +667,3 @@ ts.vectorize <- function(ts, interval){
 ts.devectorize <- function(ts){
   
 }
-

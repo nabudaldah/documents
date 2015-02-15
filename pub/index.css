@@ -3,7 +3,8 @@ html {
 }
 
 body {
-background: #fefefe;
+  background: #fefefe;
+  padding-bottom: 180px;
 }
 
 /* Tags input directive */

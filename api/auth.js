@@ -4,12 +4,34 @@ module.exports = function(app, config, db, trigger){
   var jwt        = require('jsonwebtoken');
   var bcrypt     = require('bcrypt-nodejs');
   var uuid       = require('node-uuid');
+  var basicAuth  = require('basic-auth');
 
   /* Token based Authentication (// https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/) */
+  var secret = 'development';  
+  app.use('/v1', expressJwt({secret: secret}));
 
+  // Credits: https://davidbeath.com/posts/expressjs-40-basicauth.html 
+  app.use(function (err, req, res, next) {
+    if (err.name == 'UnauthorizedError') {
+      function unauthorized(res) {
+        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+        return res.sendStatus(401);
+      };
+
+      var user = basicAuth(req);
+      if (!user || !user.name || !user.pass) return unauthorized(res);
+      db.collection('settings').findOne( { _id: user.name }, function(err, data){      
+        if(err || !data) { unauthorized(res); return; }
+        bcrypt.compare(user.pass, data.password, function(err, match) {
+          if(err || !match) { unauthorized(res); return; }
+          next();
+        });
+      });
+    }
+  });
+
+  // Authenticate and request token
   app.post('/authenticate', function (req, res) {
-    console.log('/authenticate1 req.body: ' + JSON.stringify(req.body));
-    console.log('/authenticate2 req.body: ' + req.body.username + ':' + req.body.password);
     var denied = function(status, message) { res.status(status).send(message); return; };
     if(!req.body.username || !req.body.password) { denied(400, 'No username and password provided.'); return; }
     db.collection('settings').findOne( { _id: req.body.username }, function(err, data){
@@ -19,57 +41,6 @@ module.exports = function(app, config, db, trigger){
         res.json({ token: jwt.sign(data, secret, { expiresInMinutes: config.authExpiration }), profile: data });
       });
     });
-  });
-
-  var secret;
-  if(config.development){
-    secret = 'development';
-    app.use('/v1', expressJwt({secret: secret}));
-  } else {
-    secret = uuid.v1();
-    app.use('/v1', expressJwt({secret: secret}));
-    setInterval(function(){ secret = uuid.v1(); }, config.authExpiration * 60 * 1000);
-  }
-
-  // Credits: https://davidbeath.com/posts/expressjs-40-basicauth.html 
-  var basicAuth = require('basic-auth');
-
-  var auth = function (req, res, next) {
-    function unauthorized(res) {
-      res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-      return res.sendStatus(401);
-    };
-
-    var user = basicAuth(req);
-
-    if (!user || !user.name || !user.pass) {
-      return unauthorized(res);
-    };
-
-    db.collection('settings').findOne( { _id: user.name }, function(err, data){
-      
-      // user not found
-      if(err || !data) { unauthorized(res); return; }
-
-      bcrypt.compare(user.pass, data.password, function(err, match) {
-        
-        // pass mismatch
-        if(err || !match) { unauthorized(res); return; }
-
-        // All ok, user authorized
-        next();
-
-      });
-    });
-
-  };
-
-  app.use(function (err, req, res, next) {
-    if (err.name === 'UnauthorizedError') {
-      //res.send(401, 'invalid token...');
-      // If user has no authentication token ... allow him to authenticate using basic auth
-      auth(req, res, next);
-    }
   });
 
   // Password creator

@@ -82,26 +82,8 @@ Messages.
 
 Messages.
   directive('mcMessages', ['$rootScope', 'messages', function ($rootScope, messages) {
-    /*jshint multistr: true */
-    var templateString = '\
-    <div id="mc-messages-wrapper">\
-      <div class="alert alert-{{ message.type }} {{ animation }}" ng-repeat="message in mcMessages">\
-        <a class="close" ng-click="message.close();" data-dismiss="alert" aria-hidden="true">&times;</a>\
-        <span ng-switch on="message.html">\
-        <span ng-switch-when="true">\
-          <span ng-bind-html="message.message"></span>\
-        </span>\
-        <span ng-switch-default>\
-          {{ message.message }}\
-        </span>\
-      </div>\
-    </div>\
-    ';
-    var templateString = '\
-    <a ng-show="mcMessages.length" class="btn btn-{{mcMessages[0].type}}" trigger="hover" data-container="body" data-toggle="popover" data-placement="top" data-content="{{mcMessages[0].message}}" data-title="Message">\
-      <span class="glyphicon glyphicon-exclamation-sign"></span>\
-    </a>\
-    ';
+
+    var templateString = '<a ng-show="mcMessages.length" tabindex="0" class="btn btn-{{mcMessages[0].type}}" role="button" data-toggle="popover" data-placement="top" data-trigger="focus" title="Message" data-content="{{mcMessages[0].message}}"><span class="glyphicon glyphicon-exclamation-sign"></span></a>';
     return {
       restrict: 'EA',
       template: templateString,

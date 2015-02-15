@@ -108,7 +108,7 @@ var channel = client.channel('triggers');
 channel.on('error', console.error);
   
 channel.subscribe('update', function(message) {
-  console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': mubsub: socket.io: ' + message);
+  // console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': mubsub: socket.io: ' + message);
   io.sockets.emit(message, 'updated');
 });
 

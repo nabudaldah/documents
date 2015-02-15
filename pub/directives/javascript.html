@@ -168,6 +168,50 @@ writing-mode: lr-tb;
       <span class="glyphicon glyphicon-pencil"></span>
     </button>
 
+    <div class="btn-group" ng-show="edit">
+      <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+        <span class="glyphicon glyphicon-book"></span> &nbsp; Functions &nbsp; <span class="caret"></span>
+      </button>
+      <ul class="dropdown-menu" role="menu">
+
+        <li><a href="" class="function" ng-click="insert('get(url)')"><strong>get</strong>(url) <span class="label label-success">string</span></a></li>
+        <li><a href="" class="function" ng-click="insert('put(data, url)')"><strong>put</strong>(data, url)</span></a></li>
+        <li><a href="" class="function" ng-click="insert('post(data, url)')"><strong>post</strong>(data, url)</span></a></li>
+
+        <li class="divider"></li>
+
+        <li><a href="" class="function" ng-click="insert('read(filename)')"><strong>read</strong>(filename) <span class="label label-success">string</span></a></li>
+        <li><a href="" class="function" ng-click="insert('write(data, filename)')"><strong>write</strong>(data, filename)</span></a></li>
+        <li><a href="" class="function" ng-click="insert('dir(path)')"><strong>dir</strong>(path) <span class="label label-primary">array</span></a></li>
+
+        <li class="divider"></li>
+
+        <li><a href="" class="function" ng-click="insert('list(collection, query)')"><strong>list</strong>(collection, query) <span class="label label-primary">array</span></a></li>
+        <li><a href="" class="function" ng-click="insert('load(collection, id, fields)')"><strong>load</strong>(collection, id, fields) <span class="label label-primary">object</span></a></li>
+        <li><a href="" class="function" ng-click="insert('save(collection, id, object)')"><strong>save</strong>(collection, id, object)</span></a></li>
+        <li><a href="" class="function" ng-click="insert('remove(collection, id)')"><strong>remove</strong>(collection, id)</span></a></li>
+
+        <li class="divider"></li>
+
+        <li><a href="" class="function" ng-click="insert('trigger(collection, id, variable)')"><strong>trigger</strong>(collection, id, variable)</span></a></li>
+        <li><a href="" class="function" ng-click="insert('triggermy(variable)')"><strong>triggermy</strong>(variable)</span></a></li>
+        <li><a href="" class="function" ng-click="insert('triggerme() ')"><strong>triggerme</strong>() </span></a></li>
+
+        <li class="divider"></li>
+
+        <li><a href="" class="function" ng-click="insert('doc(id, collection)')"><strong>doc</strong>(id, collection) <span class="label label-primary">object</span></a></li>
+        <li><a href="" class="function" ng-click="insert('me()')"><strong>me</strong>() <span class="label label-primary">object</span></a></li>
+        <li><a href="" class="function" ng-click="insert('my(variable, value)')"><strong>my</strong>(variable, value) <span class="label label-success">string</span> | <span class="label label-primary">object</span></a></li>
+
+        <li class="divider"></li>
+
+        <li><a href="" class="function" ng-click="insert('ts(name, id, collection)')"><strong>ts</strong>(name, id, collection) <span class="label label-primary">object</span></a></li>
+        <li><a href="" class="function" ng-click="insert('myts(name, timeseries, overwrite)')"><strong>myts</strong>(name, timeseries, overwrite) <span class="label label-primary">object</span></a></li>
+        <li><a href="" class="function" ng-click="insert('csv(text)')"><strong>csv</strong>(text) <span class="label label-success">string</span></a></li>
+
+      </ul>
+    </div>
+
   </div>
 </div>
 

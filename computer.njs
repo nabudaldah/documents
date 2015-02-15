@@ -125,7 +125,7 @@ function computeCycle(compute, callback){
       if(!parent.dependencies) continue;
       var id = parent.dependencies.split('/')[1];
       var child = documents[id];
-      if(new Date(parent._update) < new Date(child._update)){
+      if(parent && child && new Date(parent._update) < new Date(child._update)){ // when deleting from MongoDB, the objects disapear here from memory (?)
         computations[parent._id] = parent._id;
       }      
     }
@@ -183,7 +183,6 @@ var trigger = function(message, channel){
 setInterval(function(){
   
   console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': queue: ' + R.queue.length + ', influx: ' + R.influx, ', efflux: ' + R.efflux);
-  R.influx = R.efflux = 0;
   
   var collection = db.collection('computations');
 
@@ -193,16 +192,20 @@ setInterval(function(){
 
   var processes = R.instances.map(function(instance){
     return 'R[' + instance.process.pid + ']: ' + (instance.job?'working':'idle')
-  }).join('\n');
+  });
 
   var status = {
     _id: id,
     _tags: ["computer", "host", os.hostname()],
     _update: moment().format(),
-    queue: JSON.stringify(R.queue.length),
-    status: processes
+    queue:  'queue:  ' + R.queue.length,
+    influx: 'influx: ' + R.influx,
+    efflux: 'efflux: ' + R.efflux,
+    R0: processes[0],
+    R1: processes[1],
+    R2: processes[2],
+    R3: processes[3]
   };
-
 
   collection.update({ _id: id }, { $set: status }, { upsert: true }, function(err, data){ 
     if(err || !data) { console.error('Database error.'); return; }
@@ -211,4 +214,7 @@ setInterval(function(){
     return;
   });
 
-}, 2000);
+  // reset fluxis
+  R.influx = R.efflux = 0;
+
+}, 1000);
