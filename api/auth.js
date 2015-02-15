@@ -6,29 +6,56 @@ module.exports = function(app, config, db, trigger){
   var uuid       = require('node-uuid');
   var basicAuth  = require('basic-auth');
 
-  /* Token based Authentication (// https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/) */
+  // Restricted area
+  var restricted = '/v1';
   var secret = 'development';  
-  app.use('/v1', expressJwt({secret: secret}));
+
+  var authBearerHandler = expressJwt({secret: secret});
 
   // Credits: https://davidbeath.com/posts/expressjs-40-basicauth.html 
-  app.use(function (err, req, res, next) {
-    if (err.name == 'UnauthorizedError') {
-      function unauthorized(res) {
-        res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
-        return res.sendStatus(401);
-      };
-
-      var user = basicAuth(req);
-      if (!user || !user.name || !user.pass) return unauthorized(res);
-      db.collection('settings').findOne( { _id: user.name }, function(err, data){      
-        if(err || !data) { unauthorized(res); return; }
-        bcrypt.compare(user.pass, data.password, function(err, match) {
-          if(err || !match) { unauthorized(res); return; }
-          next();
-        });
+  var authBasicHandler = function (req, res, next) {
+    var user = basicAuth(req);
+    if (!user || !user.name || !user.pass) return res.sendStatus(401);
+    db.collection('settings').findOne( { _id: user.name }, function(err, data){      
+      if(err || !data) { return res.sendStatus(401); }
+      bcrypt.compare(user.pass, data.password, function(err, match) {
+        if(err || !match) { return res.sendStatus(401); }
+        next();
       });
+    });
+  };
+
+  // Check wether user would like to use Basic Auth or Token Based Auth
+  // Credits: https://davidbeath.com/posts/expressjs-40-basicauth.html 
+  app.use(restricted, function (req, res, next) {
+
+    var authorization = req.headers.authorization;
+
+    if(authorization == undefined){
+      res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
+      return res.sendStatus(401);
     }
+
+    var type = authorization.split(' ')[0];
+
+    if(type == 'Basic') {
+      authBasicHandler(req, res, next);
+    }
+
+    if(type == 'Bearer') {
+      authBearerHandler(req, res, next);
+    }
+
+    if(type != 'Bearer' && type != 'Basic') {
+      return res.sendStatus(401);
+    }
+
   });
+
+
+  /* Token based Authentication (// https://auth0.com/blog/2014/01/07/angularjs-authentication-with-cookies-vs-token/) */
+  // var secret = 'development';  
+  // app.use(restricted, expressJwt({secret: secret}));
 
   // Authenticate and request token
   app.post('/authenticate', function (req, res) {
