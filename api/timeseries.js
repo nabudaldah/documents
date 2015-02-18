@@ -1,4 +1,4 @@
-module.exports = function(app, config, db){
+module.exports = function(app, config, db, trigger){
 
   var Timeseries = require('../lib/Timeseries.js');
 
@@ -92,8 +92,7 @@ module.exports = function(app, config, db){
         //io.sockets.emit('update', req.params.collection + '/' + req.params.id + '/' + req.params.timeseries);
 
         var ref = req.params.collection + '/' + req.params.id + '/' + req.params.timeseries;
-        console.log('socket.io: ' + ref);
-        io.sockets.emit(ref, 'updated');
+        trigger(ref, 'update');
         return;
       });
 

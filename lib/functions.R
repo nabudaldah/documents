@@ -284,14 +284,14 @@ ts.list <- function(regex){
 
 # Load multiple timeseries objects of same interval (!) into a matrix
 # by a regex search string on ID
-ts.m <- function(regex, parse = FALSE, vectorize = TRUE){
+ts.m <- function(collection, regex, parse = FALSE, vectorize = TRUE){
   
   ids      <- c();
   base     <- c();
   interval <- c();
   vector   <- list();
   
-  cursor <- mongo.find(mongo, 'documents.timeseries', list('_id'=list('$regex'=regex)),
+  cursor <- mongo.find(mongo, paste0('documents.', collection), list('_id'=list('$regex'=regex)),
                        list('_id'=1), list('_id'=1, '_tags'=1, '_data.timeseries'=1))
   while (mongo.cursor.next(cursor)) {
     bson <- mongo.cursor.value(cursor)

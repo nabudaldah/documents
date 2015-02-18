@@ -73,7 +73,7 @@ R.start(function(){
       console.log('R.init(): Error: ' + err);
       process.exit();
     }
-    console.log('R: ' + R.ready() + ' instances ready to handle jobs. ')
+    console.log('R: ' + R.ready() + ' instances ready to handle jobs. ');
   });
 });
 
@@ -181,6 +181,9 @@ var trigger = function(message, channel){
 
 // health check
 setInterval(function(){
+
+  if(!R.ready())
+    console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': R not ready yet...');
   
   console.log(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': queue: ' + R.queue.length + ', influx: ' + R.influx, ', efflux: ' + R.efflux);
   
