@@ -3,7 +3,7 @@ module.exports = function(app, config, db){
   /* R engine */
   console.log('Loading R module...');
   var R = require('../lib/R.js');
-  var R = new R(config.R.exe);
+  var R = new R(config.R.exe, 1);
   R.start(function(){
     R.init('source("../lib/functions.R");', function(err){
       if(err) {

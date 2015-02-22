@@ -18,7 +18,7 @@
     "jsonwebtoken": "^3.2.2",
     "moment": "^2.9.0",
     "moment-timezone": "^0.3.0",
-    "mongodb": "^1.4.30",
+    "mongodb": "^1.4.31",
     "mongojs": "^0.18.1",
     "mubsub": "^1.0.4",
     "node-schedule": "^0.1.16",

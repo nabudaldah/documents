@@ -28,6 +28,7 @@
     "codemirror": "~4.12.0",
     "jshint": "~2.6.0",
     "json-formatter": "~0.2.7",
-    "jquery-ui": "~1.11.2"
+    "jquery-ui": "~1.11.2",
+    "underscore": "~1.7.0"
   }
 }
