@@ -43,7 +43,8 @@ echo ""
 echo "### Installing R and OpenBLAS... "
 echo ""
 
-apt-get -q -y install --no-install-recommends r-base-core libopenblas-base
+#apt-get -q -y install --no-install-recommends r-base-core libopenblas-base
+apt-get -q -y install r-base-core libopenblas-base
 
 echo ""
 echo "### Installing iptables-persistent ... "
@@ -73,6 +74,8 @@ echo ""
 echo "### Installing R libraries ... "
 echo ""
 
+#Rscript -e "install.packages('rmongodb', repos='http://cran.rstudio.com/', dependencies = TRUE)"
+#Rscript -e "install.packages('xts',      repos='http://cran.rstudio.com/', dependencies = TRUE)"
 Rscript -e "install.packages('rmongodb', repos='http://cran.rstudio.com/')"
 Rscript -e "install.packages('xts',      repos='http://cran.rstudio.com/')"
 

@@ -41,7 +41,7 @@ echo ""
 echo "### Removing packages mongodb r-base-core nodejs-legacy npm git ..."
 echo ""
 
-apt-get -y remove mongodb r-base-core nodejs-legacy npm git
+apt-get -y remove mongodb r-base-core libopenblas-base nodejs-legacy npm git iptables-persistent
 
 echo ""
 echo "### Removing documents folder ..."
