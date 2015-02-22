@@ -43,7 +43,7 @@ echo ""
 echo "### Installing R ... "
 echo ""
 
-apt-get -q -y install r-base-core
+apt-get -q -y install --no-install-recommends r-base-core
 
 echo ""
 echo "### Installing iptables-persistent ... "
