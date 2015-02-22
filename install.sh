@@ -40,10 +40,10 @@ echo ""
 apt-get -q -y install nodejs-legacy npm git
 
 echo ""
-echo "### Installing R ... "
+echo "### Installing R and OpenBLAS... "
 echo ""
 
-apt-get -q -y install --no-install-recommends r-base-core
+apt-get -q -y install --no-install-recommends r-base-core libopenblas-base
 
 echo ""
 echo "### Installing iptables-persistent ... "

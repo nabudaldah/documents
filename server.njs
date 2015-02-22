@@ -6,6 +6,10 @@ function stdout(str){
   console.log("[" + process.pid + "] " + new Date().toISOString() + ": " + str)
 }
 
+function stderr(str){
+  console.error("ERROR: [" + process.pid + "] " + new Date().toISOString() + ": " + str)
+}
+
 if(cluster.isMaster){
 
   var N = require('os').cpus().length;
@@ -76,7 +80,7 @@ if(cluster.isWorker){
     config = JSON.parse(content);
   } catch(e){
     assert(false, 'config.json should be in valid JSON format.')
-    console.error('Error reading config.json: ' + e);
+    stderr('Error reading config.json: ' + e);
     process.exit();
   }
 
@@ -90,7 +94,7 @@ if(cluster.isWorker){
   var db  = mongo.connect(config.mongo.database);
 
   db.on('error',function(err) {
-    console.error('MongoDB error: ', err);
+    stderr('MongoDB error: ', err);
     process.exit();
   });
 
@@ -101,7 +105,7 @@ if(cluster.isWorker){
     db.getCollectionNames(function(err, data){
 
       if(err) {
-        console.error('Error getting collection names from database.');
+        stderr('Error getting collection names from database.');
         process.exit();
       }
 
@@ -154,12 +158,12 @@ if(cluster.isWorker){
   // {"event" : "update", "message" : "timeseries/tstest"}
   var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
   client.on('error', function(err){
-    console.error('Mubsub client error: trying to reconnect... (' + err + ')');
+    stderr('Mubsub client error: trying to reconnect... (' + err + ')');
     client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
   });
 
   var channel = client.channel('triggers');  
-  channel.on('error', console.error);
+  channel.on('error', stderr);
     
   channel.subscribe('update', function(message) {
     // stdout(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': mubsub: socket.io: ' + message);
