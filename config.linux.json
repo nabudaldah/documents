@@ -15,7 +15,7 @@
     "database": "/tmp/documents.sqlite3"
   },
   "admin": {
-    "_id" : "admin@localhost",
+    "_id" : "admin",
     "name" : "Administrator",
     "password" : "$2a$10$LR8Rws//j0.w9fEtNs/2Jubfryco8vUV8UBQOnsIizFu2C8jXpvjK",
     "_tags" : [ "admin" ]

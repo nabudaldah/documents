@@ -89,30 +89,30 @@ if(cluster.isWorker){
   stdout('Connecting to MongoDB...');
   var db  = mongo.connect(config.mongo.database);
 
-  // db.on('error',function(err) {
-  //   console.error('MongoDB error: ', err);
-  //   process.exit();
-  // });
+  db.on('error',function(err) {
+    console.error('MongoDB error: ', err);
+    process.exit();
+  });
 
-  // db.on('ready',function() {
-  //   stdout('Connected to MongoDB.');
+  db.on('ready',function() {
+    stdout('Connected to MongoDB.');
 
-  //   /* Check if settings exists and if not -> install default super user from config.json */
-  //   db.getCollectionNames(function(err, data){
+    /* Check if settings exists and if not -> install default super user from config.json */
+    db.getCollectionNames(function(err, data){
 
-  //     if(err) {
-  //       console.error('Error getting collection names from database.');
-  //       process.exit();
-  //     }
+      if(err) {
+        console.error('Error getting collection names from database.');
+        process.exit();
+      }
 
-  //     if(!data || !data.length || data.indexOf('settings') == -1){
-  //       stdout('Initializing MongoDB: creating admin user and default collections.');
-  //       db.collection('settings').insert(config.admin);
-  //       db.collection('settings').insert(config.collections);
-  //     }
+      if(!data || !data.length || data.indexOf('settings') == -1){
+        stdout('Initializing MongoDB: creating admin user and default collections.');
+        db.collection('settings').insert(config.admin);
+        db.collection('settings').insert(config.collections);
+      }
 
-  //   });
-  // });
+    });
+  });
 
   function fixwidth(str, len, ch){
     var slack = new Array(len - str.length);
