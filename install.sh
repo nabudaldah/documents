@@ -77,10 +77,10 @@ Rscript -e "install.packages('rmongodb', repos='http://cran.rstudio.com/')"
 Rscript -e "install.packages('xts',      repos='http://cran.rstudio.com/')"
 
 echo ""
-echo "### Starting MongoDB ... "
+echo "### (Re)Starting MongoDB ... "
 echo ""
 
-service mongodb start
+service mongodb restart
 
 echo ""
 echo "### Configuring NodeJS server for Upstart (init) ... "
@@ -106,7 +106,8 @@ echo "### Installing Bower modules ... "
 echo ""
 
 cd /opt/documents/pub
-bower install --allow-root --no-interactive
+bower install -s --allow-root --no-interactive | xargs echo
+#bower install -s --allow-root --no-interactive
 
 echo ""
 echo "### Starting Documents App ... "
