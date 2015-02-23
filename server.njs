@@ -109,13 +109,23 @@ if(cluster.isWorker){
         process.exit();
       }
 
-      if(!data || !data.length || data.indexOf('settings') == -1){
-        stdout('Initializing MongoDB: creating admin user and default collections.');
+    });
+
+    db.collection('settings').findOne({ _id: 'admin' }, function(err, data){
+      if(!data){
+        stdout('Initializing MongoDB: creating admin user.');
         db.collection('settings').insert(config.admin);
+      }
+    });
+
+    db.collection('settings').findOne({ _id: 'documents' }, function(err, data){
+      if(!data){
+        stdout('Initializing MongoDB: creating default collections.');
         db.collection('settings').insert(config.collections);
       }
-
     });
+
+
   });
 
   function fixwidth(str, len, ch){
