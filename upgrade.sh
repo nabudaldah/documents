@@ -41,7 +41,8 @@ echo "### Upgrading Bower packages."
 echo ""
 
 cd pub
-bower update --allow-root
+#bower update -s --allow-root
+bower update -s --allow-root --no-interactive | xargs echo
 cd ..
 
 echo ""
