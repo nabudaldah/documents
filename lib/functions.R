@@ -489,7 +489,8 @@ ts.vsave <- function(vector){
     stop('Not connected to mongodb.');
   
   base     <- attr(vector, "base")
-  interval <- attr(vector, "interval")
+  interval <- as.character(attr(vector, "interval"))
+  #interval <- '15m'
   #vector   <- as.double(vector);
   
   upd <- list()
@@ -560,7 +561,7 @@ vtree.compute <- function(tree){
     vsum    <- rowSums(vmatrix)
     attr(vsum, "base")      <- attr(vmatrix, "base")
     attr(vsum, "interval")  <- attr(vmatrix, "interval")
-    attr(vsum, "reference") <- paste0(data, '/timeseries')
+    attr(vsum, "reference") <- data #<- paste0(data, '/timeseries')
     
     ts.vsave(vsum)
     return(vsum)

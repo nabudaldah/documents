@@ -1,20 +1,49 @@
 
 <!-- Credits: http://jsfiddle.net/brendanowen/uXbn6/8/ -->
 <script type="text/ng-template" id="tree.node.html">
-  <div class="form-group">    
+
+  <form class="form-group">
     <div class="input-group">
-      <span class="input-group-btn">
-        <button ng-disabled="ngDisabled" ng-if="ngModel.weight >= 0 || !ngModel.weight" ng-click="ngModel.weight =  -1" type="button" class="btn btn-success"><span class="glyphicon glyphicon-plus"></span></button>
-        <button ng-disabled="ngDisabled" ng-if="ngModel.weight <  0" ng-click="ngModel.weight = 1" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-minus"></span></button>
-      </span>
-      <input ng-disabled="ngDisabled" type="text" class="form-control" ng-model="ngModel.data" placeholder="({{name}})"></input>
-      <span class="input-group-btn">
-        <button ng-disabled="ngDisabled" ng-if="ngModel.nodes.length" ng-click="remove(ngModel)" type="button" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
-        <button ng-disabled="ngDisabled" ng-click="add(ngModel)" type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus-sign"></span></button>
-      </span>
+      <div class="input-group-btn">
+
+        <button ng-if="!ngModel.factor || ngModel.factor > 0" type="button" class="btn btn-success" ng-click="ngModel.factor = -1">
+          <span class="glyphicon glyphicon-plus"></span>
+        </button>
+        <button ng-if="ngModel.factor < 0" type="button" class="btn btn-danger" ng-click="ngModel.factor = +1">
+          <span class="glyphicon glyphicon-minus"></span>
+        </button>
+
+      </div>
+      <input type="text" class="form-control" ng-model="ngModel.data" placeholder="({{name}})">
+      <div class="input-group-btn" ng-if="ngModel.nodes.length || removing || adding">
+
+        <button type="button" ng-if="ngModel.nodes.length" ng-show="ngModel.open" class="btn btn-default" ng-click="ngModel.open = !ngModel.open"><span class="glyphicon glyphicon-chevron-up"></span></button>
+        <button type="button" ng-if="ngModel.nodes.length" ng-hide="ngModel.open" class="btn btn-default" ng-click="ngModel.open = !ngModel.open">{{ngModel.nodes.length}} &nbsp; <span class="glyphicon glyphicon-chevron-down"></span></button>
+
+        <button ng-if="removing" ng-hide="ngModel.top" ng-disabled="ngDisabled" ng-click="remove(ngModel)" class="btn btn-default"><span class="glyphicon glyphicon-trash"></span></button>
+        <button ng-if="adding"                         ng-disabled="ngDisabled" ng-click="add(ngModel)"    class="btn btn-default"><span class="glyphicon glyphicon-plus-sign"></span></button>
+
+      </div>
     </div>
-  </div>
-  <ul style="list-style: none;"><li ng-repeat="ngModel in ngModel.nodes" ng-include="'tree.node.html'"></li></ul>
+  </form>
+
+  <ul style="list-style: none;" ng-if="ngModel.open">
+    <li ng-repeat="ngModel in ngModel.nodes" ng-include="'tree.node.html'"></li>
+  </ul>
+
 </script>
 
+<form class="form-group">
+
+  <button ng-disabled="ngDisabled" type="button" class="btn btn-default" ng-click="removing = !removing" ng-class="{'btn-warning':removing}"><span class="glyphicon glyphicon-trash"></span></button>
+  <button ng-disabled="ngDisabled" type="button" class="btn btn-default" ng-click="adding = !adding"     ng-class="{'btn-warning':adding}"><span class="glyphicon glyphicon-plus-sign"></span></button>
+  <button ng-disabled="ngDisabled" type="button" class="btn btn-default" ng-click="moving = !moving"     ng-class="{'btn-warning':moving}"><span class="glyphicon glyphicon-move"></span></button>
+
+  <button ng-disabled="ngDisabled" type="button" class="btn btn-default" ng-click="openAll()"><span class="glyphicon glyphicon-chevron-down"></span></button>
+  <button ng-disabled="ngDisabled" type="button" class="btn btn-default" ng-click="closeAll()"><span class="glyphicon glyphicon-chevron-up"></span></button>
+
+
+</form>
+
 <div ng-model="ngModel" ng-include="'tree.node.html'"></div>
+
