@@ -3,39 +3,13 @@
 /* General */
 var fs          = require('fs');
 var mongo       = require('mongojs');
-var io          = require('socket.io');
+//var io          = require('socket.io');
 var moment      = require('moment');
 var assert      = require('assert');
 var async       = require('async');
 
-/* Express.io */
-var http        = require('http');
-var https       = require('https');
-var express     = require('express');
-var helmet      = require('helmet');
-var bodyParser  = require('body-parser');
-var compression = require('compression');
-
 /* Socket.io helper (communication between R and app via MongoDB) */
 var mubsub      = require('mubsub');
-
-//console.log('Initializing Express.io app...');
-var app = express();
-
-app.use(bodyParser.json({limit: '16mb'}));
-
-/* Express modules */
-// Credits: http://stackoverflow.com/a/12497793
-app.use(function(req, res, next){
-  if (req.is('text/*')) {
-    req.text = '';
-    req.setEncoding('utf8');
-    req.on('data', function(chunk){ req.text += chunk; });
-    req.on('end', next);
-  } else {
-    next();
-  }
-});
 
 /* Load config.json file */
 console.log('Loading config.json file...');
@@ -221,3 +195,36 @@ setInterval(function(){
   R.influx = R.efflux = 0;
 
 }, 1000);
+
+
+
+
+// /* Express.io */
+// var http        = require('http');
+// var https       = require('https');
+// var express     = require('express');
+// var helmet      = require('helmet');
+// var bodyParser  = require('body-parser');
+// var compression = require('compression');
+
+// //console.log('Initializing Express.io app...');
+// var app = express();
+
+// app.use(bodyParser.json({limit: '16mb'}));
+
+// /* Express modules */
+// // Credits: http://stackoverflow.com/a/12497793
+// app.use(function(req, res, next){
+//   if (req.is('text/*')) {
+//     req.text = '';
+//     req.setEncoding('utf8');
+//     req.on('data', function(chunk){ req.text += chunk; });
+//     req.on('end', next);
+//   } else {
+//     next();
+//   }
+// });
+
+// app.get('/:collection/:document/:field', function(res, req){
+// 	... queue requested computation
+// })
