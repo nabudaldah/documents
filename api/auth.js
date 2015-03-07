@@ -1,4 +1,12 @@
-module.exports = function(app, config, db, trigger){
+module.exports = function(context){
+
+  var stdout   = context.stdout;
+  var stderr   = context.stderr;
+  var config   = context.config;
+  var db       = context.db;
+  var app      = context.app;
+  var channel  = context.channel;
+  var trigger  = context.trigger;
 
   var expressJwt = require('express-jwt');
   var jwt        = require('jsonwebtoken');
@@ -29,26 +37,26 @@ module.exports = function(app, config, db, trigger){
   // Credits: https://davidbeath.com/posts/expressjs-40-basicauth.html 
   app.use(restricted, function (req, res, next) {
 
+    // Always allow local connections unauthenticated
+    if(req.ip == '127.0.0.1') { next(); return; }
+
+    // Get authorization header
     var authorization = req.headers.authorization;
 
+    // If there is no authorization at all ... request for Basic auth
     if(authorization == undefined){
       res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
       return res.sendStatus(401);
     }
 
+    // Handle either Basic or Token Based auth
     var type = authorization.split(' ')[0];
+    if(type == 'Basic')  authBasicHandler(req, res, next);
+    if(type == 'Bearer') authBearerHandler(req, res, next);
 
-    if(type == 'Basic') {
-      authBasicHandler(req, res, next);
-    }
-
-    if(type == 'Bearer') {
-      authBearerHandler(req, res, next);
-    }
-
-    if(type != 'Bearer' && type != 'Basic') {
+    // Caller should use either Token based auth or Basic auth... deny access
+    if(type != 'Bearer' && type != 'Basic')
       return res.sendStatus(401);
-    }
 
   });
 

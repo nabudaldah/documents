@@ -1,4 +1,12 @@
-module.exports = function(app, db){
+module.exports = function(context){
+
+  var stdout   = context.stdout;
+  var stderr   = context.stderr;
+  var config   = context.config;
+  var db       = context.db;
+  var app      = context.app;
+  var channel  = context.channel;
+  var trigger  = context.trigger;
 
 	app.get('/v1/:collection', function (req, res) {
 	  var collection = db.collection(req.params.collection);
@@ -15,7 +23,7 @@ module.exports = function(app, db){
 	    {$or: [{ _id: regex }, { name: regex }, { _tags: { $all: _tags } } ] },
 	    { _id: 1, name: 1, _tags: 1 })
 	  .limit(limit)
-	  .skip(skip, function (err, data) { 
+	  .skip(skip).toArray(function (err, data) { 
 	    if(err || !data) { res.status(500).send('Database error.'); return; }
 	    res.send(data);
 	  });

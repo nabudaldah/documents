@@ -1,4 +1,12 @@
-module.exports = function(app, config, db, trigger){
+module.exports = function(context){
+
+  var stdout   = context.stdout;
+  var stderr   = context.stderr;
+  var config   = context.config;
+  var db       = context.db;
+  var app      = context.app;
+  var channel  = context.channel;
+  var trigger  = context.trigger;
 
   var moment  = require('moment'); require('twix');
 

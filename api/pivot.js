@@ -1,4 +1,12 @@
-module.exports = function(app, config){
+module.exports = function(context){
+
+  var stdout   = context.stdout;
+  var stderr   = context.stderr;
+  var config   = context.config;
+  var db       = context.db;
+  var app      = context.app;
+  var channel  = context.channel;
+  var trigger  = context.trigger;
 
   var sqlite3 = require('sqlite3').verbose();
   var pivot   = require('../lib/pivot.js');

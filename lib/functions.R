@@ -474,6 +474,14 @@ ts.v <- function(timeseries = "timeseries", id = NULL, collection = NULL){
   return(vector);
 }
 
+ts.vnew <- function(reference, base, interval, vector){
+  attr(vector, 'reference') <- reference;
+  attr(vector, 'base')      <- base;
+  attr(vector, 'interval')  <- interval;
+  attr(vector, 'vector')    <- vector;
+  return(vector)
+}
+
 ts.vsave <- function(vector){
   
   reference <- attr(vector, "reference")
@@ -544,6 +552,73 @@ ts.vmatrix <- function(vlist){
   return(vmatrix)
   
 }
+
+# Aggregate multiple time-series
+ts.vsum <- function(collection, regex, parse = FALSE){
+  
+  # Get list of matched vectors
+  cursor <- mongo.find(mongo, paste0('documents.', collection), list('_id'=list('$regex'=regex)),
+                       list('_id'=1), list('_id'=1, '_tags'=1, '_data.timeseries'=1));
+  
+  # Initialized our aggregated vector
+  aggregate <- NULL;
+  
+  # Loop every vector  
+  while (mongo.cursor.next(cursor)) {
+    
+    # Retrieve BSON object
+    bson     <- mongo.cursor.value(cursor);
+    
+    # Extract values
+    id       <- mongo.bson.value(bson, '_id');
+    base     <- mongo.bson.value(bson, '_data.timeseries.base');
+    interval <- mongo.bson.value(bson, '_data.timeseries.interval');
+    vector   <- mongo.bson.value(bson, '_data.timeseries.vector');
+    
+    # In safety mode, reinterpret values properly (slow)
+    if(parse) {
+      vector <- as.character(vector)
+      vector <- as.double(vector)
+    }
+    
+    # Set vector attributes
+    attributes(vector) <- list(reference=paste0(collection, '/', id, '/', 'timeseries'), base=base, interval=interval)
+    
+    # Aggregate to
+    if(is.null(aggregate)) {
+      aggregate <- as.double(vector);
+      attributes(aggregate) <- list(reference=paste0(collection, '/', id, '/', 'timeseries'), base=base, interval=interval)
+    } else {
+      
+      # Keep chronologicaly first base     
+      minBase <- min(c(attr(aggregate, 'base'), base))
+      
+      # Check if intervals match (NOTE: need to check if distance is dividable by interval)
+      if(attr(vector, 'interval') != attr(aggregate, 'interval')) stop("Trying to fetch timeseries of different time intervals at once.")
+      
+      # Add padding if vectors are of different lengths     
+      if(length(vector) != length(aggregate)) {
+        from    <- parseISOtime(base)
+        to      <- parseISOtime(minBase)
+        seconds <- secondsInInterval(interval)
+        padding <- as.double(difftime(from, to, units="secs")) / seconds;
+        if(padding) vector <- c(rep(NaN, padding), vector);
+        
+        maxLength <- max(c(length(vector), length(aggregate)))
+        length(vector) <- maxLength;
+      }
+      
+      # Aggregate vector            
+      aggregate <- aggregate + vector
+      
+    }
+    
+  }
+  mongo.cursor.destroy(cursor)
+  
+  return(aggregate)
+}
+
 
 # Compute a tree object (R list nested object)
 vtree.compute <- function(tree){
