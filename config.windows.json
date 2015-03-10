@@ -1,15 +1,18 @@
 {
-  "httpPort": 3000,
-  "httpsPort": 3001,
-  "https": false,
-  "redirect": false,
-  "authExpiration": 1440,
+  "host": "127.0.0.1",
+  "port": 3000,
   "R": {
     "exe": "C:/Program Files/R/R-3.1.1/bin/x64/Rterm.exe",
     "init": ""
   },
-  "mongo": {
+  "db": {
+    "host": "127.0.0.1",
+    "port": 27017,
     "database": "documents"
+  },
+  "cluster": {
+    "me":     { "host": "127.0.0.1", "apiport": 3000, "shardport": 27017 },
+    "nodes": [{ "host": "127.0.0.1", "apiport": 3000, "shardport": 27017 }]
   },
   "sqlite": {
     "database": "C:/temp/pivot.sqlite3"
@@ -24,6 +27,9 @@
     "_id": "documents",
     "_tags" : [ "collection" ]
   }],
+  "computer": {
+    "parallel": null
+  },
   "scheduler": {
     "_id": "scheduler",
     "_tags": [ "settings", "scheduler" ],
