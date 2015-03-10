@@ -37,7 +37,15 @@ module.exports = function(context){
       if(!data)                    { res.status(500).send('Object not found in database.'); return; }
       if(!data[req.params.script]) { res.status(500).send('Script not found.');             return; }
 
-      var init = 'context <- list(collection="' + req.params.collection + '", id="' + req.params.id + '", pid="' + process.pid + '");\n';
+      var init = 'context <- list('
+        + 'collection="' + req.params.collection + '", '
+        + 'id="'         + req.params.id         + '", '
+        + 'dbhost="'     + config.db.host        + '", '
+        + 'dbport="'     + config.db.port        + '", '
+        + 'database="'   + config.db.database    + '", '
+        + 'shardhost="'  + config.cluster.me.host     + '", '
+        + 'shardport="'  + config.cluster.me.shardport     + '");db.cluster();\n';
+
       var script = data[req.params.script];
       R.run(init + script, function(err, log){ 
         console.log(log);

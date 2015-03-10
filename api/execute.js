@@ -85,7 +85,7 @@ module.exports = function(context){
 
 	    var javascript = data[req.params.script];
 	    var context = {
-	    	database:   config.mongo.database,
+	    	database:   config.db.database,
 	    	collection: req.params.collection,
 	    	id:         req.params.id,
 	    	script:     req.params.script,

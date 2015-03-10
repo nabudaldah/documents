@@ -26,8 +26,6 @@ if(cluster.isMaster){
 
 if(cluster.isWorker){
 
-  stdout('hi from ' + process.pid)
-
   /* General */
   var fs = require('fs');
   var async       = require('async');
@@ -62,56 +60,21 @@ if(cluster.isWorker){
   }
 
   var checkConfig = function(callback){
-    assert(config.mongo, 'Mongo should be configured in config.json.');
-    assert(config.mongo.database, 'A Mongo database should be configured in config.json.');
-    assert(config.mongo && config.mongo.database, 'Mongo should be configured in config.json for Mubsub.');
+    assert(config.db, 'Mongo should be configured in config.json.');
+    assert(config.db.database, 'A Mongo database should be configured in config.json.');
+    assert(config.db && config.db.database, 'Mongo should be configured in config.json for Mubsub.');
     assert(config.admin && config.collections, 'Default users and collections should be in config.json.');    
   }
 
-  /* Database */
-  // var db  = mongo.connect(config.mongo.database);
-
-  // db.on('error',function(err) {
-  //   stderr('MongoDB error: ', err);
-  //   process.exit();
-  // });
-
-  // db.on('ready',function() {
-  //   stdout('Connected to MongoDB.');
-  //   /* Check if settings exists and if not -> install default super user from config.json */
-  //   db.getCollectionNames(function(err, data){
-  //     if(err) {
-  //       stderr('Error getting collection names from database.');
-  //       process.exit();
-  //     }
-  //   });
-
-  //   db.collection('settings').findOne({ _id: 'admin' }, function(err, data){
-  //     if(!data){
-  //       stdout('Initializing MongoDB: creating admin user.');
-  //       db.collection('settings').insert(config.admin);
-  //     }
-  //   });
-
-  //   db.collection('settings').findOne({ _id: 'documents' }, function(err, data){
-  //     if(!data){
-  //       stdout('Initializing MongoDB: creating default collections.');
-  //       db.collection('settings').insert(config.collections);
-  //     }
-  //   });
-  // });
-
-
   // Shared database client binding
   var db = null;
-
   var dbConnect = function(callback){
 
     stdout('Connecting to MongoDB...');
     var mongodb = require('mongodb');
     var driver  = mongodb.MongoClient;
 
-    driver.connect('mongodb://127.0.0.1:27017/' + config.mongo.database, function(err, client) {
+    driver.connect('mongodb://127.0.0.1:27017/' + config.db.database, function(err, client) {
       if(err){
         stderr('MongoDB connection error: ', err);
         callback(err);
@@ -122,7 +85,40 @@ if(cluster.isWorker){
     });
   }
 
-  var app;
+  // Connect to MongoDB shards
+  var shards = [];
+  var shardsConnect = function(callback){
+
+    stdout('Connecting to all MongoDB shards ...');
+
+    var mongodb = require('mongodb');
+    var driver  = mongodb.MongoClient;
+
+    var async    = require('async');
+    var request  = require('request');
+
+    async.eachSeries(config.cluster.nodes, function(node, callback){
+
+      stdout('Connecting to shard... ');
+      
+      driver.connect('mongodb://'+ node.host +':'+ node.shardport +'/' + config.db.database, function(err, client) {
+        if(err){
+          stderr('MongoDB connection error: ', err);
+          callback(err);
+        }
+        stdout('Connected to MongoDB shard!');
+        shards.push(client);
+        callback();
+      });
+
+    }, function(err){
+      if(err) stderr('Error connecting to shards.');
+      callback(err);
+    });
+
+  }
+
+  var app = null;
   var apiBind = function(callback){
 
     stdout('Initializing Express.io app...');
@@ -158,10 +154,11 @@ if(cluster.isWorker){
 
     /* MongoDB R triggers */ 
     // {"event" : "update", "message" : "timeseries/tstest"}
-    var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
+    // var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.db.database);
+    var client = mubsub(db);
     client.on('error', function(err){
       stderr('Mubsub client error: trying to reconnect... (' + err + ')');
-      client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
+      client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.db.database);
     });
 
     var channel = client.channel('triggers');  
@@ -185,6 +182,7 @@ if(cluster.isWorker){
       stderr:  stderr,
       config:  config,
       db:      db,
+      shards:  shards,
       app:     app,
       channel: channel,
       trigger: trigger
@@ -214,11 +212,17 @@ if(cluster.isWorker){
     stdout('Initializing pivot API ... ');
     require(process.cwd() + '/api/pivot.js')(context)
 
-    // Coming soon...
+    // todo... text file interface using _data container of object
     // require(process.cwd() + '/api/file.js')(context)
+
+    // todo... binary file interface using GridFS
+    // require(process.cwd() + '/api/bfile.js')(context)
 
     stdout('Initializing compute API ...')
     require(process.cwd() + '/api/compute.js')(context)
+
+    stdout('Initializing mapreduce API ...')
+    require(process.cwd() + '/api/mapreduce.js')(context) // R-script only
 
     stdout('Initializing execute API ...')
     require(process.cwd() + '/api/execute.js')(context)
@@ -231,66 +235,25 @@ if(cluster.isWorker){
 
   var appListen = function(callback) {
 
-    assert(config.httpPort,  'config.js: httpPort attribute should be a valid TCP port number.');
-    assert(config.httpsPort, 'config.js: httpsPort attribute should be a valid TCP port number.');
-
-    var listening = function(err){
+    var httpServer = http.createServer(app).listen(config.port, function(err){
       if(err) callback(err);
       stdout('App listening ... ');
       callback();
-    }
-
-    if(config.redirect){
-      var redirect = function(req, res) {
-      res.writeHead(301, {Location: 'https://' + config.httpsHost + ':' + config.httpsPort || 3001 + req.path}); res.end(); };
-      http.createServer(redirect).listen(config.httpPort || 3000, listening);
-    } else {
-      var httpServer = http.createServer(app).listen(config.httpPort || 3000, listening);
-      io = io.listen(httpServer);  
-    }
-
-    /* Open app on HTTPS (http://www.mobilefish.com/services/ssl_certificates/ssl_certificates.php) */
-    if(config.https){
-      var ssl = { key: fs.readFileSync(process.cwd() + '/ssl/key.pem'), cert: fs.readFileSync(process.cwd() + '/ssl/cert.pem') };
-      var httpsServer = https.createServer(ssl, app).listen(config.httpsPort || 3001, listening);
-      io = io.listen(httpsServer);
-    }
+    });
+    io = io.listen(httpServer);  
 
   }
 
   var selfTest = function(callback){
     setTimeout(function(){
-      stdout('Running self tests...');
-
-    stdout('Testing auth API ... OK');
-    stdout('Testing status API ... OK');
-    stdout('Testing collection API ... OK');
-    stdout('Testing document API ... OK');
-    stdout('Testing timeseries API ... OK');
-    stdout('Testing timeseries CSV API ... OK');
-    stdout('Testing timeseries Excel/TSV API ... OK');
-    stdout('Testing pivot API ... OK');
-    stdout('Testing compute API ... OK');
-    stdout('Testing execute API ... OK');
-    stdout('Testing schedule API ... OK');
-
+      stdout('Running self tests ... NOK');
       callback()
     }, 100);
   }
 
   // Load config, connect to MongoDB, then bind all api's and finally start listening...
-  async.series([
-    loadConfig,
-    dbConnect,
-    apiBind,
-    appListen,
-    selfTest,
-  ], function(err, results){
-    if(err) {
-      stderr(err);
-      process.exit();
-    }
+  async.series([ loadConfig, dbConnect, shardsConnect, apiBind, appListen, selfTest ],
+    function(err, results){ if(err) { stderr(err); process.exit(); }
   });
 
 }
-// /cluster.isWorker

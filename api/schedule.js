@@ -157,7 +157,7 @@ module.exports = function(context){
 
 	    var javascript = data[script];
 	    var context = {
-	    	database:   config.mongo.database,
+	    	database:   config.db.database,
 	    	collection: collection,
 	    	id:         id,
 	    	script:     script,

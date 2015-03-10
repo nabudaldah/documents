@@ -24,7 +24,7 @@ module.exports = function(context){
   /* Update pivot table */
   app.get('/v1/:collection/pivot-update', function(req, res){
     var collection = req.params.collection;
-    pivot.update(config.mongo.database, collection, config.sqlite.database, function(err, results){
+    pivot.update(config.db.database, collection, config.sqlite.database, function(err, results){
       if(err) { res.status(400).send(error('Failed to save update pivot table')); return; }
       res.end();
     });

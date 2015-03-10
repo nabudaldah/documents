@@ -26,7 +26,7 @@ try {
 
 /* MongoDB R triggers */ 
 // {"event" : "update", "message" : "timeseries/tstest"}
-var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.mongo.database);
+var client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.db.database);
 var channel = client.channel('triggers');  
 client.on('error', console.error);
 channel.on('error', console.error);
@@ -53,7 +53,7 @@ R.start(function(){
 
 /* Database */
 console.log('Connecting to MongoDB...');
-var db  = mongo.connect(config.mongo.database);
+var db  = mongo.connect(config.db.database);
 
 db.on('error',function(err) {
   console.error('MongoDB error: ', err);

@@ -661,18 +661,29 @@ my.vtree <- function(tree = NULL){
 # Connect to local MongoDB instance for immediate database use                #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-mongo <- NULL
+mongo <- NULL;
 
-if(is.null(mongo)){
-  mongo <- mongo.create();  
+db.local <- function(){
+  mongo <<- mongo.create();
 }
 
-if(is.null(mongo) || !mongo.is.connected(mongo)){
-  stop('No database connection.')
+db.shard <- function(){
+  mongo <<- mongo.create(host = paste0(context$shardhost, ":", context$shardport), db = context$database);
 }
 
+db.cluster <- function(){
+  mongo <<- mongo.create(host = paste0(context$dbhost,    ":", context$dbport),    db = context$database);
+}
 
+# Connect to local MongoDB instance...
+db.local();
 
+#db.cluster();
+#mongo <- mongo.create(host = paste0(context$dbhost,    ":", context$dbport),    db = context$database);
+
+#if(is.null(mongo) || !mongo.is.connected(mongo)){
+#  stop('No database connection.')
+#}
 
 
 
