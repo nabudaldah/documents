@@ -8,6 +8,12 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
+  var trusted = [];
+
+  config.cluster.nodes.map(function(node){
+    trusted.push(node.host);
+  });
+
   var expressJwt = require('express-jwt');
   var jwt        = require('jsonwebtoken');
   var bcrypt     = require('bcrypt-nodejs');
@@ -37,8 +43,8 @@ module.exports = function(context){
   // Credits: https://davidbeath.com/posts/expressjs-40-basicauth.html 
   app.use(restricted, function (req, res, next) {
 
-    // Always allow local connections unauthenticated
-    if(req.ip == '127.0.0.1') { next(); return; }
+    // Allow trusted cluster connections without authenticating (mapreduce)
+    if(trusted.indexOf(req.ip) != -1) { next(); return; }
 
     // Get authorization header
     var authorization = req.headers.authorization;
