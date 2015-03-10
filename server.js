@@ -74,7 +74,7 @@ if(cluster.isWorker){
     var mongodb = require('mongodb');
     var driver  = mongodb.MongoClient;
 
-    driver.connect('mongodb://127.0.0.1:27017/' + config.db.database, function(err, client) {
+    driver.connect('mongodb://'+ config.db.host +':'+ config.db.port +'/' + config.db.database, function(err, client) {
       if(err){
         stderr('MongoDB connection error: ', err);
         callback(err);
@@ -158,7 +158,7 @@ if(cluster.isWorker){
     var client = mubsub(db);
     client.on('error', function(err){
       stderr('Mubsub client error: trying to reconnect... (' + err + ')');
-      client = mubsub('mongodb://' + 'localhost' + ':'+ 27017 +'/' + config.db.database);
+      client = mubsub('mongodb://' + config.db.host + ':'+ config.db.port +'/' + config.db.database);
     });
 
     var channel = client.channel('triggers');  
