@@ -44,7 +44,7 @@ module.exports = function(context){
   app.use(restricted, function (req, res, next) {
 
     // Allow trusted cluster connections without authenticating (mapreduce)
-    if(trusted.indexOf(req.ip) != -1) { next(); return; }
+    if(trusted.indexOf(req.hostname) != -1) { next(); return; }
 
     // Get authorization header
     var authorization = req.headers.authorization;

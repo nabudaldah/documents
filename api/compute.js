@@ -21,6 +21,9 @@ module.exports = function(context){
     });
   });
 
+  // List of currently running scripts
+  // See issue: http://stackoverflow.com/q/14302512 and http://stackoverflow.com/a/14345476
+  var running = {};
   app.get('/v1/:collection/:id/compute/:script', function (req, res) {
 
     if(!req.params.collection || !req.params.id || !req.params.script) {
@@ -47,14 +50,32 @@ module.exports = function(context){
         + 'shardport="'  + config.cluster.me.shardport     + '");db.cluster();\n';
 
       var script = data[req.params.script];
-      R.run(init + script, function(err, log){ 
-        console.log(log);
-        if(log) {
-          res.send(log);
-        } else {
-          res.send('done');
-        } 
-      });
+
+      var end = (function(req, res) {
+        var ref = req.params.collection + '/' + req.params.id + '/' + req.params.script;
+
+        var f = function(err, log){
+          
+          running[ref] = null;
+          delete running[ref];
+
+          if(err) { res.status(400).send(err); return; }
+          if(log) { res.status(200).send(log); return; }
+          
+          res.status(200).send('done');
+          return;
+        };
+        return(f);
+      })(req, res);
+
+      var ref = req.params.collection + '/' + req.params.id + '/' + req.params.script;
+      if(!running[ref]) {
+
+        running[ref] = true;
+        R.run(init + script, end);
+      } else{
+        res.status(400).send('already running');
+      }
 
     });
 

@@ -16,7 +16,11 @@ module.exports = function(context){
 	var moment  = require('moment-timezone'); var twix = require('twix');
 	var request = require('request');
 	var xmldoc  = require('xmldoc');
-	var mongo   = require('mongojs');
+
+  var mongo   = require('mongojs');
+  // var mongodb = require('mongodb'); TODO TODO TODO
+  // var mongo  = mongodb.MongoClient; TODO TODO TODO
+
 	var edi     = require(__dirname + '/../lib/edi.js');
 	var Timeseries = require(__dirname + '/../lib/Timeseries.js');
 
@@ -85,6 +89,8 @@ module.exports = function(context){
 
 	    var javascript = data[req.params.script];
 	    var context = {
+	    	host:       config.db.host,
+	    	port:       config.db.port,
 	    	database:   config.db.database,
 	    	collection: req.params.collection,
 	    	id:         req.params.id,
