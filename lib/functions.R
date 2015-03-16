@@ -677,19 +677,12 @@ db.cluster <- function(){
 
 # Connect to local MongoDB instance...
 db.local();
+if(!mongo.is.connected(mongo)) db.cluster();
+if(!mongo.is.connected(mongo)) db.shard();
 
-#db.cluster();
-#mongo <- mongo.create(host = paste0(context$dbhost,    ":", context$dbport),    db = context$database);
-
-#if(is.null(mongo) || !mongo.is.connected(mongo)){
-#  stop('No database connection.')
-#}
-
-
-
-
-
-
+if(!mongo.is.connected(mongo)) {
+  stop('functions.R: could not connect to local mongodb instance, nor a cluster nor a shard!');
+}
 
 
 # Check if '_update' field of other objects is newer than mine

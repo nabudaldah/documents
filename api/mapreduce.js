@@ -35,7 +35,7 @@ module.exports = function(context){
       var clone = function(callbackOuter){
 
         var i = 0;
-        async.eachSeries(config.cluster.nodes, function(node, callback){
+        async.each(config.cluster.nodes, function(node, callback){
 
           stdout('cloning for every node... ');
 
@@ -65,7 +65,7 @@ module.exports = function(context){
         stdout('mapreduce.js: mapping on nodes ... computing');
 
         var i = 0;
-        async.eachSeries(config.cluster.nodes, function(node, callback){
+        async.each(config.cluster.nodes, function(node, callback){
 
           stdout('computing on node: ' + node.host + ':' + node.apiport);
 

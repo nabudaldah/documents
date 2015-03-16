@@ -235,12 +235,13 @@ if(cluster.isWorker){
 
   var appListen = function(callback) {
 
-    var httpServer = http.createServer(app).listen(config.port, function(err){
+    var server = http.createServer(app).listen(config.port, function(err){
       if(err) callback(err);
       stdout('App listening ... ');
       callback();
     });
-    io = io.listen(httpServer);  
+    server.timeout = 30 * 60 * 1000; // 30min
+    io = io.listen(server);  
 
   }
 
