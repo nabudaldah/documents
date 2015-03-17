@@ -292,7 +292,7 @@ ts.matrix <- function(vlist){
 }
 
 # Aggregate multiple time-series
-ts.sum <- function(collection = NULL, idregex, property = 'timeseries', parse = FALSE){
+ts.sum <- function(collection = NULL, regex, property = 'timeseries', parse = FALSE){
   
   # Get list of matched vectors
   cursor <- mongo.find(mongo, (context$database + '.' + collection), list('_id'=list('$regex'=regex)),

@@ -1,0 +1,44 @@
+{
+  "host": "c0",
+  "port": 3000,
+  "R": {
+    "exe": "/usr/bin/R",
+    "init": ""
+  },
+  "db": {
+    "host": "c0",
+    "port": 27017,
+    "database": "documents"
+  },
+  "cluster": {
+    "me":     { "host": "c0", "apiport": 3000, "shardport": 27018 },
+    "nodes": [
+      { "host": "c0", "apiport": 3000, "shardport": 27018 },
+      { "host": "c1", "apiport": 3000, "shardport": 27018 },
+      { "host": "c2", "apiport": 3000, "shardport": 27018 },
+      { "host": "c3", "apiport": 3000, "shardport": 27018 }
+    ]
+  },
+  "sqlite": {
+    "database": "/tmp/documents.sqlite3"
+  },
+  "admin": {
+    "_id" : "admin",
+    "name" : "Administrator",
+    "password" : "$2a$10$LR8Rws//j0.w9fEtNs/2Jubfryco8vUV8UBQOnsIizFu2C8jXpvjK",
+    "_tags" : [ "admin" ]
+  },
+  "collections": [{
+    "_id": "documents",
+    "_tags" : [ "collection" ]
+  }],
+  "computer": {
+    "parallel": null
+  },
+  "scheduler": {
+    "_id": "scheduler",
+    "_tags": [ "settings", "scheduler" ],
+    "_template": [ { "type": "textarea", "name": "schedule" } ], 
+    "schedule": "#\n# Scheduling scripts in crontab style (google for 'crontab'):\n#\n# [minute] [hour] [day] [month] [weekday] [collection/document/script]\n#\n\n# Run every minute\n#* * * * * documents/doc01/script01\n\n# Run every hour\n#0 * * * * documents/doc01/script01\n\n# Run every day at 14:30\n#30 14 * * * documents/doc01/script01"
+  }
+}
