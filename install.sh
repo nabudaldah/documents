@@ -22,6 +22,12 @@ export DEBIAN_FRONTEND=noninteractive
 cd /opt
 
 echo ""
+echo "### Updating APT ... "
+echo ""
+
+apt-get update
+
+echo ""
 echo "### Installing NTP time synchronization service ... "
 echo ""
 
