@@ -84,15 +84,16 @@ if(cluster.isWorker){
       callback();
 
       // Insert admin if it doesn't exist.
-      db.collection('settings').find({ _id: 'admin' }, function(err, data){
+      db.collection('settings').find({ _id: 'admin' }).toArray(function(err, data){
         if(err) {
-          stderr('Could not find admin user...');
+          stderr('Error trying to find admin user...');
           return;
         }
-        if(!data){
-        db.collection('settings').insert({ event: channel, "message": message }, function(err, data){
-          if(err) stderr('trigger: ' + err);
-        })
+        if(!data.length){
+          db.collection('settings').insert(config.admin, function(err, data){
+            if(err) stderr('Could not add default admin user: ' + err);
+            else stdout('Added default admin user.')
+          })
 
         }
       })
