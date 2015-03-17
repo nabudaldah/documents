@@ -82,6 +82,21 @@ if(cluster.isWorker){
       stdout('Connected to MongoDB!');
       db = client;
       callback();
+
+      // Insert admin if it doesn't exist.
+      db.collection('settings').find({ _id: 'admin' }, function(err, data){
+        if(err) {
+          stderr('Could not find admin user...');
+          return;
+        }
+        if(!data){
+        db.collection('settings').insert({ event: channel, "message": message }, function(err, data){
+          if(err) stderr('trigger: ' + err);
+        })
+
+        }
+      })
+
     });
   }
 
