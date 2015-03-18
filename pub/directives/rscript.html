@@ -188,26 +188,34 @@ writing-mode: lr-tb;
       </button>
       <ul class="dropdown-menu" role="menu">
 
-        <li><a href="" class="function" ng-click="insert('doc(collection, id)')"><strong>doc</strong>(collection, id) <span class="label label-primary">list</span></a></li>
-        <li><a href="" class="function" ng-click="insert('doc.n(collection, regex)')"><strong>doc.n</strong>(collection, regex) <span class="label label-primary">list</span></a></li>
+<li><a href="" class="function" ng-click="insert('v(property, id, collection)                 ')">   <strong>v             </strong>(property, id, collection)            </a></li>
+<li><a href="" class="function" ng-click="insert('doc(id, collection)                         ')">   <strong>doc           </strong>(id, collection)                      </a></li>
+<li><a href="" class="function" ng-click="insert('docs(tags, collection)                      ')">   <strong>docs          </strong>(tags, collection)                    </a></li>
 
-        <li class="divider"></li>
+<li class="divider"></li>
 
-        <li><a href="" class="function" ng-click="insert('ts(timeseries, id, collection)')"><strong>ts</strong>(timeseries, id, collection) <span class="label label-primary">xts</span></a></li>
-        <li><a href="" class="function" ng-click="insert('ts.save(ts, collection, id, timeseries)')"><strong>ts.save</strong>(ts, collection, id, timeseries)</a></li>
-        <li><a href="" class="function" ng-click="insert('ts.new(base, interval, vector)')"><strong>ts.new</strong>(base, interval, vector) <span class="label label-primary">xts</span></a></li>
-        <li><a href="" class="function" ng-click="insert('ts.seq(from, to, interval)')"><strong>ts.seq</strong>(from, to, interval) <span class="label label-success">vector</span></a></li>
+<li><a href="" class="function" ng-click="insert('me()                                        ')">   <strong>me            </strong>()                                    </a></li>
+<li><a href="" class="function" ng-click="insert('my(property, value)                         ')">   <strong>my            </strong>(property, value)                     </a></li>
+<li><a href="" class="function" ng-click="insert('my.ts(property, vector)                     ')">   <strong>my.ts         </strong>(property, vector)                    </a></li>
+<li><a href="" class="function" ng-click="insert('my.tree(property)                           ')">   <strong>my.tree       </strong>(property)                            </a></li>
 
-        <li class="divider"></li>
+<li class="divider"></li>
 
-        <li><a href="" class="function" ng-click="insert('trigger.me()')"><strong>trigger.me</strong>()</a></li>
-        <li><a href="" class="function" ng-click="insert('trigger.my(property)')"><strong>trigger.my</strong>(property)</a></li>
-        <li><a href="" class="function" ng-click="insert('trigger(collection, id, property)')"><strong>trigger</strong>(collection, id, property)</a></li>
+<li><a href="" class="function" ng-click="insert('ts(property, id, collection)                ')">   <strong>ts            </strong>(property, id, collection)            </a></li>
+<li><a href="" class="function" ng-click="insert('ts.new(base, interval, vector)              ')">   <strong>ts.new        </strong>(base, interval, vector)              </a></li>
+<li><a href="" class="function" ng-click="insert('ts.save(vector, property, id, collection)   ')">   <strong>ts.save       </strong>(vector, property, id, collection)    </a></li>
+<li><a href="" class="function" ng-click="insert('ts.sum(tags, property, collection)          ')">   <strong>ts.sum        </strong>(tags, property, collection)          </a></li>
 
-        <li class="divider"></li>
+<li class="divider"></li>
 
-        <li><a href="" class="function" ng-click="insert('formatISOtime(time)')"><strong>formatISOtime</strong>(time) <span class="label label-success">string</span></a></li>
-        <li><a href="" class="function" ng-click="insert('parseISOtime(string)')"><strong>parseISOtime</strong>(string) <span class="label label-success">POSIXct</span></a></li>
+<li><a href="" class="function" ng-click="insert('trigger.me()                                ')">   <strong>trigger.me    </strong>()                                    </a></li>
+<li><a href="" class="function" ng-click="insert('trigger.my(property)                        ')">   <strong>trigger.my    </strong>(property)                            </a></li>
+
+<li class="divider"></li>
+
+<li><a href="" class="function" ng-click="insert('shard()                                     ')">   <strong>shard         </strong>()                                    </a></li>
+<li><a href="" class="function" ng-click="insert('cluster()                                   ')">   <strong>cluster       </strong>()                                    </a></li>
+
 
       </ul>
     </div>

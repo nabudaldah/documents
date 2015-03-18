@@ -4,13 +4,14 @@
 
 ssh-keygen -t rsa
 
-ssh gen@c0 mkdir -p .ssh
-ssh gen@c1 mkdir -p .ssh
-ssh gen@c2 mkdir -p .ssh
-ssh gen@c3 mkdir -p .ssh
+N=7
 
-cat .ssh/id_rsa.pub | ssh gen@c0 'cat >> .ssh/authorized_keys'
-cat .ssh/id_rsa.pub | ssh gen@c1 'cat >> .ssh/authorized_keys'
-cat .ssh/id_rsa.pub | ssh gen@c2 'cat >> .ssh/authorized_keys'
-cat .ssh/id_rsa.pub | ssh gen@c3 'cat >> .ssh/authorized_keys'
+for ((i=0; i<=$N; i++ )); do
+	echo "c$i: Creating .ssh folder ..."
+	ssh gen@c$i mkdir -p .ssh
+done
 
+for ((i=0; i<=$N; i++ )); do
+	echo "c$i: Sending public key ..."
+	cat ~/.ssh/id_rsa.pub | ssh gen@c$i 'cat >> .ssh/authorized_keys'
+done

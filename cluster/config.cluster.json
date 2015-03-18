@@ -16,7 +16,11 @@
       { "host": "c0", "apiport": 3000, "shardport": 27018 },
       { "host": "c1", "apiport": 3000, "shardport": 27018 },
       { "host": "c2", "apiport": 3000, "shardport": 27018 },
-      { "host": "c3", "apiport": 3000, "shardport": 27018 }
+      { "host": "c3", "apiport": 3000, "shardport": 27018 },
+      { "host": "c4", "apiport": 3000, "shardport": 27018 },
+      { "host": "c5", "apiport": 3000, "shardport": 27018 },
+      { "host": "c6", "apiport": 3000, "shardport": 27018 },
+      { "host": "c7", "apiport": 3000, "shardport": 27018 }
     ]
   },
   "sqlite": {

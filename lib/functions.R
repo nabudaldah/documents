@@ -113,20 +113,20 @@ trigger.me <- function(){
 }
 
 # Load one document from database by ID
-doc <- function(collection = NULL, id = NULL){
+doc <- function(id = NULL, collection = NULL){
   if(is.null(collection)) collection <- context$collection;
   if(is.null(id))         id         <- context$id; 
   bson  <- mongo.find.one(mongo, (context$database + '.' + collection), list('_id'=id));
   return(mongo.bson.to.Robject(bson));
 }
 
-# Load list of documents from database by regex pattern over ID
-doc.n <- function(collection, regex){
+# Load list of documents from database by tags
+docs <- function(tags, collection = NULL){
   
   if(is.null(collection)) collection <- context$collection;
   
   docs <- list();
-  cursor <- mongo.find(mongo, (context$database + '.' + collection), list('_id'=list('$regex'=regex)));
+  cursor <- mongo.find(mongo, (context$database + '.' + collection), list('_tags'=list('$all'=c(tags))));
   while (mongo.cursor.next(cursor)) {
     bson <- mongo.cursor.value(cursor)
     id <- mongo.bson.value(bson, '_id')
@@ -134,6 +134,11 @@ doc.n <- function(collection, regex){
   }
   mongo.cursor.destroy(cursor)
   return(docs);
+}
+
+# Return myself
+me <- function(){
+  return(doc(context$id, context$collection))
 }
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
@@ -176,13 +181,13 @@ my <- function(property, value = NULL, parse = NULL){
   }
 }
 
-my.ts <- function(timeseries='timeseries', ts=NULL){
+my.ts <- function(property = 'timeseries', vector = NULL){
   collection <- context$collection
-  id <- context$id
-  if(is.null(ts)){
-    return(ts(timeseries=timeseries, id=id, collection=collection))      
+  id         <- context$id
+  if(is.null(vector)){
+    return(ts(property = property, id = id, collection = collection));
   } else {
-    return(ts.save(ts=ts, collection=collection, id=id, timeseries=timeseries))    
+    return(ts.save(vector = vector, property = property, id = id, collection = collection));
   }
 }
 
@@ -191,7 +196,7 @@ my.ts <- function(timeseries='timeseries', ts=NULL){
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Load one vector from database (do not create XTS objects, just plain vectors)
-ts <- function(collection = NULL, id = NULL, property = 'timeseries'){
+ts <- function(property = 'timeseries', id = NULL, collection = NULL){
   if(!mongo.is.connected(mongo)) stop('Not connected to mongodb.');
   
   if(is.null(collection)) collection <- context$collection;  
@@ -214,14 +219,14 @@ ts <- function(collection = NULL, id = NULL, property = 'timeseries'){
   return(vector);
 }
 
-ts.new <- function(base, interval, vector){  
+ts.new <- function(base, interval, vector){
   attr(vector, 'base')      <- base;
   attr(vector, 'interval')  <- interval;
   return(vector)
 }
 
-ts.save <- function(ts, collection = NULL, id = NULL, property = 'timeseries', reference = NULL){
-
+ts.save <- function(vector, property = 'timeseries', id = NULL, collection = NULL, reference = NULL){
+  
   if(!is.null(reference)){
     reference <- unlist(strsplit(reference, "/"))
     if(length(reference) != 3) stop('ts.save: invalid reference "' + reference + '".');
@@ -229,20 +234,20 @@ ts.save <- function(ts, collection = NULL, id = NULL, property = 'timeseries', r
     id         <- reference[2]
     property   <- reference[3]
   }
-
+  
   if(is.null(collection)) collection <- context$collection;  
   if(is.null(id))         id         <- context$id;    
   
   if(!mongo.is.connected(mongo))
     stop('Not connected to mongodb.');
   
-  base     <- attr(ts, "base")
-  interval <- as.character(attr(ts, "interval"))
+  base     <- attr(vector, "base")
+  interval <- as.character(attr(vector, "interval"))
   
   upd <- list()
   upd[['$set']] <- list()
   upd[['$set']][['_data']] <- list()
-  upd[['$set']][['_data']][[property]] <- list(base=base, interval=interval, vector=ts)
+  upd[['$set']][['_data']][[property]] <- list(base=base, interval=interval, vector=vector)
   
   ok <- mongo.update(mongo, (context$database + '.' + collection), list('_id'=id), upd, mongo.update.upsert);
   
@@ -292,11 +297,16 @@ ts.matrix <- function(vlist){
 }
 
 # Aggregate multiple time-series
-ts.sum <- function(collection = NULL, regex, property = 'timeseries', parse = FALSE){
+ts.sum <- function(tags, property = 'timeseries', collection = NULL, parse = FALSE){
+  
+  if(is.null(collection)) collection <- context$collection;
   
   # Get list of matched vectors
-  cursor <- mongo.find(mongo, (context$database + '.' + collection), list('_id'=list('$regex'=regex)),
-                       list('_id'=1), list('_id'=1, '_tags'=1, '_data.timeseries'=1));
+  ns     <- context$database + '.' + collection
+  query  <- list('_tags'=list('$all'=list(tags)))
+  fields <- list('_id'=1, '_tags'=1); fields['_data.' + property] <- 1;
+  sort   <- list('_id'=1);
+  cursor <- mongo.find(mongo, ns, query, sort, fields);
   
   # Initialized our aggregated vector
   aggregate <- NULL;
@@ -365,9 +375,10 @@ tree.compute <- function(tree){
   N     <- length(nodes)
   
   reference <- unlist(strsplit(unlist(data), "/"))
+  if(length(reference) != 3) stop('Missing elements of reference in leaf of tree (collection, id, property)')
   
   if(N == 0){
-    return(ts.v(collection = reference[1], id = reference[2], property = 'timeseries'))
+    return(ts(property = reference[3], id = reference[2], collection = reference[1]))
   } else {
     vlist   <- lapply(nodes, tree.compute)
     matrix  <- ts.matrix(vlist)
@@ -376,7 +387,7 @@ tree.compute <- function(tree){
     attr(vsum, "interval")  <- attr(matrix, "interval");
     attr(vsum, "reference") <- data;
     
-    ts.save(vsum)
+    ts.save(vsum, reference = data)
     return(vsum)
   }
 }
@@ -385,7 +396,7 @@ tree.compute <- function(tree){
 tree <- function(collection = NULL, id = NULL, property = 'tree'){
   if(is.null(collection)) collection <- context$collection;  
   if(is.null(id))         id         <- context$id;  
-  d <- doc(collection, id);
+  d <- doc(id = id, collection = collection);
   return(tree.compute(d[[property]]));
 }
 
@@ -406,22 +417,22 @@ context <- list(database = 'documents', collection = NULL, id = NULL)
 
 mongo <- NULL;
 
-db.local <- function(){
+dblocal <- function(){
   mongo <<- mongo.create();
 }
 
-db.shard <- function(){
+shard <- function(){
   mongo <<- mongo.create(host = (context$shardhost + ":" + context$shardport), db = context$database);
 }
 
-db.cluster <- function(){
+cluster <- function(){
   mongo <<- mongo.create(host = (context$dbhost +    ":" + context$dbport),    db = context$database);
 }
 
 # Connect to local MongoDB instance...
-if(!mongo.is.connected(mongo)) db.local();
-if(!mongo.is.connected(mongo)) db.cluster();
-if(!mongo.is.connected(mongo)) db.shard();
+if(!mongo.is.connected(mongo)) dblocal();
+if(!mongo.is.connected(mongo)) cluster();
+if(!mongo.is.connected(mongo)) shard();
 
 if(!mongo.is.connected(mongo)) {
   stop('functions.R: could not connect to local mongodb instance, nor a cluster nor a shard!');
@@ -441,8 +452,8 @@ updates <- function(documents){
   return(FALSE)
 }
 
-v <- function(collection = NULL, id = NULL, property, value = NULL, parse = NULL){
-
+v <- function(property, id = NULL, collection = NULL, value = NULL, parse = NULL){
+  
   if(is.null(collection)) collection <- context$collection;  
   if(is.null(id))         id         <- context$id;  
   

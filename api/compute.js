@@ -47,7 +47,7 @@ module.exports = function(context){
         + 'dbport="'     + config.db.port        + '", '
         + 'database="'   + config.db.database    + '", '
         + 'shardhost="'  + config.cluster.me.host     + '", '
-        + 'shardport="'  + config.cluster.me.shardport     + '");db.cluster();\n';
+        + 'shardport="'  + config.cluster.me.shardport     + '");\n';
 
       var script = data[req.params.script];
 
