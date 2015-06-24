@@ -22,7 +22,7 @@ app.directive('reference', function ($http) {
 
       if(parts.length == 3){
         scope.level = 'fields';
-        $http.get('/v1/' + collection + '/' + object)
+        $http.get('/api/' + collection + '/' + object)
           .success(function (data) { 
             scope.results = [];
             if(!data || !data._template) return;
@@ -36,7 +36,7 @@ app.directive('reference', function ($http) {
 
       if(parts.length == 2){
         scope.level = 'documents';
-        $http.get('/v1/' + collection + '?query=' + object + '&limit=10')
+        $http.get('/api/' + collection + '?query=' + object + '&limit=10')
           .success(function (data) { 
             scope.results = data.map(function(c){ return c._id; });
           });
@@ -44,7 +44,7 @@ app.directive('reference', function ($http) {
       };
 
       scope.level = 'collections';
-      $http.get('/v1/settings?query=collection')
+      $http.get('/api/settings?query=collection')
         .success(function (data) { 
           scope.results = [];
           if(!data) return;

@@ -1,7 +1,7 @@
 ctrl.controller('pivot', function ($scope, $http, $window, $location) {
 
   $scope.object = $location.path().split('/')[1];
-  $scope.api  = '/v1/' + $scope.object;
+  $scope.api  = '/api/' + $scope.object;
   $scope.route = '/' + $scope.object;
 
   $scope.dimensions = [];
@@ -48,7 +48,7 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location) {
 
       $scope.data       = {};
 
-      var url = "/v1/" + $scope.object + "/pivot?q=1";
+      var url = "/api/" + $scope.object + "/pivot?q=1";
 
       if($scope.row)     url += "&row="     + $scope.row;
       if($scope.column)  url += "&column="  + $scope.column
@@ -71,7 +71,7 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location) {
 
   $scope.rebuild = function(){
     $scope.rebuilding = true;
-    $http.get('/v1/' + $scope.object + '/pivot-update').success(function (data, status, headers, config) {
+    $http.get('/api/' + $scope.object + '/pivot-update').success(function (data, status, headers, config) {
       if(status == 200){ $scope.load(); }
       else { console.log('failed to rebuild: ' + status)};
       $scope.rebuilding = false;

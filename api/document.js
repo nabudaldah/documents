@@ -8,10 +8,12 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
+  stdout('Initializing document API ... ');
+
   var moment  = require('moment'); require('twix');
 
   /* Get object including data (potentially large JSON) */
-  app.get('/v1/:collection/:id/raw', function (req, res) {
+  app.get('/api/:collection/:id/raw', function (req, res) {
     var collection = db.collection(req.params.collection);
     collection.findOne({ _id: req.params.id }, function (err, data) {
       if(err)   { res.status(500).send('Database error.');               return; }
@@ -21,7 +23,7 @@ module.exports = function(context){
   });
 
   /* Get object */
-  app.get('/v1/:collection/:id', function (req, res) {
+  app.get('/api/:collection/:id', function (req, res) {
     var collection = db.collection(req.params.collection);
     collection.findOne({ _id: req.params.id }, { _data: false }, function (err, data) {
       if(err)   { res.status(500).send('Database error.');               return; }
@@ -31,7 +33,7 @@ module.exports = function(context){
   });
 
   /* Create object */
-  app.post('/v1/:collection', function (req, res) {
+  app.post('/api/:collection', function (req, res) {
     var object = req.body;
     var collection = db.collection(req.params.collection);
     collection.insert(object, function(err, data){ 
@@ -44,7 +46,7 @@ module.exports = function(context){
   });
 
   /* Update object */
-  app.put('/v1/:collection/:id', function (req, res) {
+  app.put('/api/:collection/:id', function (req, res) {
     if(req.body._id) delete req.body._id;
     req.body._update = moment().format();
     var collection = db.collection(req.params.collection);
@@ -58,7 +60,7 @@ module.exports = function(context){
   });
 
   /* Insert *or* update object */
-  app.post('/v1/:collection/:id', function (req, res) {
+  app.post('/api/:collection/:id', function (req, res) {
     if(req.body._id) delete req.body._id;
     req.body._update = moment().format();
     var collection = db.collection(req.params.collection);
@@ -72,7 +74,7 @@ module.exports = function(context){
   });
 
   /* Delete object */
-  app.delete('/v1/:collection/:id', function (req, res) {
+  app.delete('/api/:collection/:id', function (req, res) {
     var collection = db.collection(req.params.collection);
     collection.remove({ _id: req.params.id }, function(err, data){
       if(err || !data) { res.status(500).send('Database error.'); return; }

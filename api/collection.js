@@ -8,41 +8,32 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
-	app.get('/v1/:collection', function (req, res) {
+  var ObjectID = require('mongodb').ObjectID;
+
+	app.get('/api/:collection', function (req, res) {
 	  var collection = db.collection(req.params.collection);
 	  var limit = parseInt(req.query.limit) || 25;
 	  var skip  = parseInt(req.query.skip)  || 0;
 
-	  var regex;
-	  try     { regex = new RegExp(req.query.query, 'i'); }
-	  catch(e){ regex = req.query.query; }
+	  var query;
+	  query = { "$and": [ { _id: new RegExp(req.query.query, 'i') }, { _id: new RegExp('^' + req.username) } ] }
+	  if (req.username == 'admin') query = { _id: new RegExp(req.query.query, 'i') }
 
-	  var _tags = req.query.query?req.query.query.split(' '):[];
+	  if(req.query.count){
+		  collection.count(query, function (err, data) { 
+		    if(err) { stderr(err); res.status(500).send('Database error.'); return; }
+		    if(!data) data = 0;
+		    res.send({ count: data });
+		  });
+	  } else {
+			collection.find(query, { _id: 1, name: 1, _tags: 1 })
+			.limit(limit)
+			.skip(skip).toArray(function (err, data) { 
+				if(err || !data) { stderr(err); res.status(500).send('Database error.'); return; }
+				res.send(data); 
+			});
+	  }
 
-	  collection.find(
-	    {$or: [{ _id: regex }, { name: regex }, { _tags: { $all: _tags } } ] },
-	    { _id: 1, name: 1, _tags: 1 })
-	  .limit(limit)
-	  .skip(skip).toArray(function (err, data) { 
-	    if(err || !data) { res.status(500).send('Database error.'); return; }
-	    res.send(data);
-	  });
-	});
-
-	app.get('/v1/:collection/count', function (req, res) {
-	  var collection = db.collection(req.params.collection);
-
-	  var regex;
-	  try     { regex = new RegExp(req.query.query, 'i'); }
-	  catch(e){ regex = req.query.query; }
-
-	  var _tags = req.query.query?req.query.query.split(' '):[];
-
-	  collection.count({$or: [{ _id: regex }, { name: regex }, { _tags: { $all: _tags } } ] }, function (err, data) { 
-	    if(err) { res.status(500).send('Database error.'); return; }
-	    if(!data) data = 0;
-	    res.send({ count: data });
-	  });
 	});
 
 };

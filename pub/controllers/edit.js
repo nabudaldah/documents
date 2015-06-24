@@ -1,19 +1,33 @@
 ctrl.controller('edit',
-	['$scope', '$routeParams', '$http', '$location', '$window', 'socket', '$timeout', 'messages',
-	function ($scope, $routeParams, $http, $location, $window, socket, $timeout, messages) {
+  ['$scope', '$routeParams', '$http', '$location', '$window', 'socket', '$timeout', 'messages',
+  function ($scope, $routeParams, $http, $location, $window, socket, $timeout, messages) {
 
   // Autosave time every 10 seconds (milliseconds)
   var autosaveTime = 10000;
 
   $scope.user      = JSON.parse($window.localStorage.user || "{}");
 
-  $scope.id  = $routeParams.id;
+  $scope.id         = $routeParams.id;
   $scope.collection = $location.path().split('/')[1];
-  $scope.reference = $scope.collection + '/' + $scope.id;
-  $scope.api = '/v1/' + $scope.reference;
+  $scope.reference  = $scope.collection + '/' + $scope.id;
+  $scope.api        = '/api/' + $scope.reference;
+
+  $('[data-toggle="popover"]').popover({html: true, container: 'body', trigger: 'hover' });
 
   $scope.doc   = {};
   $scope.doc._template = [];
+
+  // setTimeout(function(){
+  //   console.log('timeout zv!')
+  //   $scope.doc['zv'] = [{height: 1.8, name: "Moroni", age: Math.round(Math.random() * 500) },
+  //                   {name: "Tiancum", age: Math.round(Math.random() * 430) },
+  //                   {name: "Jacob", age: Math.round(Math.random() * 270) },
+  //                   {name: "Nephi", age: Math.round(Math.random() * 290) },
+  //                   {name: "Enos", age: Math.round(Math.random() * 340) }];
+  //   $scope.$apply();
+
+  // }, 1000);
+
 
   $scope.new = !$scope.id;
   //$scope.ready = true;
@@ -29,9 +43,14 @@ ctrl.controller('edit',
     }
     
     if($routeParams.template){
-      $http.get('/v1/' + $scope.collection + '/' + $routeParams.template)
+      $http.get('/api/' + $scope.collection + '/' + $routeParams.template)
       .success(function (templateObject) {
-        $scope.doc._template = templateObject._template;
+        if(templateObject._tags && templateObject._tags.indexOf('template') != -1) {
+          var index = templateObject._tags.indexOf('template');
+          templateObject._tags.splice(index, 1);
+        }
+        $scope.doc = templateObject;
+        $scope.doc._id = $scope.collection + '-' + uuid().split('-')[0],
         $scope.ready= true;
       }).error(function(error){
         $scope.ready = true;
@@ -63,14 +82,14 @@ ctrl.controller('edit',
   }
 
   $scope.starred = false;
-  $http.get('/v1/settings/' + $scope.user._id)
+  $http.get('/api/users/' + $scope.user._id)
   .success(function (data, status, headers, config) {
     if(data && data.starred){
       if(typeof(data.starred) == 'string') data.starred = data.starred.split(',');
       $scope.starred = data.starred.indexOf($scope.reference) != -1;
     }
   }).error(function (data, status, headers, config){
-      messages.add('danger', 'Error retrieving user settings "/v1/settings/' + $scope.user._id + '".');  	
+      messages.add('danger', 'Error retrieving user "/api/users/' + $scope.user._id + '".');    
   });
 
   $scope.edit = function(){
@@ -121,13 +140,13 @@ ctrl.controller('edit',
 
   $scope.autosave = function(property){
 
-  	if(property == undefined || $scope.doc[property] == undefined) return;
+    if(property == undefined || $scope.doc[property] == undefined) return;
 
-  	var doc = {};
-  	doc[property] = $scope.doc[property];
-    $http.put('/v1/' + $scope.collection + '/' + $scope.doc._id, doc)
+    var doc = {};
+    doc[property] = $scope.doc[property];
+    $http.put('/api/' + $scope.collection + '/' + $scope.doc._id, doc)
     .success(function (data, status, headers, config){
-    	// Success
+      // Success
       $('#save').addClass('btn-success');
       $timeout(function(){
         $('#save').removeClass('btn-success');
@@ -137,23 +156,23 @@ ctrl.controller('edit',
       delete $scope.changedProperties[property];
     }).error(function (data, status, headers, config){
       messages.add('danger', 'Error autosaving property "' + property + '" of doc "' + $scope.doc._id + '".');
-    });  	
+    });   
   }
 
   $scope.save = function(){
     $scope.saving = !$scope.saving;
-    $http.put('/v1/' + $scope.collection + '/' + $scope.doc._id, $scope.doc)
+    $http.put('/api/' + $scope.collection + '/' + $scope.doc._id, $scope.doc)
     .success(function (data, status, headers, config){
-    	// all ok
+      // all ok
     }).error(function (data, status, headers, config){
       messages.add('danger', 'Error saving doc "' + $scope.doc._id + '".');
     });
   };
 
   $scope.delete = function(){
-    $http.delete('/v1/' + $scope.collection + '/' + $scope.doc._id)
+    $http.delete('/api/' + $scope.collection + '/' + $scope.doc._id)
     .success(function (data, status, headers, config){
-    	$scope.close();
+      $scope.close();
     }).error(function (data, status, headers, config){
       messages.add('danger', 'Error deleting document "' + $scope.doc._id + '".');
     });
@@ -161,8 +180,7 @@ ctrl.controller('edit',
 
   $scope.create = function(){
     $scope.saving = !$scope.saving;
-    var url = '/v1/' + $scope.collection;
-    console.log($scope.doc)
+    var url = '/api/' + $scope.collection;
     $http.post(url, $scope.doc)
     .success(function (data, status, headers, config){
         var url = '/' + $scope.collection + '/' + $scope.doc._id;
@@ -211,7 +229,7 @@ ctrl.controller('edit',
 
   $scope.star = function(){
     $scope.starred = !$scope.starred;
-    $http.get('/v1/settings/' + $scope.user._id)
+    $http.get('/api/users/' + $scope.user._id)
     .success(function (data, status, headers, config) {
       if(data){
         if(data.starred == undefined){
@@ -220,7 +238,7 @@ ctrl.controller('edit',
         if(typeof(data.starred) == 'string') data.starred = data.starred.split(',');
         if($scope.starred) data.starred.push($scope.reference);
           else data.starred.splice(data.starred.indexOf($scope.reference), 1);
-        $http.put('/v1/settings/' + $scope.user._id, {starred: data.starred});
+        $http.put('/api/users/' + $scope.user._id, {starred: data.starred});
       }
     }).error(function (data, status, headers, config){
       messages.add('danger', 'Error starring doc.');
@@ -251,19 +269,14 @@ ctrl.controller('edit',
 
       var oldObject = $scope.doc;
       //var newObject = newObject)
-      // console.log(oldObject)
-      // console.log(newObject)
 
       var syncObject = function(oldObject, newObject){
 
-        // console.log('---');
 
         /* OK */
         for(key in newObject){
           if(newObject[key] && oldObject[key]) {
             var d = JSON.stringify(newObject[key]) == JSON.stringify(oldObject[key]);
-            //console.log('both: ' + key + ' (same? '+d+')');
-            // if(!d) console.log('changed: ' + key)
             if(!d) oldObject[key] = newObject[key];
           }
         }
@@ -272,14 +285,12 @@ ctrl.controller('edit',
         for(key in newObject){
           if(newObject[key] && !oldObject[key]) {
             oldObject[key] = newObject[key]
-            // console.log('added: ' + key);
           }
         }
 
         /* OK */
         for(key in oldObject){
           if(!newObject[key]) {
-            // console.log('removed: ' + key);
             //delete oldObject[key];
           }
         }  
@@ -355,149 +366,116 @@ ctrl.controller('edit',
   }
 
   // $scope.$on("$destroy", function() {
-  //   console.log('destroy');
   // });
 
+  // autosave every attribute?
+  // $scope.$watch('doc', function(oldDoc, newDoc) {
+  //   console.log(oldDoc, newDoc);
+  //   if(oldDoc == newDoc){
+  //     console.log('nothing really changed...')
+  //   } else {
+  //     console.log('hey, doc has changed!');      
+  //   }
+  // }, true);
 
 
+  $scope.bindField = function(name){
+
+    var id = nameId(name);
 
 
+    // Anonymous function to copy id, instead of referencing it: credits: http://stackoverflow.com/a/5226333
+    (function(id){
+      setTimeout(function(){
+
+        //Set the draggable elements
+        $("#" + id).draggable({
+          helper: 'clone',
+          appendTo: 'body',
+          start: function(){
+            $(this).css({display: 'none'});
+            $scope.dragging = fieldById(this.id);
+            $scope.$apply();
+          },
+          stop: function(){
+            $(this).css({display: 'block'});
+            $scope.squeezeBefore($scope.dragging, $scope.hovering);
+            $scope.$apply();
+          }
+        });
+
+        $("#" + id).droppable({
+          over: function (event, ui) {
+            //$(this).css('border', '1px solid red');
+            $scope.hovering = fieldById(this.id);
+            $scope.previewBefore($scope.dragging, $scope.hovering);
+            $scope.$apply();
+
+          },
+          out: function(event, ui ) {
+            // $(this).css('border', '2px solid blue');
+            $scope.$apply();
+          }
+        });
+
+      }, 10);
+    })(id);
+
+  }
+
+  var fieldIndex = function(id){
+    for(var i = 0; i < $scope.doc._template.length; i++)
+      if(nameId($scope.doc._template[i].name) == id) return(i);      
+    return(null);
+  }
+
+  var fieldById = function(id){
+    var i = fieldIndex(id);
+    if(i != null) return($scope.doc._template[i]);
+    else return(null);
+  }
+
+  $scope.moveItem = function(fromId, toId){
+
+    if(!fromId || !toId) return;
+
+    var fromIdx  = fieldIndex(fromId);
+    var fromItem = fieldById(fromId);
+
+    $scope.doc._template.splice(fromIdx, 1);
+
+    //var toIdx    = fieldIndex(toId) + 1;
+    var toIdx    = fieldIndex(toId);
+    $scope.doc._template.splice(toIdx, 0, fromItem);
+
+  }
+
+  var nameId = function(name){
+    return('field-' + name);
+  }
+
+  $scope.previewBefore = function(dragging, hovering){
+    if(!dragging || !hovering) return;
+    $('.before-field').css('display', 'none');
+    var before = $('#before-' + nameId(hovering.name));
+    before.css('display', 'block');
+    before.addClass('col-md-' + dragging.width);
+    before.css('height', 150 + 'px');
+  }
+
+  $scope.squeezeBefore = function(dragging, hovering){
+    $('.before-field').css('display', 'none');      
+    if(!dragging || !hovering) return;
+    $scope.moveItem(nameId(dragging.name), nameId(hovering.name));
+    $('.before-field').css('display', 'none');      
+  }
 
 
-
-
-
-
-
-
-
-
-
-
-
-    $scope.bindField = function(name){
-
-      var id = nameId(name);
-
-      console.log('binding field: ' + id);
-
-      // Anonymous function to copy id, instead of referencing it: credits: http://stackoverflow.com/a/5226333
-      (function(id){
-        setTimeout(function(){
-
-          //Set the draggable elements
-          $("#" + id).draggable({
-            helper: 'clone',
-            appendTo: 'body',
-            start: function(){
-              $(this).css({display: 'none'});
-              $scope.dragging = fieldById(this.id);
-              $scope.$apply();
-            },
-            stop: function(){
-              $(this).css({display: 'block'});
-              $scope.squeezeBefore($scope.dragging, $scope.hovering);
-              $scope.$apply();
-            }
-          });
-
-          $("#" + id).droppable({
-            over: function (event, ui) {
-              //$(this).css('border', '1px solid red');
-              $scope.hovering = fieldById(this.id);
-              $scope.previewBefore($scope.dragging, $scope.hovering);
-              $scope.$apply();
-
-            },
-            out: function(event, ui ) {
-              // $(this).css('border', '2px solid blue');
-              $scope.$apply();
-            }
-          });
-
-        }, 10);
-      })(id);
-
-    }
-
-    var fieldIndex = function(id){
-      for(var i = 0; i < $scope.doc._template.length; i++)
-        if(nameId($scope.doc._template[i].name) == id) return(i);      
-      return(null);
-    }
-
-    var fieldById = function(id){
-      var i = fieldIndex(id);
-      if(i != null) return($scope.doc._template[i]);
-      else return(null);
-    }
-
-    $scope.moveItem = function(fromId, toId){
-
-      if(!fromId || !toId) return;
-
-      var fromIdx  = fieldIndex(fromId);
-      var fromItem = fieldById(fromId);
-
-      $scope.doc._template.splice(fromIdx, 1);
-
-      //var toIdx    = fieldIndex(toId) + 1;
-      var toIdx    = fieldIndex(toId);
-      $scope.doc._template.splice(toIdx, 0, fromItem);
-
-    }
-
-    var nameId = function(name){
-      return('field-' + name);
-    }
-
-    $scope.previewBefore = function(dragging, hovering){
-      if(!dragging || !hovering) return;
-      console.log('previewBefore: ' + nameId(dragging.name) + ' -> ' + nameId(hovering.name));
-      $('.before-field').css('display', 'none');
-      var before = $('#before-' + nameId(hovering.name));
-      before.css('display', 'block');
-      before.addClass('col-md-' + dragging.width);
-      before.css('height', 150 + 'px');
-    }
-
-    $scope.squeezeBefore = function(dragging, hovering){
-      $('.before-field').css('display', 'none');      
-      if(!dragging || !hovering) return;
-      console.log('squeezeBefore: ' + nameId(dragging.name) + ' -> ' + nameId(hovering.name));
-      $scope.moveItem(nameId(dragging.name), nameId(hovering.name));
-      $('.before-field').css('display', 'none');      
-    }
-
-
-    $scope.bindFields = function(){
-      $scope.doc._template.map(function(field){
-        // $scope.addItem(field.name);
-        $scope.bindField(field.name);
-      })
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  $scope.bindFields = function(){
+    $scope.doc._template.map(function(field){
+      // $scope.addItem(field.name);
+      $scope.bindField(field.name);
+    })
+  }
 
 }]);

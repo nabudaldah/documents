@@ -8,10 +8,12 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
+  stdout('Initializing compute API ...')
+
   /* R engine */
   console.log('Loading R module...');
-  var R = require('../lib/R.js');
-  var R = new R(config.R.exe, 1);
+  var R = require('computer');
+  var R = new R(config.R.exe, require('os').cpus().length);
   R.start(function(){
     R.init('source("../lib/functions.R");', function(err){
       if(err) {
@@ -24,7 +26,7 @@ module.exports = function(context){
   // List of currently running scripts
   // See issue: http://stackoverflow.com/q/14302512 and http://stackoverflow.com/a/14345476
   var running = {};
-  app.get('/v1/:collection/:id/compute/:script', function (req, res) {
+  app.get('/api/:collection/:id/compute/:script', function (req, res) {
 
     if(!req.params.collection || !req.params.id || !req.params.script) {
       res.status(400).send('Missing collection, id and script parameters.'); return;

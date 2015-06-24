@@ -12,13 +12,13 @@ library(xts)
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 # Credit: http://stackoverflow.com/a/18175871
-"+" = function(x,y) {
-  if(is.character(x) | is.character(y)) {
-    return(paste0(x , y))
-  } else {
-    .Primitive("+")(x,y)
-  }
-}
+# "+" = function(x,y) {
+#   if(is.character(x) | is.character(y)) {
+#     return(paste0(x , y))
+#   } else {
+#     .Primitive("+")(x,y)
+#   }
+# }
 
 # Corrected version of periodicity {xts}
 xtsPeriodicity <- function (x, ...) {
@@ -42,10 +42,10 @@ xtsPeriodicity <- function (x, ...) {
 # Parse interval specification (15m, 1h, 1d, etc) into interval format
 # as expected by seq( ... by = ... ) function
 seqInterval <- function(interval){
-  delta <- gsub("([0-9]+)(m|h|d)", "\\1", interval)
-  unit  <- gsub("([0-9]+)(m|h|d)", "\\2", interval)
-  unit  <- list('m'='mins', 'h'='hour', 'd'='DSTday')[[unit]]
-  return(delta + ' ' + unit)
+  delta <- gsub("([0-9]+)(s|m|h|d)", "\\1", interval)
+  unit  <- gsub("([0-9]+)(s|m|h|d)", "\\2", interval)
+  unit  <- list('s'='sec', 'm'='min', 'h'='hour', 'd'='DSTday')[[unit]]
+  return(paste0(delta, ' ', unit))
 }
 
 # Calculate interval in seconds from interval specification (e.g. 1h to 3600sec
@@ -53,7 +53,7 @@ seqInterval <- function(interval){
 intervalLength <- function(interval){
   delta   <- gsub("([0-9]+)(m|h|d)", "\\1", interval)
   unit    <- gsub("([0-9]+)(m|h|d)", "\\2", interval)
-  seconds <- list('m'=60, 'h'=60*60, 'd'=60*60*24)[[unit]] * as.numeric(delta)
+  seconds <- list('s'=1, 'm'=60, 'h'=60*60, 'd'=60*60*24)[[unit]] * as.numeric(delta)
   return(seconds)
 }
 
@@ -70,11 +70,11 @@ parseISO <- function(string){
   string <- gsub(" ", "T", string)
   
   format <- ''
-  if(length(grep("([0-9]{4})-([0-9]{2})-([0-9]{2})",  string))) format <- format + '%Y-%m-%d';  
-  if(length(grep("T([0-9]{2}):([0-9]{2})([^:]|$)",    string))) format <- format + 'T%H:%M';
-  if(length(grep("T([0-9]{2}):([0-9]{2}):([0-9]{2})", string))) format <- format + 'T%H:%M:%S';
+  if(length(grep("([0-9]{4})-([0-9]{2})-([0-9]{2})",  string))) format <- paste0(format, '%Y-%m-%d');  
+  if(length(grep("T([0-9]{2}):([0-9]{2})([^:]|$)",    string))) format <- paste0(format, 'T%H:%M');
+  if(length(grep("T([0-9]{2}):([0-9]{2}):([0-9]{2})", string))) format <- paste0(format, 'T%H:%M:%S');
   if(length(grep("([+-][0-9]{2}):([0-9]{2})", string))){
-    format <- format + '%z'
+    format <- paste0(format, '%z')
     string <- gsub("([+-][0-9]{2}):([0-9]{2})", "\\1\\2", string)
   }
   
@@ -99,9 +99,9 @@ seqTime <- function(from, to, interval = "1d"){
 trigger <- function(collection = NULL, id = NULL, property = NULL){
   if(is.null(collection)) collection <- context$collection;
   if(is.null(id))         id         <- context$id; 
-  if(is.null(property)) { trigger <- list(event="update", message=(collection + "/" + id));}
-  else { trigger <- list(event="update", message=(collection + "/" + id + "/" + property));}
-  mongo.insert(mongo, (context$database + '.triggers'), trigger);
+  if(is.null(property)) { trigger <- list(event="update", message=paste0(collection, '/', id));}
+  else { trigger <- list(event="update", message=paste0(collection, '/', id, '/', property));}
+  mongo.insert(mongo, paste0(context$database, '.triggers'), trigger);
 } 
 
 trigger.my <- function(property = NULL){
@@ -116,7 +116,7 @@ trigger.me <- function(){
 doc <- function(id = NULL, collection = NULL){
   if(is.null(collection)) collection <- context$collection;
   if(is.null(id))         id         <- context$id; 
-  bson  <- mongo.find.one(mongo, (context$database + '.' + collection), list('_id'=id));
+  bson  <- mongo.find.one(mongo, paste0(context$database, '.', collection), list('_id'=id));
   return(mongo.bson.to.Robject(bson));
 }
 
@@ -126,7 +126,7 @@ docs <- function(tags, collection = NULL){
   if(is.null(collection)) collection <- context$collection;
   
   docs <- list();
-  cursor <- mongo.find(mongo, (context$database + '.' + collection), list('_tags'=list('$all'=c(tags))));
+  cursor <- mongo.find(mongo, paste0(context$database, '.', collection), list('_tags'=list('$all'=tags)));
   while (mongo.cursor.next(cursor)) {
     bson <- mongo.cursor.value(cursor)
     id <- mongo.bson.value(bson, '_id')
@@ -157,7 +157,7 @@ my <- function(property, value = NULL, parse = NULL){
   if(is.null(value)){
     projection <- list()
     projection[[property]] <- 1
-    bson  <- mongo.find.one(mongo, (context$database + '.' + collection), list('_id'=id), projection);
+    bson  <- mongo.find.one(mongo, paste0(context$database, '.', collection), list('_id'=id), projection);
     if(is.null(bson)) { warning('my: object not found.'); return(NULL); }
     obj <- mongo.bson.to.Robject(bson);
     #val <- obj[[property]];
@@ -175,7 +175,7 @@ my <- function(property, value = NULL, parse = NULL){
     upd[['$set']] <- list()
     upd[['$set']][[property]] <- value
     
-    ok <- mongo.update(mongo, (context$database + '.' + collection), list('_id'=id), upd);
+    ok <- mongo.update(mongo, paste0(context$database, '.', collection), list('_id'=id), upd);
     
     return(ok);
   }
@@ -202,17 +202,17 @@ ts <- function(property = 'timeseries', id = NULL, collection = NULL){
   if(is.null(collection)) collection <- context$collection;  
   if(is.null(id))         id         <- context$id;  
   
-  projection <- ('{ "_data.' + property + '": 1 }')
-  bson  <- mongo.find.one(mongo, (context$database + '.' + collection), list('_id'=id), projection);
+  projection <- paste0('{ "_data.', property, '": 1 }')
+  bson  <- mongo.find.one(mongo, paste0(context$database, '.', collection), list('_id'=id), projection);
   if(is.null(bson)) stop('ts: object not found.');
   
-  vector <- mongo.bson.value(bson, ('_data.' + property + '.vector'));
+  vector <- mongo.bson.value(bson, paste0('_data.', property, '.vector'));
   vector <- as.double(vector)
   
-  interval <- mongo.bson.value(bson, ('_data.' + property + '.interval'))
-  base     <- mongo.bson.value(bson, ('_data.' + property + '.base'))
+  interval <- mongo.bson.value(bson, paste0('_data.', property, '.interval'))
+  base     <- mongo.bson.value(bson, paste0('_data.', property, '.base'))
   
-  attr(vector, "reference")  <- (collection + '/' + id + '/' + property);
+  attr(vector, "reference")  <- paste0(collection, '/', id, '/', property);
   attr(vector, "base")       <- base
   attr(vector, "interval")   <- interval
   
@@ -229,7 +229,7 @@ ts.save <- function(vector, property = 'timeseries', id = NULL, collection = NUL
   
   if(!is.null(reference)){
     reference <- unlist(strsplit(reference, "/"))
-    if(length(reference) != 3) stop('ts.save: invalid reference "' + reference + '".');
+    if(length(reference) != 3) stop(paste0('ts.save: invalid reference "', reference, '".'));
     collection <- reference[1]    
     id         <- reference[2]
     property   <- reference[3]
@@ -249,7 +249,7 @@ ts.save <- function(vector, property = 'timeseries', id = NULL, collection = NUL
   upd[['$set']][['_data']] <- list()
   upd[['$set']][['_data']][[property]] <- list(base=base, interval=interval, vector=vector)
   
-  ok <- mongo.update(mongo, (context$database + '.' + collection), list('_id'=id), upd, mongo.update.upsert);
+  ok <- mongo.update(mongo, paste0(context$database, '.', collection), list('_id'=id), upd, mongo.update.upsert);
   
   if(!ok) stop('Failed to update object in database.')
   return(ok);    
@@ -298,13 +298,13 @@ ts.matrix <- function(vlist){
 
 # Aggregate multiple time-series
 ts.sum <- function(tags, property = 'timeseries', collection = NULL, parse = FALSE){
-  
+      
   if(is.null(collection)) collection <- context$collection;
-  
+    
   # Get list of matched vectors
-  ns     <- context$database + '.' + collection
-  query  <- list('_tags'=list('$all'=list(tags)))
-  fields <- list('_id'=1, '_tags'=1); fields['_data.' + property] <- 1;
+  ns     <- paste0(context$database, '.', collection)
+  query  <- list('_tags'=list('$all'=as.list(tags)))
+  fields <- list('_id'=1, '_tags'=1); fields[paste0('_data.', property)] <- 1;
   sort   <- list('_id'=1);
   cursor <- mongo.find(mongo, ns, query, sort, fields);
   
@@ -313,50 +313,70 @@ ts.sum <- function(tags, property = 'timeseries', collection = NULL, parse = FAL
   
   # Loop every vector  
   while (mongo.cursor.next(cursor)) {
-    
+        
     # Retrieve BSON object
     bson     <- mongo.cursor.value(cursor);
     
     # Extract values
     id       <- mongo.bson.value(bson, '_id');
-    base     <- mongo.bson.value(bson, '_data.' + property + '.base');
-    interval <- mongo.bson.value(bson, '_data.' + property + '.interval');
-    vector   <- mongo.bson.value(bson, '_data.' + property + '.vector');
+    #print(id); next;
+    base     <- mongo.bson.value(bson, paste0('_data.', property, '.base'));
+    interval <- mongo.bson.value(bson, paste0('_data.', property, '.interval'));
+    vector   <- mongo.bson.value(bson, paste0('_data.', property, '.vector'));
+    
+    if(is.null(base) || is.null(interval) || is.null(vector)) { print('Bad ts.'); next; }
     
     # In safety mode, reinterpret values properly (slow)
-    if(parse) {
+    #if(parse) {
       vector <- as.character(vector)
       vector <- as.double(vector)
-    }
-    
+    #}
+            
     # Set vector attributes
-    attributes(vector) <- list(reference=(collection + '/' + id + '/' + property), base=base, interval=interval)
-    
+    attributes(vector) <- list(reference=paste0(collection, '/', id, '/', property), base=base, interval=interval)
+        
     # Aggregate to
     if(is.null(aggregate)) {
       aggregate <- as.double(vector);
-      attributes(aggregate) <- list(reference=(collection + '/' + id + '/' + property), base=base, interval=interval)
+      attributes(aggregate) <- list(reference=paste0(collection, '/', id, '/', property), base=base, interval=interval)
+      minBase <- base;
     } else {
-      
-      # Keep chronologicaly first base     
-      minBase <- min(c(attr(aggregate, 'base'), base))
-      
+            
       # Check if intervals match (NOTE: need to check if distance is dividable by interval)
-      if(attr(vector, 'interval') != attr(aggregate, 'interval')) stop("Trying to fetch timeseries of different time intervals at once.")
+      if(attr(vector, 'interval') != attr(aggregate, 'interval')) next;
+        #stop("Trying to fetch timeseries of different time intervals at once. ", attr(vector, 'interval'), '!=', attr(aggregate, 'interval'))
       
       # Add padding if vectors are of different lengths     
-      if(length(vector) != length(aggregate)) {
-        from    <- parseISO(base)
-        to      <- parseISO(minBase)
-        seconds <- intervalLength(interval)
-        padding <- as.double(difftime(from, to, units="secs")) / seconds;
-        if(padding) vector <- c(rep(NaN, padding), vector);
-        
-        maxLength <- max(c(length(vector), length(aggregate)))
-        length(vector) <- maxLength;
+      #if(length(vector) != length(aggregate)) {
+      from    <- parseISO(base)
+      to      <- parseISO(minBase)
+      seconds <- intervalLength(interval)
+      padding <- as.double(difftime(from, to, units="secs")) / seconds;
+      if(padding > 0) {
+        a <- attributes(vector)
+        vector <- c(rep(NaN, padding), vector);
+        attributes(vector) <- a
+      }
+      if(padding < 0) { 
+        a <- attributes(aggregate)
+        aggregate <- c(rep(NaN, abs(padding)), aggregate);
+        attributes(aggregate) <- a
       }
       
-      # Aggregate vector            
+      maxLength <- max(c(length(vector), length(aggregate)))
+      length(vector)    <- maxLength;
+      length(aggregate) <- maxLength;
+      #}
+
+      # Keep chronologicaly first base     
+      minBase <- min(c(attr(aggregate, 'base'), base))
+      attr(aggregate, 'base') <- minBase;
+            
+      aggregate[ is.na(aggregate)  ] <- 0
+      vector   [ is.na(vector)    ] <- 0
+      
+      # Aggregate vector
+      #print(str(vector))
       aggregate <- aggregate + vector
       
     }
@@ -422,11 +442,11 @@ dblocal <- function(){
 }
 
 shard <- function(){
-  mongo <<- mongo.create(host = (context$shardhost + ":" + context$shardport), db = context$database);
+  mongo <<- mongo.create(host = paste0(context$shardhost, " :", context$shardport), db = context$database);
 }
 
 cluster <- function(){
-  mongo <<- mongo.create(host = (context$dbhost +    ":" + context$dbport),    db = context$database);
+  mongo <<- mongo.create(host = paste0(context$dbhost +    ":", context$dbport),    db = context$database);
 }
 
 # Connect to local MongoDB instance...
@@ -461,7 +481,7 @@ v <- function(property, id = NULL, collection = NULL, value = NULL, parse = NULL
     properties <- list()
     properties[[property]] <- 1
     
-    bson <- mongo.find.one(mongo, (context$database + '.' + collection), list('_id'=id), properties);
+    bson <- mongo.find.one(mongo, paste0(context$database, '.', collection), list('_id'=id), properties);
     if(is.null(bson)) return(NULL);
     
     iter <- mongo.bson.find(bson, property)
@@ -479,7 +499,7 @@ v <- function(property, id = NULL, collection = NULL, value = NULL, parse = NULL
     upd[['$set']] <- list()
     upd[['$set']][[property]] <- value
     
-    ok <- mongo.update(mongo, (context$database + '.' + collection), list('_id'=id), upd);
+    ok <- mongo.update(mongo, paste0(context$database, '.', collection), list('_id'=id), upd);
     
     return(ok);
   }
@@ -504,3 +524,55 @@ v <- function(property, id = NULL, collection = NULL, value = NULL, parse = NULL
 #ts.devectorize <- function(ts){
 #  
 #}
+
+ts.vec <- function(xts_){
+  
+}
+
+ts.xts <- function(vector){
+  base     <- parseISO(attr(vector, 'base'));
+  interval <- seqInterval(attr(vector, 'interval'))
+  time     <- seq(from = base, by = interval, length.out = length(vector))
+  ts       <- xts(as.double(vector), time);
+  colnames(ts) <- c(attr(vector, 'reference'));
+  return(ts)
+}
+
+every <- function(fraction, fun){
+  if(fraction %% 1 == 0) fun();
+}
+
+#for(i in 0:1000) every(i / 100, function(){ print(i) })
+
+tags <- function(id = NULL, collection = NULL){
+  return(v('_tags', id, collection))
+}
+
+my.tags <- function(tags = NULL){
+  if(is.null(tags)){
+    return(v('_tags'))
+  } else {
+    return(tag(tags, contex$id, context$collection))
+  }
+}
+
+tag <- function(tags, id = NULL, collection = NULL){
+  newTags <- unique(c(v('_tags', id, collection), tags))
+  return(v('_tags', id, collection, newTags))
+}
+
+#tag(c('nabi'), 'ts-1', 'timeseries')
+
+untag <- function(tags, id = NULL, collection = NULL){
+  oldTags <- unique(v('_tags', id, collection))
+  newTags <- setdiff(oldTags, tags)
+  return(v('_tags', id, collection, newTags))  
+}
+
+#context$collection <- 'messages'; context$id='sum';
+#collection <- NULL; id <- NULL; property <- 'timeseries'
+#tags <- c('sum')
+
+#v(collection = 'timeseries', id = 'new-functions-r', property = 'results', value='nabi')
+#trigger(collection = 'timeseries', id = 'new-functions-r')
+

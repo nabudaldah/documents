@@ -22,7 +22,7 @@ app.directive('password', function ($http) {
     scope.hash = function(){
     	scope.executing = true;
     	
-      $http.get('/v1/'+attr.collection+'/'+attr.id+'/' + attr.name + '/hash')
+      $http.get('/api/'+attr.collection+'/'+attr.id+'/hash/' + attr.name + '')
         .success(function(data, status, headers, config) {
           scope.message = data;
           scope.executing = false;

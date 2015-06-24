@@ -34,7 +34,7 @@ app.directive('timeseries', function($http, socket) {
       var code = { "hour": "H", "day": "D", "week": "W", "month": "M", "quarter": "Q", "year": "Y" };
       if(scope.unit) scope.unitCode = code[scope.unit];
       else scope.unitCode = code["hour"];
-      var url = '/v1/' + attr.collection + '/' + attr.id + '/timeseries/' + attr.timeseries;
+      var url = '/api/' + attr.collection + '/' + attr.id + '/timeseries/' + attr.timeseries;
       var from, to;
       if(scope.unit){
         from = moment().startOf(scope.unit).add(scope.offset, scope.unit);
@@ -63,7 +63,7 @@ app.directive('timeseries', function($http, socket) {
     }
 
     var save = function(){
-      var url = '/v1/' + attr.collection + '/' + attr.id + '/timeseries/' + attr.timeseries;
+      var url = '/api/' + attr.collection + '/' + attr.id + '/timeseries/' + attr.timeseries;
       $http.put(url, scope.ts);        
     }
 

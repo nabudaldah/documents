@@ -40,7 +40,7 @@
 		<span class="input-group-btn">
 
 			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-				New &nbsp; 
+				<span class="glyphicon glyphicon-plus"></span> &nbsp; 
 				<span class="caret" style="font-size: small;"></span>
 				<span class="sr-only">Toggle Dropdown</span>
 			</button>
@@ -58,11 +58,7 @@
 		<span class="input-group-btn">
 
 			<a href="" class="btn btn-default">
-				<span ng-if="query">found {{queryCount}} of </span>{{totalCount}} docs
-			</a>
-
-			<a href="{{::route}}/pivot" class="btn btn-default">
-				<span class="glyphicon glyphicon-stats"></span>
+				<span ng-if="query">{{queryCount}} of </span>{{totalCount}}
 			</a>
 
 			<a ng-click="colDown()" ng-hide="" class="btn btn-default hidden-xs">

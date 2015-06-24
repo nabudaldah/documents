@@ -8,8 +8,10 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
+  stdout('Initializing status API ... ');
+
 	/* Show server status: potentially dangerous information given... */
-	app.get('/v1/status', function (req, res){
+	app.get('/api/status', function (req, res){
 	  var status = {
 	    uptime: process.uptime(),
 	    arch: process.arch,

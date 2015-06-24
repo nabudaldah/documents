@@ -8,6 +8,8 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
+  stdout('Initializing execute API ...')
+
 	/* Javascript execute */
 	var fs      = require('fs');
 	var Fiber   = require('fibers'); // 0.1s
@@ -21,7 +23,7 @@ module.exports = function(context){
   // var mongodb = require('mongodb'); TODO TODO TODO
   // var mongo  = mongodb.MongoClient; TODO TODO TODO
 
-	var edi     = require(__dirname + '/../lib/edi.js');
+	var EDI     = require(__dirname + '/../lib/EDI.js');
 	var Timeseries = require(__dirname + '/../lib/Timeseries.js');
 
 	var executeJavascriptContext = fs.readFileSync(__dirname + '/../lib/context.js', { encoding : 'utf8' });
@@ -35,7 +37,7 @@ module.exports = function(context){
 	    request: request,
 	    moment: moment,
 	    xmldoc: xmldoc,
-	    edi: edi,
+	    EDI: EDI,
 	    Timeseries: Timeseries,
 	    context: context
 	  };
@@ -59,7 +61,7 @@ module.exports = function(context){
 	// See issue: http://stackoverflow.com/q/14302512 and http://stackoverflow.com/a/14345476
 	var running = {};
 
-	app.get('/v1/:collection/:id/execute/:script', function (req, res) {
+	app.get('/api/:collection/:id/execute/:script', function (req, res) {
 
 	  if(!req.params.collection || !req.params.id || !req.params.script) {
 	    res.status(400).send(error('Missing collection, id and script parameters.'));

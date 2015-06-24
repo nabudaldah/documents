@@ -5,7 +5,7 @@ ctrl.controller('raw', function($scope, $routeParams, $http, $location, $window,
   $scope.id  = $routeParams.id;
   $scope.collection = $location.path().split('/')[1];
   $scope.docRef = $scope.collection + '/' + $scope.id;
-  $scope.docApi = '/v1/' + $scope.docRef;
+  $scope.docApi = '/api/' + $scope.docRef;
   $scope.docUrl = '/' + $scope.docRef;
 
   $scope.doc   = {};

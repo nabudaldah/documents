@@ -7,8 +7,10 @@ module.exports = function(context){
   var app      = context.app;
   var channel  = context.channel;
   var trigger  = context.trigger;
-
-  app.get('/v1/:collection/excel/:template', function(req, res){
+ 
+  stdout('Initializing timeseries Excel/TSV API ...')
+ 
+  app.get('/api/:collection/excel/:template', function(req, res){
     
     var collection = db.collection(req.params.collection);
     var selection  = {  };
@@ -24,7 +26,7 @@ module.exports = function(context){
 
   });
 
-  app.post('/v1/:collection/excel', function(req, res){
+  app.post('/api/:collection/excel', function(req, res){
 
     var selection  = { };
     var projection = req.body;
@@ -53,7 +55,7 @@ module.exports = function(context){
 
 
   /* Get timeseries in CSV format */
-  app.get('/v1/:collection/:id/timeseries/:timeseries/excel', function (req, res) {
+  app.get('/api/:collection/:id/timeseries/:timeseries/excel', function (req, res) {
 
     var collection = db.collection(req.params.collection);
     var projection = {};

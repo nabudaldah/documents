@@ -24,6 +24,10 @@
   <script src="/bower_components/angular/angular.min.js"></script>
   <script src="/bower_components/angular-route/angular-route.min.js"></script>
 
+  <!-- Angular UI ng-grid -->
+  <link rel="stylesheet" type="text/css" href="/bower_components/ng-grid/ng-grid.css" />
+  <script type="text/javascript" src="/bower_components/ng-grid/ng-grid-2.0.14.min.js"></script>
+
   <!-- Twitter Bootstrap -->
   <link  href="/bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
   <link  href="/include/animate.css" rel="stylesheet">
@@ -102,9 +106,10 @@
   <script src="/directives/header.js"></script>
   <script src="/directives/password.js"></script>
   <script src="/directives/progressbar.js"></script>
+  <script src="/directives/datatable.js"></script>
 
   <!-- AngularJS Controllers -->
-  <script src="/controllers/dashboard.js"></script>
+  <script src="/controllers/home.js"></script>
   <script src="/controllers/list.js"></script>
   <script src="/controllers/edit.js"></script>
   <script src="/controllers/pivot.js"></script>
@@ -144,10 +149,6 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
 
-        <ul class="nav navbar-nav">
-          <li ng-class="{active:currentCollection() == ''}"><a href="/#/">Dashboard</a></li>
-          <li ng-repeat="collection in collections" ng-class="{active:collection==currentCollection()}"><a href="/#/{{collection}}">{{collection}}</a></li>
-        </ul>
 
         <form class="navbar-form navbar-right" role="form">
 
@@ -160,12 +161,14 @@
             </button>
             <ul class="dropdown-menu" role="menu">
               
+
+
               <li ng-repeat="star in stars"><a href="/#/{{star}}"><span class="glyphicon glyphicon-star"></span> &nbsp; {{star}}</a></li>
 
-              <li class="divider"></li>
+              <li ng-if="stars.length" class="divider"></li>
               
-              <li><a href="/#/settings/{{user._id}}"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
-              <li><a href="/#/settings"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
+              <li><a href="/#/home"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
+              <li><a href="/#/users/{{user._id}}"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
               
               <li class="divider"></li>
 
@@ -193,9 +196,10 @@
 
   <div ng-show="!authenticated()" class="col-sm-6 col-sm-offset-3" style="margin-top: 10%" id="login">
 
-    <form class="form">
+    <form class="form" ng-hide="signinup">
+
       <div class="form-group">
-        <h2 class="col-sm-12" style="margin-bottom: 0.7em">{{error || "Please sign in"}}</h2>
+        <h2 class="col-sm-12" style="margin-bottom: 0.7em">Please sign in <small> ... or <button type="button" class="btn-link" ng-click="signinup=true">sign up now!</button></small></h2>
       </div>
       <div class="form-group">
         <div class="col-sm-5">
@@ -213,6 +217,66 @@
       <div class="form-group">
         <div class="col-sm-12">
           <hr/>
+          <strong ng-show="error">{{error}}</strong>
+          <p class="text-muted">Copyright &copy; 2014 - 2015, Energy21 B.V.</p>
+        </div>
+      </div>
+
+    </form>
+
+    <form class="form-horizontal" ng-show="signinup">
+
+      <div class="form-group">
+        <h2 class="col-sm-12" style="margin-bottom: 0.7em">Please fill in <small> ... or <button type="button" class="btn-link" ng-click="signinup=false">just sign in!</button></small></h2>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Username:</label>
+        <div class="col-sm-8">
+          <input ng-model="username" ng-disabled="authenticating" type="token" class="form-control" id="inputUsername" placeholder="username" required>          
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Full name:</label>
+        <div class="col-sm-8">
+          <input ng-model="name" ng-disabled="authenticating" type="text" class="form-control" id="inputUsername" placeholder="full-name" required autofocus>    
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Email:</label>
+        <div class="col-sm-8">
+          <input ng-model="email" ng-disabled="authenticating" type="email" class="form-control" id="inputUsername" placeholder="email" required>          
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Password:</label>
+        <div class="col-sm-8">
+          <input ng-model="password" ng-disabled="authenticating" type="password" class="form-control" id="inputUsername" placeholder="password" required>          
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label">Repeat:</label>
+        <div class="col-sm-8">
+          <input ng-model="password1" ng-disabled="authenticating" type="password" class="form-control" id="inputUsername" placeholder="password" required>          
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-sm-4 control-label"></label>
+        <div class="col-sm-8">
+          <button ng-click="signup()" ng-show="!authenticating" ng-disabled="!username || !password || !password1 || password != password1 || authenticating" type="submit" value="Login" class="pull-right btn btn-success">Sign up</button>
+          <button ng-show="authenticating" type="button" class="pull-right btn btn-default"><img src="/images/loading.gif"/></button>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="col-sm-12">
+          <hr/>
+          <strong ng-show="error">{{error}}</strong>
           <p class="text-muted">Copyright &copy; 2014 - 2015, Energy21 B.V.</p>
         </div>
       </div>

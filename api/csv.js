@@ -1,3 +1,6 @@
+
+var Timeseries = require('../lib/Timeseries.js')
+
 module.exports = function(context){
 
   var stdout   = context.stdout;
@@ -8,7 +11,9 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
-  app.get('/v1/:collection/csv/:template', function(req, res){
+  stdout('Initializing timeseries CSV API ...')
+
+  app.get('/api/:collection/csv/:template', function(req, res){
     
     var collection = db.collection(req.params.collection);
     var selection  = {  };
@@ -24,7 +29,7 @@ module.exports = function(context){
 
   });
 
-  app.post('/v1/:collection/csv', function(req, res){
+  app.post('/api/:collection/csv', function(req, res){
 
     var selection  = { };
     var projection = req.body;
@@ -53,7 +58,7 @@ module.exports = function(context){
 
 
   /* Get timeseries in CSV format */
-  app.get('/v1/:collection/:id/timeseries/:timeseries/csv', function (req, res) {
+  app.get('/api/:collection/:id/timeseries/:timeseries/csv', function (req, res) {
 
     var collection = db.collection(req.params.collection);
     var projection = {};

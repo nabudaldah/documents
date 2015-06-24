@@ -5,7 +5,8 @@ var app = angular.module('app', [
   'ngRoute',
   'ctrl',
   'Messages',
-  'jsonFormatter'
+  'jsonFormatter',
+  'ngGrid'
 ]);
 
 var ctrl = angular.module('ctrl', []);
@@ -16,15 +17,15 @@ app.config(['$routeProvider',
   function($routeProvider) {
 
   $routeProvider
-    .when('/',                          { templateUrl: '/views/dashboard.html', controller: 'dashboard' })
-    .when('/:collection',               { templateUrl: '/views/list.html',      controller: 'list' })
-    .when('/:collection/pivot',         { templateUrl: '/views/pivot.html',     controller: 'pivot'})
-    .when('/:collection/new',           { templateUrl: '/views/edit.html',      controller: 'edit' })
-    .when('/:collection/new/:template', { templateUrl: '/views/edit.html',      controller: 'edit' })
-    .when('/:collection/:id',           { templateUrl: '/views/edit.html',      controller: 'edit' })
-    .when('/:collection/:id/raw',       { templateUrl: '/views/raw.html' ,      controller: 'raw'  })
+    .when('/home',                      { templateUrl: '/views/home.html',  controller: 'home' })
+    .when('/:collection',               { templateUrl: '/views/list.html',  controller: 'list' })
+    .when('/:collection/pivot',         { templateUrl: '/views/pivot.html', controller: 'pivot'})
+    .when('/:collection/new',           { templateUrl: '/views/edit.html',  controller: 'edit' })
+    .when('/:collection/new/:template', { templateUrl: '/views/edit.html',  controller: 'edit' })
+    .when('/:collection/:id',           { templateUrl: '/views/edit.html',  controller: 'edit' })
+    .when('/:collection/:id/raw',       { templateUrl: '/views/raw.html' ,  controller: 'raw'  })
 
-    .otherwise({ redirectTo: '/'});
+    .otherwise({ redirectTo: '/home'});
 
 }]);
 
@@ -58,17 +59,18 @@ ctrl.controller('index',
   }
 
   $scope.loadCollections = function(){
-    $http.get('/v1/settings?query=collection').success(function (data) { 
-      $scope.collections = data.map(function(c){
-        return c._id;
-      });
-    });
+    $scope.collections = ['timeseries'];
+    // $http.get('/api/settings?query=collection').success(function (data) { 
+    //   $scope.collections = data.map(function(c){
+    //     return c._id;
+    //   });
+    // });
   };
 
   $scope.updateStars = function(){
 
     $http
-      .get('/v1/settings/' + $scope.user._id)
+      .get('/api/users/' + $scope.user._id)
       .success(function(data, status, headers, config){
         $scope.stars = data.starred;
       }).error(function(data, status, headers, config){
@@ -80,12 +82,12 @@ ctrl.controller('index',
     $scope.updateCollections();
     $scope.updateStars();
     
-    socket.on('settings/' + $scope.user._id, function (data) {
+    socket.on('users/' + $scope.user._id, function (data) {
       $scope.updateStars();
     });
 
     $scope.$on('$destroy', function () {
-      socket.close('settings/' + $scope.user._id);
+      socket.close('users/' + $scope.user._id);
     });
   }
 
@@ -107,11 +109,12 @@ ctrl.controller('index',
   };
 
   $scope.updateCollections = function(){
-    $http.get('/v1/settings?query=collection').success(function (data) {
-      $scope.collections = data.map(function(c){
-        return c._id;
-      });
-    });
+    $scope.collections = ['timeseries']
+    // $http.get('/api/settings?query=collection').success(function (data) {
+    //   $scope.collections = data.map(function(c){
+    //     return c._id;
+    //   });
+    // });
   };
 
   if($scope.authenticated()){
@@ -120,6 +123,36 @@ ctrl.controller('index',
     $scope.showAuthentication();
   }
   
+  $scope.signup = function() {
+
+    // $scope.signinup = false;
+            
+    var authentication = { username: $scope.username, name: $scope.name, password: $scope.password, email: $scope.email };
+    // delete $scope.username;
+    // delete $scope.password;
+
+    $scope.authenticating = true;
+
+    $http
+      .post('/signup', authentication)
+      .success(function (data, status, headers, config) {
+        $scope.signinup = false;
+        $scope.login();
+      })
+      .error(function (data, status, headers, config) {
+        $scope.authenticating = false;
+        $scope.showAuthentication();
+        $scope.error = "Sorry, try again (" + data+ ")";
+        $('#login').addClass('animated wobble');
+        $('#login').one('webkitAnimationEnd mozAnimationEnd MSAnimationEnd oanimationend animationend', function(){
+          $('#login').removeClass('animated wobble');
+          $('#inputUsername').focus();
+        });
+
+        // messages.add('danger', 'Invalid username or password. Please try again.', { timeout: 5000 });
+      });
+  };
+
   $scope.login = function() {
             
     var authentication = { username: $scope.username, password: $scope.password };
@@ -129,7 +162,7 @@ ctrl.controller('index',
     $scope.authenticating = true;
 
     $http
-      .post('/authenticate', authentication)
+      .post('/login', authentication)
       .success(function (data, status, headers, config) {
         $window.localStorage.token = data.token;
         $window.localStorage.user  = JSON.stringify(data.profile);
@@ -159,29 +192,13 @@ ctrl.controller('index',
   $scope.checkStatus = function(){
     if(!$scope.authenticated()) return;
     $http
-      .get('/v1/status')
+      .get('/status')
       .success(function(data, status, headers, config){
-        var txt = "";
-
-        txt =       "NodeJS " + data.version + "\n"
-        txt = txt + data.platform + " (" + data.arch  + ")\n";
-        txt = txt + "Up:  " + numeral(data.uptime).format('00:00:00') + "\n";
-        txt = txt + "Mem: " + numeral(data.memory).format('0.0 b') + "\n";
-
-        $scope.status = txt;
-
+        console.log(data);
       }).error(function(data, status, headers, config){
-        $scope.status = null;
+        console.error(data);
       });
   }
-
-  // Doesn't work well...
-  // var statusInterval = 1000 * 60;
-  // setInterval(function() {
-  //   $scope.checkStatus();
-  // }, statusInterval);
-
-  // $scope.checkStatus();
 
   $('[data-toggle="tooltip"]').tooltip();
   $('[data-toggle="popover"]').popover()

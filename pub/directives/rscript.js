@@ -31,9 +31,9 @@ app.directive('rscript', function ($http) {
       scope.computing = true;
       var update = {};
       update[attr.script] = scope.ngModel;
-      $http.put('/v1/'+attr.col+'/'+attr.id, update)
+      $http.put('/api/'+attr.col+'/'+attr.id, update)
         .success(function(data){
-          $http.get('/v1/'+attr.col+'/'+attr.id+'/compute/' + attr.script)
+          $http.get('/api/'+attr.col+'/'+attr.id+'/compute/' + attr.script)
             .success(function(data, status, headers, config) {
               scope.message = data;
               scope.computing = false;

@@ -3,7 +3,7 @@ ctrl.controller('list',
   function ($scope, $http, $window, $location, socket, messages) {
 
   $scope.object = $location.path().split('/')[1];
-  $scope.api  = '/v1/' + $scope.object;
+  $scope.api  = '/api/' + $scope.object;
   $scope.route = '/#/' + $scope.object;
 
   $scope.query = $window.localStorage.query || '';
@@ -53,7 +53,7 @@ ctrl.controller('list',
       messages.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
 
-    var url = $scope.api + '/count';
+    var url = $scope.api + '?count=true';
     $http.get(url).success(function(data) { 
       $scope.totalCount = data.count;
     }).error(function(error){
@@ -61,7 +61,7 @@ ctrl.controller('list',
       messages.add('danger', 'Error retrieving count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
 
-    var url = $scope.api + '/count?query=' + $scope.query;
+    var url = $scope.api + '/?count=true&query=' + $scope.query;
     $http.get(url).success(function(data) { 
       $scope.queryCount = data.count;
     }).error(function(error){
@@ -110,7 +110,7 @@ ctrl.controller('list',
     }
   }
 
-  var url = '/v1/' + $scope.object + '/?query=template&limit=24';
+  var url = '/api/' + $scope.object + '/?query=template&limit=24';
   $http.get(url).success(function(data) { $scope.templates = data; });
 
   $scope.new = function(template){

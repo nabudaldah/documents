@@ -47,9 +47,9 @@ app.directive('javascript', function ($http) {
       scope.executing = true;
       var update = {};
       update[attr.script] = scope.ngModel;
-      $http.put('/v1/' + attr.col + '/' + attr.id, update)
+      $http.put('/api/' + attr.col + '/' + attr.id, update)
         .success(function(data){
-          $http.get('/v1/'+attr.col+'/'+attr.id+'/execute/' + attr.script)
+          $http.get('/api/'+attr.col+'/'+attr.id+'/execute/' + attr.script)
             .success(function(data, status, headers, config) {
               scope.message = data;
               scope.executing = false;
@@ -79,8 +79,8 @@ app.directive('javascript', function ($http) {
       }
       var update = {};
       update[attr.script] = scope.ngModel;
-      $http.put('/v1/' + attr.col + '/' + attr.id, update).success(function(data){
-        $http.get('/v1/' + attr.col + '/' + attr.id + '/schedule/' + attr.script).success(function(data){
+      $http.put('/api/' + attr.col + '/' + attr.id, update).success(function(data){
+        $http.get('/api/' + attr.col + '/' + attr.id + '/schedule/' + attr.script).success(function(data){
           console.log('rescheduled')
         });
       });

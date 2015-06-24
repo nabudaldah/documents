@@ -9,11 +9,13 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
+  stdout('Initializing mapreduce API ...')
+
   var uuid     = require('node-uuid');
   var async    = require('async');
   var request  = require('request');
 
-  app.get('/v1/:collection/:id/mapreduce', function (req, res) {
+  app.get('/api/:collection/:id/mapreduce', function (req, res) {
 
     if(!req.params.collection || !req.params.id) {
       res.status(400).send('Missing collection and id parameters.'); return;
@@ -27,7 +29,9 @@ module.exports = function(context){
       if(!data.map)    { res.status(500).send('Map script not found.');         return; }
       if(!data.reduce) { res.status(500).send('Reduce script not found.');      return; }
     
-      var mrid = "MR" + Math.round(Math.random() * 1000000);
+      if(!data._tags) data._tags = [];
+      data._tags.push('mapreduce');
+      data._tags.push(data._id);
 
       // clone to shards
       // map on nodes
@@ -72,7 +76,7 @@ module.exports = function(context){
           var id = req.params.id + '-mr-' + (i++);
           id = id.replace(/[\.:]/g,'');
 
-          var url = 'http://' + node.host + ':' + node.apiport + '/v1/' + req.params.collection + '/' + id + '/compute/map';
+          var url = 'http://' + node.host + ':' + node.apiport + '/api/' + req.params.collection + '/' + id + '/compute/map';
           stdout(url);
           request(url, function (err, res, body) {
             if (err) stderr('mapreduce.js: ' + err);
@@ -94,7 +98,7 @@ module.exports = function(context){
       var reduce = function(callbackOuter){
         stdout('mapreduce.js: reducing now ... computing');
 
-        var url = 'http://' + config.host + ':' + config.port + '/v1/' + req.params.collection + '/' + req.params.id + '/compute/reduce';
+        var url = 'http://' + config.host + ':' + config.port + '/api/' + req.params.collection + '/' + req.params.id + '/compute/reduce';
         request(url, function (err, res, body) {
           if (err) stderr('mapreduce.js: ' + err);
           else stdout('reduced all!');

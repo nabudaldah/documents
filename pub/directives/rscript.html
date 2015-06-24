@@ -188,33 +188,33 @@ writing-mode: lr-tb;
       </button>
       <ul class="dropdown-menu" role="menu">
 
-<li><a href="" class="function" ng-click="insert('v(property, id, collection)                 ')">   <strong>v             </strong>(property, id, collection)            </a></li>
-<li><a href="" class="function" ng-click="insert('doc(id, collection)                         ')">   <strong>doc           </strong>(id, collection)                      </a></li>
-<li><a href="" class="function" ng-click="insert('docs(tags, collection)                      ')">   <strong>docs          </strong>(tags, collection)                    </a></li>
+        <li><a href="" class="function" ng-click="insert('v(property, id, collection)')"><strong>v</strong>(property, id, collection)            </a></li>
+        <li><a href="" class="function" ng-click="insert('doc(id, collection)')"><strong>doc</strong>(id, collection)                      </a></li>
+        <li><a href="" class="function" ng-click="insert('docs(tags, collection)')"><strong>docs</strong>(tags, collection)                    </a></li>
 
-<li class="divider"></li>
+        <li class="divider"></li>
 
-<li><a href="" class="function" ng-click="insert('me()                                        ')">   <strong>me            </strong>()                                    </a></li>
-<li><a href="" class="function" ng-click="insert('my(property, value)                         ')">   <strong>my            </strong>(property, value)                     </a></li>
-<li><a href="" class="function" ng-click="insert('my.ts(property, vector)                     ')">   <strong>my.ts         </strong>(property, vector)                    </a></li>
-<li><a href="" class="function" ng-click="insert('my.tree(property)                           ')">   <strong>my.tree       </strong>(property)                            </a></li>
+        <li><a href="" class="function" ng-click="insert('me()')"><strong>me</strong>()                                    </a></li>
+        <li><a href="" class="function" ng-click="insert('my(property, value)')"><strong>my</strong>(property, value)                     </a></li>
+        <li><a href="" class="function" ng-click="insert('my.ts(property, vector)')"><strong>my.ts</strong>(property, vector)                    </a></li>
+        <li><a href="" class="function" ng-click="insert('my.tree(property)')"><strong>my.tree</strong>(property)                            </a></li>
 
-<li class="divider"></li>
+        <li class="divider"></li>
 
-<li><a href="" class="function" ng-click="insert('ts(property, id, collection)                ')">   <strong>ts            </strong>(property, id, collection)            </a></li>
-<li><a href="" class="function" ng-click="insert('ts.new(base, interval, vector)              ')">   <strong>ts.new        </strong>(base, interval, vector)              </a></li>
-<li><a href="" class="function" ng-click="insert('ts.save(vector, property, id, collection)   ')">   <strong>ts.save       </strong>(vector, property, id, collection)    </a></li>
-<li><a href="" class="function" ng-click="insert('ts.sum(tags, property, collection)          ')">   <strong>ts.sum        </strong>(tags, property, collection)          </a></li>
+        <li><a href="" class="function" ng-click="insert('ts(property, id, collection)')"><strong>ts</strong>(property, id, collection)            </a></li>
+        <li><a href="" class="function" ng-click="insert('ts.new(base, interval, vector)')"><strong>ts.new</strong>(base, interval, vector)              </a></li>
+        <li><a href="" class="function" ng-click="insert('ts.save(vector, property, id, collection)')"><strong>ts.save</strong>(vector, property, id, collection)    </a></li>
+        <li><a href="" class="function" ng-click="insert('ts.sum(tags, property, collection)')"><strong>ts.sum</strong>(tags, property, collection)          </a></li>
 
-<li class="divider"></li>
+        <li class="divider"></li>
 
-<li><a href="" class="function" ng-click="insert('trigger.me()                                ')">   <strong>trigger.me    </strong>()                                    </a></li>
-<li><a href="" class="function" ng-click="insert('trigger.my(property)                        ')">   <strong>trigger.my    </strong>(property)                            </a></li>
+        <li><a href="" class="function" ng-click="insert('trigger.me()')"><strong>trigger.me</strong>()                                    </a></li>
+        <li><a href="" class="function" ng-click="insert('trigger.my(property)')"><strong>trigger.my</strong>(property)                            </a></li>
 
-<li class="divider"></li>
+        <li class="divider"></li>
 
-<li><a href="" class="function" ng-click="insert('shard()                                     ')">   <strong>shard         </strong>()                                    </a></li>
-<li><a href="" class="function" ng-click="insert('cluster()                                   ')">   <strong>cluster       </strong>()                                    </a></li>
+        <li><a href="" class="function" ng-click="insert('shard()')"><strong>shard</strong>()                                    </a></li>
+        <li><a href="" class="function" ng-click="insert('cluster()')"><strong>cluster</strong>()                                    </a></li>
 
 
       </ul>
@@ -223,9 +223,150 @@ writing-mode: lr-tb;
 
 </div>
 
-<div class="form-group" ng-show="edit">
+<div ng-show="edit">
   <!-- <textarea rows="10" type="text" class="form-control code" ng-model="ngModel"></textarea>	 -->
-  <textarea></textarea>
+  <div class="form-group col-sm-10">
+    <textarea></textarea>  
+  </div>
+
+  <div class="form-group col-sm-2">
+
+
+
+
+<!-- Single button -->
+<div class="btn-group btn-group-justified" role="group" aria-label="">
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      My
+    </button>
+    <ul class="dropdown-menu" role="menu">
+
+<li><a href="" class="function" ng-click="insert('me()')"><strong>me</strong>()                                    </a></li>
+<li><a href="" class="function" ng-click="insert('my(property, value)')"><strong>my</strong>(property, value)                     </a></li>
+<li><a href="" class="function" ng-click="insert('my.ts(property, vector)')"><strong>my.ts</strong>(property, vector)                    </a></li>
+<li><a href="" class="function" ng-click="insert('my.tree(property)')"><strong>my.tree</strong>(property)                            </a></li>
+
+    </ul>
+  </div>
+
+</div>
+
+
+
+
+<!-- Single button -->
+<div class="btn-group btn-group-justified" role="group" aria-label="">
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      Docs
+    </button>
+    <ul class="dropdown-menu" role="menu">
+
+<li><a href="" class="function" ng-click="insert('v(property, id, collection)')"><strong>v</strong>(property, id, collection)            </a></li>
+<li><a href="" class="function" ng-click="insert('doc(id, collection)')"><strong>doc</strong>(id, collection)                      </a></li>
+<li><a href="" class="function" ng-click="insert('docs(tags, collection)')"><strong>docs</strong>(tags, collection)                    </a></li>
+
+    </ul>
+  </div>
+
+</div>
+
+
+<!-- Single button -->
+<div class="btn-group btn-group-justified" role="group" aria-label="">
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      TS
+    </button>
+    <ul class="dropdown-menu" role="menu">
+
+<li><a href="" class="function" ng-click="insert('ts(property, id, collection)')"><strong>ts</strong>(property, id, collection)            </a></li>
+<li><a href="" class="function" ng-click="insert('ts.new(base, interval, vector)')"><strong>ts.new</strong>(base, interval, vector)              </a></li>
+<li><a href="" class="function" ng-click="insert('ts.save(vector, property, id, collection)')"><strong>ts.save</strong>(vector, property, id, collection)    </a></li>
+<li><a href="" class="function" ng-click="insert('ts.sum(tags, property, collection)')"><strong>ts.sum</strong>(tags, property, collection)          </a></li>
+
+    </ul>
+  </div>
+
+</div>
+
+
+
+
+<!-- Single button -->
+<div class="btn-group btn-group-justified" role="group" aria-label="">
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      Trigger
+    </button>
+    <ul class="dropdown-menu" role="menu">
+
+<li><a href="" class="function" ng-click="insert('trigger.me()')"><strong>trigger.me</strong>()                                    </a></li>
+<li><a href="" class="function" ng-click="insert('trigger.my(property)')"><strong>trigger.my</strong>(property)                            </a></li>
+
+    </ul>
+  </div>
+
+</div>
+
+
+
+
+
+
+<!-- Single button -->
+<div class="btn-group btn-group-justified" role="group" aria-label="">
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      DB
+    </button>
+    <ul class="dropdown-menu" role="menu">
+
+<li><a href="" class="function" ng-click="insert('shard()')"><strong>shard</strong>()                                    </a></li>
+<li><a href="" class="function" ng-click="insert('cluster()')"><strong>cluster</strong>()                                    </a></li>
+
+    </ul>
+  </div>
+
+</div>
+
+
+
+
+
+<!-- Single button -->
+<div class="btn-group btn-group-justified" role="group" aria-label="">
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      R
+    </button>
+    <ul class="dropdown-menu" role="menu">
+
+<li><a href="" class="function" ng-click="insert('# comment line\n')"><strong>#</strong> comment line</a></li>
+<li><a href="" class="function" ng-click="insert('var <- 100;')"><strong>var</strong> &lt;- 100</a></li>
+<li><a href="" class="function" ng-click="insert('var <- c(1,2,3);')"><strong>var</strong> &lt;- c(1,2,3)</a></li>
+<li><a href="" class="function" ng-click="insert('for(i in 1:100){\n  # code here\n}')"><strong>for</strong>(i in 1:100){ ... }</a></li>
+<li><a href="" class="function" ng-click="insert('print(\'hello\');\n')"><strong>print</strong>('hello')</a></li>
+<li><a href="" class="function" ng-click="insert('f <- function(x, y){\n  return(x * y);\n}\nn <- f(3, 5)\n')"><strong>f &lt;- function</strong>(x, y){ ... }</a></li>
+
+    </ul>
+  </div>
+
+</div>
+
+
+
+
+
+  </div>
+
 </div>    
 
 <!-- {{ngModel}} -->

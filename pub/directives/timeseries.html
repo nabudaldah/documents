@@ -40,11 +40,11 @@
        <span class="glyphicon glyphicon-pencil"></span>
     </button>
 
-    <a class="btn btn-default" href="/v1/{{collection}}/{{id}}/timeseries/{{timeseries}}/csv" target="new">
+    <a class="btn btn-default" href="/api/{{collection}}/{{id}}/timeseries/{{timeseries}}/csv" target="new">
       CSV
     </a>
 
-    <a class="btn btn-default" href="/v1/{{collection}}/{{id}}/timeseries/{{timeseries}}/excel?timezone={{timezone}}&period={{unitCode}}{{offset>=0?'+':''}}{{offset}}" target="new">
+    <a class="btn btn-default" href="/api/{{collection}}/{{id}}/timeseries/{{timeseries}}/excel?timezone={{timezone}}&period={{unitCode}}{{offset>=0?'+':''}}{{offset}}" target="new">
       <img src="/images/xls.png" width="16" height="16"/>
     </a>
 

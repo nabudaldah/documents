@@ -141,31 +141,29 @@ if(cluster.isWorker){
     app = express();
 
     /* Log all API requests */
-    app.use(function (req, res, next) {
-      stdout(req.ip + " " + req.method + " " + req.path);
-      next();
-    })
+    app.use(function (req, res, next) { stdout(req.ip + " " + req.method + " " + req.path); next(); });
 
     /* Express modules */
     // Credits: http://stackoverflow.com/a/12497793
-    app.use(function(req, res, next){
-      if (req.is('text/*')) {
-        req.text = '';
-        req.setEncoding('utf8');
-        req.on('data', function(chunk){ req.text += chunk; });
-        req.on('end', next);
-      } else {
-        next();
-      }
-    });
+    // app.use(function(req, res, next){
+    //   if (req.is('text/*')) {
+    //     req.text = '';
+    //     req.setEncoding('utf8');
+    //     req.on('data', function(chunk){ req.text += chunk; });
+    //     req.on('end', next);
+    //   } else {
+    //     next();
+    //   }
+    // });
 
-    app.use(helmet());
+    // app.use(helmet());
 
     // Credits: http://stackoverflow.com/questions/19917401/node-js-express-request-entity-too-large
     app.use(bodyParser.json({limit: '16mb'}));
+    app.use(bodyParser.text({ type: 'text/xml' }))
     app.use(bodyParser.urlencoded({limit: '16mb', extended: true }));
 
-    app.use(compression({threshold: 512}));
+    // app.use(compression({threshold: 512}));
     app.use(express.static(process.cwd() + '/pub'));
 
     /* MongoDB R triggers */ 
@@ -179,7 +177,7 @@ if(cluster.isWorker){
 
     var channel = client.channel('triggers');  
     channel.on('error', stderr);
-      
+    
     channel.subscribe('update', function(message) {
       // stdout(moment().format("YYYY-MM-DD HH:mm:ss.SSS") + ': mubsub: socket.io: ' + message);
       io.sockets.emit(message, 'updated');
@@ -204,56 +202,36 @@ if(cluster.isWorker){
       trigger: trigger
     }
 
-    stdout('Initializing auth API ... ');
     require(process.cwd() + '/api/auth.js')(context)
-
-    stdout('Initializing status API ... ');
     require(process.cwd() + '/api/status.js')(context)
-
-    stdout('Initializing collection API ... ');
     require(process.cwd() + '/api/collection.js')(context)
-
-    stdout('Initializing document API ... ');
     require(process.cwd() + '/api/document.js')(context)
-
-    stdout('Initializing timeseries API ...')
     require(process.cwd() + '/api/timeseries.js')(context)
-
-    stdout('Initializing timeseries CSV API ...')
+    //require(process.cwd() + '/api/soap.js')(context)
     require(process.cwd() + '/api/csv.js')(context)
-
-    stdout('Initializing timeseries Excel/TSV API ...')
     require(process.cwd() + '/api/excel.js')(context)
-
-    stdout('Initializing pivot API ... ');
     require(process.cwd() + '/api/pivot.js')(context)
+    require(process.cwd() + '/api/compute.js')(context)
+    require(process.cwd() + '/api/mapreduce.js')(context) // R-script only
+    require(process.cwd() + '/api/execute.js')(context)
+    require(process.cwd() + '/api/schedule.js')(context)
 
     // todo... text file interface using _data container of object
     // require(process.cwd() + '/api/file.js')(context)
-
     // todo... binary file interface using GridFS
     // require(process.cwd() + '/api/bfile.js')(context)
-
-    stdout('Initializing compute API ...')
-    require(process.cwd() + '/api/compute.js')(context)
-
-    stdout('Initializing mapreduce API ...')
-    require(process.cwd() + '/api/mapreduce.js')(context) // R-script only
-
-    stdout('Initializing execute API ...')
-    require(process.cwd() + '/api/execute.js')(context)
-
-    stdout('Initializing schedule API ...')
-    require(process.cwd() + '/api/schedule.js')(context)
 
     callback();
   };
 
   var appListen = function(callback) {
 
-    var server = http.createServer(app).listen(config.port, function(err){
-      if(err) callback(err);
-      stdout('App listening ... ');
+    // var server = http.createServer(app).listen(config.port, function(err){
+    var ssl = { key: fs.readFileSync(process.cwd() + '/ssl/key.pem', { encoding: 'utf-8' }), cert: fs.readFileSync(process.cwd() + '/ssl/cert.pem', { encoding: 'utf-8' }) };
+    // var server = http.createServer(app).listen(config.port, function(err){
+    var server = https.createServer(ssl, app).listen(config.port, function(err){
+      if(err) { callback(err); process.exit(); return; }
+      stdout('App listening for HTTPS connections on TCP port ' + config.port + '.');
       callback();
     });
     server.timeout = 30 * 60 * 1000; // 30min
@@ -261,15 +239,8 @@ if(cluster.isWorker){
 
   }
 
-  var selfTest = function(callback){
-    setTimeout(function(){
-      stdout('Running self tests ... NOK');
-      callback()
-    }, 100);
-  }
-
   // Load config, connect to MongoDB, then bind all api's and finally start listening...
-  async.series([ loadConfig, dbConnect, shardsConnect, apiBind, appListen, selfTest ],
+  async.series([ loadConfig, dbConnect, shardsConnect, apiBind, appListen ],
     function(err, results){ if(err) { stderr(err); process.exit(); }
   });
 

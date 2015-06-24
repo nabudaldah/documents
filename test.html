@@ -1,0 +1,264 @@
+    <section class="suite">
+      <h1>Authentication API</h1>
+      <dl>
+        <dt class="error">Sign-up</dt>
+        <dd class="error"><pre><code>var user = { username: &quot;test&quot;, name: &quot;Test User&quot;, password: &quot;test1234&quot;, email: &quot;test@test.com&quot; };
+request({ uri: baseurl + '/signup', method: 'POST', agentOptions: options, json: user }, function (error, response, body) {
+	expect(error).to.not.exists;
+	expect(response).to.exists;
+	expect(response.statusCode).to.equal(200);
+	done(error);
+    })</code></pre></dd>
+        <dd class="error">AssertionError: expected 400 to equal 200</dd>
+        <dt>Login</dt>
+        <dd><pre><code>var user = { username: &quot;test&quot;, password: &quot;test1234&quot; };
+request({ uri: baseurl + '/login', method: 'POST', agentOptions: options, json: user }, function (error, response, body) {
+	expect(error).to.not.exists;
+	expect(response).to.exists;
+	expect(response.statusCode).to.equal(200);
+	expect(response.body.token).to.exist();
+	expect(response.body.profile._id).to.equal(user.username);
+	done(error);
+    })</code></pre></dd>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>Time Series API</h1>
+      <dl>
+        <dt>Store</dt>
+        <dd><pre><code>var timeseries = { base: &quot;2015-01-01T00:00+01:00&quot;, interval: &quot;1h&quot;, vector: vector };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.not.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.equal(200);
+			done(error);
+    }
+		request({ uri: url, method: 'PUT', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Retrieve</dt>
+        <dd><pre><code>var timeseries = { base: &quot;2015-01-01T00:00+01:00&quot;, interval: &quot;1h&quot;, vector: vector };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.not.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.equal(200);
+			expect(body).to.deep.equal(timeseries);
+			done(error);
+    }
+		request({ uri: url, method: 'GET', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Retrieve Part</dt>
+        <dd><pre><code>var vector1 = [vector[0], vector[1]];
+		var timeseries = { base: &quot;2015-01-01T00:00:00+01:00&quot;, interval: &quot;1h&quot;, vector: vector1 };
+		var from = &quot;2015-01-01T00:00:00+01:00&quot;
+		var to   = &quot;2015-01-01T01:00:00+01:00&quot;
+		var url = baseurl + '/timeseries/' + id + '/timeseries' + '?from=' + encodeURIComponent(from) + '&amp;to=' + encodeURIComponent(to); // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.not.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.equal(200);
+			expect(body).to.deep.equal(timeseries);
+			done(error);
+    }
+		request({ uri: url, method: 'GET', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Pad Emptiness</dt>
+        <dd><pre><code>var vector1 = [null, null].concat(vector).concat([null, null]);
+		var timeseries = { base: &quot;2014-12-31T22:00:00+01:00&quot;, interval: &quot;1h&quot;, vector: vector1 };
+		var from = &quot;2014-12-31T22:00:00+01:00&quot;
+		var to   = &quot;2015-01-01T05:00:00+01:00&quot;
+		var url = baseurl + '/timeseries/' + id + '/timeseries' + '?from=' + encodeURIComponent(from) + '&amp;to=' + encodeURIComponent(to); // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.not.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.equal(200);
+			expect(body).to.deep.equal(timeseries);
+			done(error);
+    }
+		request({ uri: url, method: 'GET', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Overwrite</dt>
+        <dd><pre><code>var timeseries = { base: &quot;2015-01-01T03:00+01:00&quot;, interval: &quot;1h&quot;, vector: vector };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.not.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.equal(200);
+			done(error);
+    }
+		request({ uri: url, method: 'PUT', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Retrieve Again</dt>
+        <dd><pre><code>var timeseries = { base: &quot;2015-01-01T00:00+01:00&quot;, interval: &quot;1h&quot;, vector: vector.concat(vector) };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.not.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.equal(200);
+			expect(body).to.deep.equal(timeseries);
+			done(error);
+    }
+		request({ uri: url, method: 'GET', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Reject Incomplete</dt>
+        <dd><pre><code>var timeseries = { };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.not.equal(200);
+			done();
+    }
+		request({ uri: url, method: 'PUT', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Reject Base</dt>
+        <dd><pre><code>var timeseries = { base: &quot;2 september 2015 om 15 over 12&quot;, interval: &quot;1h&quot;, vector: vector };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.not.equal(200);
+			done();
+    }
+		request({ uri: url, method: 'PUT', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Reject Interval</dt>
+        <dd><pre><code>var timeseries = { base: &quot;2015-01-01T00:00+01:00&quot;, interval: &quot;2h&quot;, vector: vector };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.not.equal(200);
+			done();
+    }
+		request({ uri: url, method: 'PUT', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Reject Vector</dt>
+        <dd><pre><code>var timeseries = { base: &quot;2015-01-01T00:00+01:00&quot;, interval: &quot;1h&quot;, vector: [] };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.not.equal(200);
+			done();
+    }
+		request({ uri: url, method: 'PUT', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+        <dt>Remove</dt>
+        <dd><pre><code>var timeseries = { base: &quot;2015-01-01T00:00+01:00&quot;, interval: &quot;1h&quot;, vector: vector };
+		var url = baseurl + '/timeseries/' + id + '/timeseries'; // + '/timeseries/timeseries';
+	 	var callback = function (error, response, body) {
+			expect(error).to.not.exists;
+			expect(response).to.exists;
+			expect(response.statusCode).to.equal(200);
+			done(error);
+    }
+		request({ uri: url, method: 'DELETE', agentOptions: options, json: timeseries }, callback)</code></pre></dd>
+      </dl>
+    </section>
+    <section class="suite">
+      <h1>Timeseries Library</h1>
+      <dl>
+        <section class="suite">
+          <h1>#overlay()</h1>
+          <dl>
+            <dt>should overwrite data points at correct location in vector</dt>
+            <dd><pre><code>var ts0 = { &quot;base&quot; : &quot;2013-01-01T00:00:00+01:00&quot;, &quot;interval&quot; : &quot;1h&quot;, &quot;vector&quot; : [ 1, 1, 1, 1 ] };
+var ts1 = { &quot;base&quot; : &quot;2013-01-01T02:00:00+01:00&quot;, &quot;interval&quot; : &quot;1h&quot;, &quot;vector&quot; : [ 2, 2, 2, 2 ] };
+var ts = new Timeseries(ts0).overlay(ts1);
+ts.vector.toString().should.equal(&quot;1,1,2,2,2,2&quot;);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>#isValid()</h1>
+          <dl>
+            <dt>should test if object is valid timeseries</dt>
+            <dd><pre><code>var ts = new Timeseries({ base: '2014-01-01T00:00+01:00', interval: '15m', vector: [1,2,3,4] });
+ts.isValid().should.be.ok;</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>#length()</h1>
+          <dl>
+            <dt>should calculate correct hourly length</dt>
+            <dd><pre><code>Timeseries.prototype.length(&quot;2003-12-31T00:00+01:00&quot;, &quot;2004-01-01T00:00+01:00&quot;, &quot;1h&quot;).should.equal(25);</code></pre></dd>
+            <dt>should calculate correct hourly uneven-minute length</dt>
+            <dd><pre><code>Timeseries.prototype.length(&quot;2003-12-31T00:00+01:00&quot;, &quot;2004-01-01T23:59+01:00&quot;, &quot;1h&quot;).should.equal(48);</code></pre></dd>
+            <dt>should calculate correct zero length</dt>
+            <dd><pre><code>Timeseries.prototype.length(&quot;2004-02-01T00:00+01:00&quot;, &quot;2004-01-01T00:00+01:00&quot;, &quot;1h&quot;).should.equal(0);</code></pre></dd>
+            <dt>should calculate correct hourly uneven-minute length (2)</dt>
+            <dd><pre><code>Timeseries.prototype.length(&quot;2004-02-01T00:00+01:00&quot;, &quot;2004-02-01T23:59+01:00&quot;, &quot;1h&quot;).should.equal(24);</code></pre></dd>
+            <dt>should calculate correct 6 hourly length</dt>
+            <dd><pre><code>Timeseries.prototype.length(&quot;2014-01-01T00:00+01:00&quot;, &quot;2014-01-01T23:59+01:00&quot;, &quot;6h&quot;).should.equal(4);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>#slice()</h1>
+          <dl>
+            <dt>calculate correct slice of array</dt>
+            <dd><pre><code>var ts = new Timeseries({ id: &quot;ts&quot;, base: &quot;2014-01-01T00:00+01:00&quot;, interval: &quot;1d&quot;, vector: [1,2,3] })
+ts.slice(&quot;2013-12-31&quot;, &quot;2014-01-02&quot;).toString().should.equal(&quot;0,2&quot;);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>#roundUp()</h1>
+          <dl>
+            <dt>should correctly round up to nearest interval</dt>
+            <dd><pre><code>var base = &quot;2014-01-01T&quot; +     &quot;00:01:00&quot;    + &quot;+01:00&quot;;
+var interval = '4m';
+var date = &quot;2013-01-04T&quot; +     &quot;00:04:00&quot;    + &quot;+01:00&quot;;
+var ts = new Timeseries({base:base, interval:interval, vector:[]});
+moment(&quot;2013-01-04T00:05:00+01:00&quot;).isSame(ts.roundUp(date)).should.be.ok;</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>#roundDown()</h1>
+          <dl>
+            <dt>should correctly round down to nearest interval</dt>
+            <dd><pre><code>var base = &quot;2014-01-01T&quot; +     &quot;00:01:00&quot;    + &quot;+01:00&quot;;
+var interval = '4m';
+var date = &quot;2013-01-04T&quot; +     &quot;00:04:00&quot;    + &quot;+01:00&quot;;
+var ts = new Timeseries({base:base, interval:interval, vector:[]});
+moment(&quot;2013-01-04T00:01:00+01:00&quot;).isSame(ts.roundDown(date)).should.be.ok;</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>#toCSV()</h1>
+          <dl>
+            <dt>should export correct CSV text in 15min interval</dt>
+            <dd><pre><code>var base = &quot;2014-01-01T00:00:00+01:00&quot;;
+var interval = '15m';
+var ts = new Timeseries({base:base, interval:interval, vector:[1,2,3]});
+ts.toCSV().should.equal(&quot;2014-01-01T00:00:00+01:00,1\n2014-01-01T00:15:00+01:00,2\n2014-01-01T00:30:00+01:00,3&quot;);</code></pre></dd>
+            <dt>should export correct CSV text in hourly interval</dt>
+            <dd><pre><code>var base = &quot;2014-01-01T00:00:00+01:00&quot;;
+var interval = '1h';
+var ts = new Timeseries({base:base, interval:interval, vector:[1,2,3]});
+ts.toCSV().should.equal(&quot;2014-01-01T00:00:00+01:00,1\n2014-01-01T01:00:00+01:00,2\n2014-01-01T02:00:00+01:00,3&quot;);</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>#reconstruct()</h1>
+          <dl>
+            <dt>should reconstruct timeseries vector from all changes</dt>
+            <dd><pre><code>var ts0 = new Timeseries({
+				base: &quot;2015-01-01T00:00+01:00&quot;,
+				interval: &quot;15m&quot;,
+				vector: []
+			});
+			ts0.change({ base: &quot;2015-01-01T00:00+01:00&quot;, interval: &quot;1m&quot;, vector: [ 0,  1,  2,  3,  4 ] });
+			ts0.change({ base: &quot;2015-01-01T00:05+01:00&quot;, interval: &quot;1m&quot;, vector: [ 5,  6,  7,  8,  9 ] });
+			ts0.change({ base: &quot;2015-01-01T00:10+01:00&quot;, interval: &quot;1m&quot;, vector: [10, 11, 12, 13, 14 ] });
+			ts0.reconstruct()
+			moment(ts0.base).isSame('2015-01-01T00:00+01:00').should.be.ok;
+			ts0.interval.should.equal('1m')
+			ts0.vector.join(',').should.equal([ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 ].join(','));</code></pre></dd>
+          </dl>
+        </section>
+        <section class="suite">
+          <h1>#pad()</h1>
+          <dl>
+            <dt>should padd timeseries with null value over a period</dt>
+            <dd><pre><code>var ts0 = new Timeseries({
+				base: &quot;2015-01-01T00:00+01:00&quot;,
+				interval: &quot;1h&quot;,
+				vector: [1,2,3]
+			});
+			var ts1 = ts0.pad(&quot;2014-12-31T22:00+01:00&quot;, &quot;2015-01-01T05:00+01:00&quot;)
+			expect(ts1.vector).to.deep.equal([NaN, NaN, 1, 2, 3, NaN, NaN]);
+			expect(ts1.vector.length).to.equal(7);</code></pre></dd>
+          </dl>
+        </section>
+      </dl>
+    </section>

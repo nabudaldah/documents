@@ -8,6 +8,8 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
+  stdout('Initializing schedule API ...')
+
   /* Scheduler */
   console.log('Loading scheduler...');
   var schedule = require('node-schedule');
@@ -62,7 +64,7 @@ module.exports = function(context){
         console.log('schedule.js: scheduling: cron ' + repeat + ' doing ' + reference);
         var job = schedule.scheduleJob(repeat, function(){
           // Execute via API
-          // /v1/:collection/:id/execute/:script
+          // /api/:collection/:id/execute/:script
           var execute = reference.split('/')[0] + '/' + reference.split('/')[1] + '/execute/' + reference.split('/')[2];
           console.log('executing "' + execute + '" ...');
 
@@ -157,6 +159,8 @@ module.exports = function(context){
 
 	    var javascript = data[script];
 	    var context = {
+	    	host:       config.db.host,
+	    	port:       config.db.port,
 	    	database:   config.db.database,
 	    	collection: collection,
 	    	id:         id,

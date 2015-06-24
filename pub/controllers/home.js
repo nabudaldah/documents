@@ -1,4 +1,4 @@
-ctrl.controller('dashboard',
+ctrl.controller('home',
   ['$scope', '$routeParams', '$http', '$location', '$window', 'socket', '$timeout', 'messages',
   function ($scope, $routeParams, $http, $location, $window, socket, $timeout, messages) {
 

@@ -8,6 +8,8 @@ module.exports = function(context){
   var channel  = context.channel;
   var trigger  = context.trigger;
 
+  stdout('Initializing pivot API ... ');
+
   var sqlite3 = require('sqlite3').verbose();
   var pivot   = require('../lib/pivot.js');
   var async   = require('async');
@@ -22,7 +24,7 @@ module.exports = function(context){
   }
 
   /* Update pivot table */
-  app.get('/v1/:collection/pivot-update', function(req, res){
+  app.get('/api/:collection/pivot-update', function(req, res){
     var collection = req.params.collection;
     pivot.update(config.db.database, collection, config.sqlite.database, function(err, results){
       if(err) { res.status(400).send(error('Failed to save update pivot table')); return; }
@@ -31,7 +33,7 @@ module.exports = function(context){
   });
 
   /* Query pivot table */
-  app.get('/v1/:collection/pivot', function (req, res) {
+  app.get('/api/:collection/pivot', function (req, res) {
 
     // http://localhost/api/pivot/WorldBank?row=Region&column=Year&measure=SUM(GDP)&filter=Region='Europe',Year>2003
     var table      = req.params.collection;

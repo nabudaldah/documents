@@ -11,7 +11,7 @@ module.exports = function(context){
   // Add later: encoding (base64 or utf8)
 
   /* Get file */
-  app.get('/v1/:collection/:id/file/:file', function (req, res) {
+  app.get('/api/:collection/:id/file/:file', function (req, res) {
 
     var collection = db.collection(req.params.collection);
     var projection = {};
@@ -31,7 +31,7 @@ module.exports = function(context){
   });
 
   /* Put file */
-  app.post('/v1/:collection/:id/file/:file', function (req, res) {
+  app.post('/api/:collection/:id/file/:file', function (req, res) {
 
     var collection = db.collection(req.params.collection);
     var mongoUpdate = {};
