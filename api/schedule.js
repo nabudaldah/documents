@@ -107,7 +107,7 @@ module.exports = function(context){
 	var request = require('request');
 	var xmldoc  = require('xmldoc');
 	var mongo   = require('mongojs');
-	var edi     = require(__dirname + '/../lib/EDI.js');
+	var edi     = require('edi');
 	var Timeseries = require(__dirname + '/../lib/Timeseries.js');
 
 	var executeJavascriptContext = fs.readFileSync(__dirname + '/../lib/context.js', { encoding : 'utf8' });

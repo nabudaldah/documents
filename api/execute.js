@@ -23,7 +23,7 @@ module.exports = function(context){
   // var mongodb = require('mongodb'); TODO TODO TODO
   // var mongo  = mongodb.MongoClient; TODO TODO TODO
 
-	var EDI     = require(__dirname + '/../lib/EDI.js');
+	var EDI     = require('edi');
 	var Timeseries = require(__dirname + '/../lib/Timeseries.js');
 
 	var executeJavascriptContext = fs.readFileSync(__dirname + '/../lib/context.js', { encoding : 'utf8' });

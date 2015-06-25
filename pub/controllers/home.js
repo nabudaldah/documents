@@ -2,6 +2,9 @@ ctrl.controller('home',
   ['$scope', '$routeParams', '$http', '$location', '$window', 'socket', '$timeout', 'messages',
   function ($scope, $routeParams, $http, $location, $window, socket, $timeout, messages) {
 
+    $location.path('/' + $scope.user._id);
+    console.log($scope.user._id)
+
     $scope.N     = 100;
     $scope.edit  = true;
     $scope.items = [];

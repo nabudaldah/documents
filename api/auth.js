@@ -150,26 +150,26 @@ module.exports = function(context){
       return;
     }
 
-    // Users in this multi-tenant system are only allowed to access timeseries collection 
-    if(req.params.collection != 'timeseries') {
-      console.error('Denied: Non-timeseries collection');
-      res.status(400).send('Denied: Non-timeseries collection')
-      return;
-    }
-
-    // Users are allowed to access documents having id's that start with their user name
-    if((req.params.id || '').substr(0, req.username.length) == req.username) {
-      console.error('Granted: ID begins with username');
+    // Users in this multi-tenant system are only allowed to access their own collection 
+    if(req.params.collection == req.username) {
+      console.error('Granted: Own collection');
       next();
       return;
     }
 
     // Users are allowed to access documents having id's that start with their user name
-    if(req.params.collection == 'timeseries' && (!req.params.id || req.params.id.trim() == '')) {
-      console.error('Granted: Listing timeseries');
-      next();
-      return;
-    }
+    // if((req.params.id || '').substr(0, req.username.length) == req.username) {
+    //   console.error('Granted: ID begins with username');
+    //   next();
+    //   return;
+    // }
+
+    // Users are allowed to access documents having id's that start with their user name
+    // if(req.params.collection == 'timeseries' && (!req.params.id || req.params.id.trim() == '')) {
+    //   console.error('Granted: Listing timeseries');
+    //   next();
+    //   return;
+    // }
 
     res.status(400).send('Denied: End');
     console.error('Denied: End')
