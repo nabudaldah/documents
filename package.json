@@ -12,6 +12,7 @@
     "cheerio": "^0.18.0",
     "compression": "^1.4.0",
     "computer": "^1.0.0",
+    "edi": "^1.0.0",
     "express": "^4.11.2",
     "express-json": "^1.0.0",
     "express-jwt": "^1.0.0",
