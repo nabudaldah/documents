@@ -34,8 +34,6 @@ if(cluster.isWorker){
   var assert      = require('assert');
 
   /* Express.io */
-  var http        = require('http');
-  var https       = require('https');
   var express     = require('express');
   var helmet      = require('helmet');
   var bodyParser  = require('body-parser');
@@ -60,6 +58,8 @@ if(cluster.isWorker){
   }
 
   var checkConfig = function(callback){
+    assert(config.http, 'HTTP port should be configured in config.json.');
+    assert(config.https, 'HTTPS port should be configured in config.json.');
     assert(config.db, 'Mongo should be configured in config.json.');
     assert(config.db.database, 'A Mongo database should be configured in config.json.');
     assert(config.db && config.db.database, 'Mongo should be configured in config.json for Mubsub.');
@@ -140,6 +140,9 @@ if(cluster.isWorker){
     stdout('Initializing Express.io app...');
     app = express();
 
+    // gzip all data
+    app.use(compression());
+
     /* Log all API requests */
     app.use(function (req, res, next) { stdout(req.ip + " " + req.method + " " + req.path); next(); });
 
@@ -162,8 +165,6 @@ if(cluster.isWorker){
     app.use(bodyParser.json({limit: '16mb'}));
     app.use(bodyParser.text({ type: 'text/xml' }))
     app.use(bodyParser.urlencoded({limit: '16mb', extended: true }));
-
-    // app.use(compression({threshold: 512}));
     app.use(express.static(process.cwd() + '/pub'));
 
     /* MongoDB R triggers */ 
@@ -226,12 +227,26 @@ if(cluster.isWorker){
 
   var appListen = function(callback) {
 
-    // var server = http.createServer(app).listen(config.port, function(err){
-    var ssl = { key: fs.readFileSync(process.cwd() + '/ssl/key.pem', { encoding: 'utf-8' }), cert: fs.readFileSync(process.cwd() + '/ssl/cert.pem', { encoding: 'utf-8' }) };
-    // var server = http.createServer(app).listen(config.port, function(err){
-    var server = https.createServer(ssl, app).listen(config.port, function(err){
+    // Credits: http://stackoverflow.com/a/23975955/3514414
+    // Redirect from http port 80 to https
+    var http = require('http');
+    http.createServer(function (req, res) {
+        res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+        res.end();
+    }).listen(config.http);
+    stdout('App redirecting HTTP connections on TCP port ' + config.https + ' to HTTPS URL.');
+
+    // Credits: http://qugstart.com/blog/node-js/install-comodo-positivessl-certificate-with-node-js/
+    var options = {
+      ca:   fs.readFileSync(config.ssl.ca,   { encoding: 'utf-8' }),
+      key:  fs.readFileSync(config.ssl.key,  { encoding: 'utf-8' }),
+      cert: fs.readFileSync(config.ssl.crt,  { encoding: 'utf-8' })
+    };
+
+    var https  = require('https');
+    var server = https.createServer(options, app).listen(config.https, function(err){
       if(err) { callback(err); process.exit(); return; }
-      stdout('App listening for HTTPS connections on TCP port ' + config.port + '.');
+      stdout('App listening for HTTPS connections on TCP port ' + config.https + '.');
       callback();
     });
     server.timeout = 30 * 60 * 1000; // 30min
