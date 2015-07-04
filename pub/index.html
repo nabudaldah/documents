@@ -115,74 +115,6 @@
   <script src="/controllers/pivot.js"></script>
   <script src="/controllers/raw.js"></script>
 
-
-</head>
-
-<style>
-
-  #menu {
-    /*background-color: #428bca;*/
-  }
-
-  body {
-    padding-bottom: 80px;
-  }
-</style>
-
-
-<body ng-controller="index">
-
-  <!-- Top menu -->
-  <nav id="menu" class="navbar navbar-default navbar-fixed-bottom" ng-show="authenticated()">
-    <div class="container-fluid">
-
-      <!-- Brand and toggle get grouped for better mobile display -->
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-      </div>
-
-      <!-- Collect the nav links, forms, and other content for toggling -->
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-
-
-        <form class="navbar-form navbar-right" role="form">
-
-          <mc-messages></mc-messages>  
-
-          <!-- Single button -->
-          <div class="btn-group dropup">
-            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-              <span class="glyphicon glyphicon-user"></span>
-            </button>
-            <ul class="dropdown-menu" role="menu">
-              
-
-
-              <li ng-repeat="star in stars"><a href="/#/{{star}}"><span class="glyphicon glyphicon-star"></span> &nbsp; {{star}}</a></li>
-
-              <li ng-if="stars.length" class="divider"></li>
-              
-              <li><a href="/#/home"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
-              <li><a href="/#/users/{{user._id}}"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
-              
-              <li class="divider"></li>
-
-              <li><a href="" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> &nbsp; Log off</a></li>
-            </ul>
-          </div>
-
-          
-        </form>
-
-      </div><!-- /.navbar-collapse -->
-    </div>
-  </nav>
-
   <style>
     #login {
       -webkit-animation-duration: 0.5s;
@@ -193,6 +125,45 @@
       /*-moz-animation-iteration-count: infinite;*/
     }
   </style>
+</head>
+
+
+<body ng-controller="index" style="margin-top: 100px">
+
+  <!-- Top menu -->
+  <nav id="menu" class="navbar navbar-default navbar-inverse navbar-fixed-top" ng-show="authenticated()" style="border-bottom: 5px solid #337ab7; padding: 10px">
+    <div class="container">
+
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="" style="color: white">DATABOX</a>
+        <p class="navbar-text">Signed in as {{user.name}}</p>
+      </div>
+
+      <ul class="nav navbar-nav navbar-right">
+        <li class="dropdown">
+          <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
+          <ul class="dropdown-menu">
+
+            <li ng-repeat="star in stars"><a href="/#/{{star}}"><span class="glyphicon glyphicon-star"></span> &nbsp; {{star}}</a></li>
+            <li ng-if="stars.length" role="separator" class="divider"></li>
+            <li><a href="/#/home"><span class="glyphicon glyphicon-user"></span> &nbsp; {{user.name}}</a></li>
+            <li><a href="/#/users/{{user._id}}"><span class="glyphicon glyphicon-cog"></span> &nbsp; Settings</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="" ng-click="logout()"><span class="glyphicon glyphicon-off"></span> &nbsp; Log off</a></li>
+
+          </ul>
+        </li>
+      </ul>
+
+    </div>
+  </nav>
 
   <div ng-show="!authenticated()" class="col-sm-6 col-sm-offset-3" style="margin-top: 10%" id="login">
 
@@ -287,7 +258,7 @@
   </div>  
 
 
-  <div id="view" ng-if="authenticated()">
+  <div id="view" ng-if="authenticated()" class="container">
     <div ng-view></div>
   </div>
 

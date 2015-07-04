@@ -17,6 +17,7 @@ app.config(['$routeProvider',
   function($routeProvider) {
 
   $routeProvider
+    .when('/',                          { templateUrl: '/views/home.html',  controller: 'home' })
     .when('/home',                      { templateUrl: '/views/home.html',  controller: 'home' })
     .when('/:collection',               { templateUrl: '/views/list.html',  controller: 'list' })
     .when('/:collection/pivot',         { templateUrl: '/views/pivot.html', controller: 'pivot'})

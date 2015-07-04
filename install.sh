@@ -31,8 +31,8 @@ cd /opt/documents
 npm install bower -g
 npm install forever -g
 
-Rscript -e "install.packages('rmongodb', repos='http://cran.rstudio.com/', dependencies=T)"
-Rscript -e "install.packages('xts',      repos='http://cran.rstudio.com/', dependencies=T)"
+Rscript -e "install.packages('rmongodb', repos='http://cran-mirror.cs.uu.nl/')"
+Rscript -e "install.packages('xts',      repos='http://cran-mirror.cs.uu.nl/')"
 
 service mongodb restart
 
