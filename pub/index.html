@@ -133,16 +133,20 @@
   <!-- Top menu -->
   <nav id="menu" class="navbar navbar-default navbar-inverse navbar-fixed-top" ng-show="authenticated()" style="border-bottom: 5px solid #337ab7; padding: 10px">
     <div class="container">
-
+      <img src="/images/cube.png" width="50" height="50" style="float: left; margin-right: 10px"/>
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
+
         <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
           <span class="sr-only">Toggle navigation</span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="" style="color: white">DATABOX</a>
+
+        <a class="navbar-brand" href="" style="color: white" >
+          DATABOX
+        </a>
         <p class="navbar-text">Signed in as {{user.name}}</p>
       </div>
 
@@ -170,6 +174,7 @@
     <form class="form" ng-hide="signinup">
 
       <div class="form-group">
+
         <h2 class="col-sm-12" style="margin-bottom: 0.7em">Please sign in <small> ... or <button type="button" class="btn-link" ng-click="signinup=true">sign up now!</button></small></h2>
       </div>
       <div class="form-group">
@@ -189,7 +194,7 @@
         <div class="col-sm-12">
           <hr/>
           <strong ng-show="error">{{error}}</strong>
-          <p class="text-muted">Copyright &copy; 2015, DataBoxApp</p>
+          <p class="text-muted" style="margin-top: 20px"><img src="/images/cube.png" width="50" height="50" style=""/> DataBox &copy; 2015</p>
         </div>
       </div>
 
@@ -198,47 +203,47 @@
     <form class="form-horizontal" ng-show="signinup">
 
       <div class="form-group">
-        <h2 class="col-sm-12" style="margin-bottom: 0.7em">Please fill in <small> ... or <button type="button" class="btn-link" ng-click="signinup=false">just sign in!</button></small></h2>
+        <h2 class="col-sm-12" style="margin-bottom: 0.7em">Let's sign you up <small> ... or <button type="button" class="btn-link" ng-click="signinup=false">just sign in!</button></small></h2>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-4 control-label">Username:</label>
-        <div class="col-sm-8">
+        <label class="col-sm-3 control-label">Username:</label>
+        <div class="col-sm-9">
           <input ng-model="username" ng-disabled="authenticating" type="token" class="form-control" id="inputUsername" placeholder="username" required>          
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-4 control-label">Full name:</label>
-        <div class="col-sm-8">
+        <label class="col-sm-3 control-label">Full name:</label>
+        <div class="col-sm-9">
           <input ng-model="name" ng-disabled="authenticating" type="text" class="form-control" id="inputUsername" placeholder="full-name" required autofocus>    
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-4 control-label">Email:</label>
-        <div class="col-sm-8">
+        <label class="col-sm-3 control-label">Email:</label>
+        <div class="col-sm-9">
           <input ng-model="email" ng-disabled="authenticating" type="email" class="form-control" id="inputUsername" placeholder="email" required>          
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-4 control-label">Password:</label>
-        <div class="col-sm-8">
+        <label class="col-sm-3 control-label">Password:</label>
+        <div class="col-sm-9">
           <input ng-model="password" ng-disabled="authenticating" type="password" class="form-control" id="inputUsername" placeholder="password" required>          
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-4 control-label">Repeat:</label>
-        <div class="col-sm-8">
+        <label class="col-sm-3 control-label">Repeat:</label>
+        <div class="col-sm-9">
           <input ng-model="password1" ng-disabled="authenticating" type="password" class="form-control" id="inputUsername" placeholder="password" required>          
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-4 control-label"></label>
-        <div class="col-sm-8">
+        <label class="col-sm-3 control-label"></label>
+        <div class="col-sm-9">
           <button ng-click="signup()" ng-show="!authenticating" ng-disabled="!username || !password || !password1 || password != password1 || authenticating" type="submit" value="Login" class="pull-right btn btn-success">Sign up</button>
           <button ng-show="authenticating" type="button" class="pull-right btn btn-default"><img src="/images/loading.gif"/></button>
         </div>
@@ -248,7 +253,7 @@
         <div class="col-sm-12">
           <hr/>
           <strong ng-show="error">{{error}}</strong>
-          <p class="text-muted">Copyright &copy; 2015, DataBoxApp</p>
+          <p class="text-muted" style="margin-top: 20px"><img src="/images/cube.png" width="50" height="50" style=""/> DataBox &copy; 2015</p>
         </div>
       </div>
 
