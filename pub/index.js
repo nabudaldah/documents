@@ -12,9 +12,9 @@ var app = angular.module('app', [
 var ctrl = angular.module('ctrl', []);
 
 /* Routes (Views and Controllers) */
-app.config(['$routeProvider',
+app.config(['$routeProvider', '$locationProvider',
 
-  function($routeProvider) {
+  function($routeProvider, $locationProvider) {
 
   $routeProvider
     .when('/',                          { templateUrl: '/views/home.html',  controller: 'home' })
@@ -27,6 +27,8 @@ app.config(['$routeProvider',
     .when('/:collection/:id/raw',       { templateUrl: '/views/raw.html' ,  controller: 'raw'  })
 
     .otherwise({ redirectTo: '/home'});
+
+  $locationProvider.html5Mode(true);
 
 }]);
 
