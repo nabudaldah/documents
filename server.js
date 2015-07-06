@@ -222,6 +222,12 @@ if(cluster.isWorker){
     // todo... binary file interface using GridFS
     // require(process.cwd() + '/api/bfile.js')(context)
 
+    // Credits: http://stackoverflow.com/a/18214539/3514414
+    app.use(function(req, res) {
+      console.log('html5route')
+      res.sendfile(process.cwd() + '/pub/index.html');
+    });
+
     callback();
   };
 
