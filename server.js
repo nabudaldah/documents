@@ -65,6 +65,7 @@ if(cluster.isWorker){
     assert(config.db.database, 'A Mongo database should be configured in config.json.');
     assert(config.db && config.db.database, 'Mongo should be configured in config.json for Mubsub.');
     assert(config.admin && config.collections, 'Default users and collections should be in config.json.');    
+    assert(config.tmp, 'Temporary folder should be configured in config.json.');
   }
 
   // Shared database client binding

@@ -15,7 +15,7 @@ module.exports = function(context){
   var path      = require('path');
   var fs        = require('fs-extra');
   var uuid      = require('node-uuid');
-  var parseXlsx = require('excel');
+  var XLSX      = require('xlsx')
 
   // Credits: http://stackoverflow.com/a/23843746/3514414
   app.post('/api/:collection/upload', function (req, res, next) {
@@ -33,11 +33,12 @@ module.exports = function(context){
       fstream.on('close', function () {    
         console.log("Upload Finished of " + filename + ' into ' + target);              
 
-        parseXlsx(target, function(err, data) {
-          if(err) throw err;
-          console.log(data);
-          res.send(data);           //where to go next
-        });
+        var wb = XLSX.readFile(target);
+        var wsNames = []; for(s in wb.Sheets) wsNames.push(s);
+        var ws = wb.Sheets[wsNames[0]]
+        var json = XLSX.utils.sheet_to_json(ws)
+        console.log(json)
+        res.send(json)
 
       });
     });

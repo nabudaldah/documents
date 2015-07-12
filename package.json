@@ -14,7 +14,6 @@
     "computer": "^1.0.0",
     "connect-busboy": "0.0.2",
     "edi": "^1.0.0",
-    "excel": "^0.1.4",
     "express": "^4.11.2",
     "express-json": "^1.0.0",
     "express-jwt": "^1.0.0",
@@ -37,6 +36,7 @@
     "sqlite3": "^3.0.5",
     "thunky": "^0.1.0",
     "twix": "^0.6.2",
+    "xlsx": "^0.8.0",
     "xmldoc": "^0.3.0"
   },
   "engine": "node >= 0.10.32",
