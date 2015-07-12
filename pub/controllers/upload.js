@@ -38,9 +38,10 @@ ctrl.controller('upload',
                     console.log(config.file)
                     // $scope.data = data
                     console.log(data);
-                    var columns = data[0]
+                    var columns = []
+                    for(c in data[0]) columns.push(c)
                     console.log(columns)
-                    var rows = data.slice(1).map(function(row){ var obj = {}; for(var i = 0; i < columns.length; i++) obj[columns[i]] = row[i]; return(obj) })
+                    var rows = data //.slice(1).map(function(row){ var obj = {}; for(var i = 0; i < columns.length; i++) obj[columns[i]] = row[i]; return(obj) })
                     console.log(rows)
                     $scope.data = rows
                     $scope.columns = columns
