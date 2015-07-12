@@ -71,6 +71,11 @@
   <link  href="/bower_components/json-formatter/dist/json-formatter.css" rel="stylesheet">
   <script src="/bower_components/json-formatter/dist/json-formatter.js"></script>
 
+  <!-- Support for file uploads from AngularJS -->
+  <script src="/bower_components/ng-file-upload/ng-file-upload-all.min.js"></script>
+
+  
+
   <!-- Drag & Drop support -->
   <script src="/include/drag-n-drop.js"></script>
 
@@ -114,6 +119,7 @@
   <script src="/controllers/edit.js"></script>
   <script src="/controllers/pivot.js"></script>
   <script src="/controllers/raw.js"></script>
+  <script src="/controllers/upload.js"></script>
 
   <style>
     #login {
@@ -144,7 +150,7 @@
           <span class="icon-bar"></span>
         </button>
 
-        <a class="navbar-brand" href="" style="color: white" >
+        <a class="navbar-brand" href="/home" style="color: white" >
           DATABOX
         </a>
         <p class="navbar-text">Signed in as {{user.name}}</p>

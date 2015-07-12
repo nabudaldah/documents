@@ -6,7 +6,8 @@ var app = angular.module('app', [
   'ctrl',
   'Messages',
   'jsonFormatter',
-  'ngGrid'
+  'ngGrid',
+  'ngFileUpload'
 ]);
 
 var ctrl = angular.module('ctrl', []);
@@ -17,14 +18,15 @@ app.config(['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
 
   $routeProvider
-    .when('/',                          { templateUrl: '/views/home.html',  controller: 'home' })
-    .when('/home',                      { templateUrl: '/views/home.html',  controller: 'home' })
-    .when('/:collection',               { templateUrl: '/views/list.html',  controller: 'list' })
-    .when('/:collection/pivot',         { templateUrl: '/views/pivot.html', controller: 'pivot'})
-    .when('/:collection/new',           { templateUrl: '/views/edit.html',  controller: 'edit' })
-    .when('/:collection/new/:template', { templateUrl: '/views/edit.html',  controller: 'edit' })
-    .when('/:collection/:id',           { templateUrl: '/views/edit.html',  controller: 'edit' })
-    .when('/:collection/:id/raw',       { templateUrl: '/views/raw.html' ,  controller: 'raw'  })
+    .when('/',                          { templateUrl: '/views/home.html',   controller: 'home'   })
+    .when('/home',                      { templateUrl: '/views/home.html',   controller: 'home'   })
+    .when('/:collection',               { templateUrl: '/views/list.html',   controller: 'list'   })
+    .when('/:collection/pivot',         { templateUrl: '/views/pivot.html',  controller: 'pivot'  })
+    .when('/:collection/new',           { templateUrl: '/views/edit.html',   controller: 'edit'   })
+    .when('/:collection/new/:template', { templateUrl: '/views/edit.html',   controller: 'edit'   })
+    .when('/:collection/upload',        { templateUrl: '/views/upload.html', controller: 'upload' })
+    .when('/:collection/:id',           { templateUrl: '/views/edit.html',   controller: 'edit'   })
+    .when('/:collection/:id/raw',       { templateUrl: '/views/raw.html' ,   controller: 'raw'    })
 
     .otherwise({ redirectTo: '/home'});
 
@@ -37,6 +39,17 @@ app.config(['$routeProvider', '$locationProvider',
 app.filter('fromNow', function() {
   return function(date) {
     return moment(date).fromNow();
+  }
+});
+
+// Credits: https://gist.github.com/thomseddon/3511330
+app.filter('bytes', function() {
+  return function(bytes, precision) {
+    if (isNaN(parseFloat(bytes)) || !isFinite(bytes)) return '-';
+    if (typeof precision === 'undefined') precision = 1;
+    var units = ['bytes', 'kB', 'MB', 'GB', 'TB', 'PB'],
+      number = Math.floor(Math.log(bytes) / Math.log(1024));
+    return (bytes / Math.pow(1024, Math.floor(number))).toFixed(precision) +  ' ' + units[number];
   }
 });
 
@@ -207,3 +220,4 @@ ctrl.controller('index',
   $('[data-toggle="popover"]').popover()
 
 }]);
+

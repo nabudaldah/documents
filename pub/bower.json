@@ -31,6 +31,7 @@
     "jquery-ui": "~1.11.2",
     "underscore": "~1.7.0",
     "ui-grid": "~2.0.14",
-    "ng-grid": "~2.0.14"
+    "ng-grid": "~2.0.14",
+    "ng-file-upload": "~5.0.9"
   }
 }

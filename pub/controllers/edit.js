@@ -37,8 +37,10 @@ ctrl.controller('edit',
 
     $scope.editing = true;
     $scope.doc = {
-      _id: $scope.collection + '-' + uuid().split('-')[0],
-      _tags: [$scope.collection],
+      // _id: $scope.collection + '-' + uuid().split('-')[0],
+      _id: uuid().split('-')[0],
+      // _tags: [$scope.collection],
+      _tags: ['by:' + $scope.user._id, 'date:' + moment().format('YYYY-MM-DD'), 'time:' + moment().format('HH:mm')],
       _template: []
     }
     
@@ -50,7 +52,7 @@ ctrl.controller('edit',
           templateObject._tags.splice(index, 1);
         }
         $scope.doc = templateObject;
-        $scope.doc._id = $scope.collection + '-' + uuid().split('-')[0],
+        $scope.doc._id = uuid().split('-')[0],
         $scope.ready= true;
       }).error(function(error){
         $scope.ready = true;

@@ -38,6 +38,7 @@ if(cluster.isWorker){
   var helmet      = require('helmet');
   var bodyParser  = require('body-parser');
   var compression = require('compression');
+  var busboy      = require('connect-busboy');
 
   /* Socket.io helper (communication between R and app via MongoDB) */
   var mubsub      = require('mubsub');
@@ -161,6 +162,9 @@ if(cluster.isWorker){
 
     // app.use(helmet());
 
+    // For file uploads
+    app.use(busboy());
+
     // Credits: http://stackoverflow.com/questions/19917401/node-js-express-request-entity-too-large
     app.use(bodyParser.json({limit: '16mb'}));
     app.use(bodyParser.text({ type: 'text/xml' }))
@@ -204,18 +208,20 @@ if(cluster.isWorker){
     }
 
     require(process.cwd() + '/api/auth.js')(context)
-    require(process.cwd() + '/api/status.js')(context)
     require(process.cwd() + '/api/collection.js')(context)
+    require(process.cwd() + '/api/upload.js')(context)
     require(process.cwd() + '/api/document.js')(context)
     require(process.cwd() + '/api/timeseries.js')(context)
-    //require(process.cwd() + '/api/soap.js')(context)
-    require(process.cwd() + '/api/csv.js')(context)
-    require(process.cwd() + '/api/excel.js')(context)
-    require(process.cwd() + '/api/pivot.js')(context)
     require(process.cwd() + '/api/compute.js')(context)
-    require(process.cwd() + '/api/mapreduce.js')(context) // R-script only
     require(process.cwd() + '/api/execute.js')(context)
-    require(process.cwd() + '/api/schedule.js')(context)
+
+    // require(process.cwd() + '/api/status.js')(context)
+    //require(process.cwd() + '/api/soap.js')(context)
+    // require(process.cwd() + '/api/csv.js')(context)
+    // require(process.cwd() + '/api/excel.js')(context)
+    // require(process.cwd() + '/api/pivot.js')(context)
+    // require(process.cwd() + '/api/mapreduce.js')(context) // R-script only
+    // require(process.cwd() + '/api/schedule.js')(context)
 
     // todo... text file interface using _data container of object
     // require(process.cwd() + '/api/file.js')(context)
@@ -224,8 +230,8 @@ if(cluster.isWorker){
 
     // Credits: http://stackoverflow.com/a/18214539/3514414
     app.use(function(req, res) {
-      console.log('html5route')
-      res.sendfile(process.cwd() + '/pub/index.html');
+      stdout('Defaulting to public index.')
+      res.sendFile(process.cwd() + '/pub/index.html');
     });
 
     callback();

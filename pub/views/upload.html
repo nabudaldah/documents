@@ -1,0 +1,69 @@
+<div class="container">
+
+  <h1>Upload data <small ng-if="file">{{file.name}} ({{file.rows}} rows, {{file.columns}} columns, {{file.size | bytes}})</small></h1>
+
+  <hr/>
+
+  <button class="btn btn-primary btn-lg" ng-show="true" ng-disabled="data" ngf-select ng-model="files" >Upload &nbsp; <span class="glyphicon glyphicon-upload"></span> </button>
+
+  <button class="btn btn-danger btn-lg" ng-show="data" ng-disabled="saved" ng-click="clear()">Clear &nbsp; <span class="glyphicon glyphicon-remove"></span></button>
+
+  <button class="btn btn-success btn-lg" ng-show="data" ng-disabled="saved" ng-click="save()">Save &nbsp; <span class="glyphicon glyphicon-save"></span></button>
+
+  <button class="btn btn-danger btn-lg" ng-show="saved" ng-click="undo()">Undo &nbsp; <span class="glyphicon glyphicon-repeat"></span></button>
+
+  <button class="btn btn-success btn-lg" ng-show="saved" ng-click="accept()">Accept &nbsp; <span class="glyphicon glyphicon-ok"></span></button>
+
+  <span>{{ status }}</span>
+
+  <button type="button" class="btn btn-warning pull-right" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-info-sign"></span></button>
+
+  <hr />
+
+  <progressbar  ng-model="progress" ng-disabled="!data"></progressbar>
+
+  <hr />
+
+  <taginput ng-model="tags"></taginput>
+
+  <hr />
+
+  <style>
+    .gridStyle { height: 400px;}
+  </style>
+
+  <datatable ng-model="data" name="data"></datatable>
+
+  <hr />
+
+  <json-formatter json="data" style="font-size: small; border: 1px solid #ccc; border-radius: 4px; padding: 1em;"></json-formatter>
+
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Uploading data to DataBox</h4>
+      </div>
+      <div class="modal-body">
+        <p>To upload data from your computer to your DataBox, make sure you:</p>
+        <ol>
+          <li>Have an Excel 2010 or 2013 sheet prepared (.xlsx)</li>
+          <li>Your Excel sheet has only 1 tab (remove all others)</li>
+          <li>Your Excel sheet is 1 table of rows</li>
+          <li>The columns in your table have unique column names</li>
+          <li>Optionally have your first column contain unique ids for each row</li>
+        </ol>
+        <p>Here follows an example of a perfect upload Excel sheet:</p>
+        <p><img src="/images/upload-help.png"/></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+

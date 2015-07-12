@@ -127,52 +127,52 @@ module.exports = function(context){
     if(req.user.name) req.username = req.user.name; // Basic auth  (API)
     if(req.user._id)  req.username = req.user._id;  // Token based (web-app)
 
-    console.log('Access Control: ['+ req.username +'] trying to access collection: ['+req.params.collection+'], id: ['+req.params.id+'], operation: ['+req.params.operation+'], property: ['+req.params.property+']')
+    stdout('Access Control: '+ req.username +' trying to access collection: '+req.params.collection+', id: '+req.params.id+', operation: '+req.params.operation+', property: '+req.params.property+'')
 
     // No authorization (does not work with bearer auth yet..)
     if(!req.username){
-      console.error('Denied: No username');
+      stderr('Denied: No username');
       res.status(401).send('Denied: No username')
       return;
     }
 
     // Admin can access anything ...
     if(req.username == 'admin'){
-      console.error('Granted: Admin');
+      stdout('Granted: Admin');
       next();
       return;
     }
 
     // Users in this multi-tenant system are allowed to view their own user settings 
     if(req.params.collection == 'users' && req.params.id == req.username) {
-      console.error('Granted: Own user settings');
+      stdout('Granted: Own user settings');
       next();
       return;
     }
 
     // Users in this multi-tenant system are only allowed to access their own collection 
     if(req.params.collection == req.username) {
-      console.error('Granted: Own collection');
+      stdout('Granted: Own collection');
       next();
       return;
     }
 
     // Users are allowed to access documents having id's that start with their user name
     // if((req.params.id || '').substr(0, req.username.length) == req.username) {
-    //   console.error('Granted: ID begins with username');
+    //   stdout('Granted: ID begins with username');
     //   next();
     //   return;
     // }
 
     // Users are allowed to access documents having id's that start with their user name
     // if(req.params.collection == 'timeseries' && (!req.params.id || req.params.id.trim() == '')) {
-    //   console.error('Granted: Listing timeseries');
+    //   stdout('Granted: Listing timeseries');
     //   next();
     //   return;
     // }
 
     res.status(400).send('Denied: End');
-    console.error('Denied: End')
+    stderr('Denied: End')
   })
 
 
