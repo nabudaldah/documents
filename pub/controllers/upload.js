@@ -9,6 +9,10 @@ ctrl.controller('upload',
     $scope.reference  = $scope.collection + '/' + $scope.id;
     $scope.api        = '/api/' + $scope.reference;
 
+    // Sensible defaults
+    $scope.options = { tags: true, parse: true, trim: true }
+
+
     $scope.$watch('files', function () {
         $scope.upload($scope.files);
         console.log('watch files!')
@@ -60,13 +64,18 @@ ctrl.controller('upload',
 
         $scope.status = "Saving ..."
 
+        var isNumeric = function(str){
+            return((/^\d+$/).test(str.toString()) || (/^\d+\.\d+$/).test(str.toString()))
+        }
+
         var extractTags = function(obj){
-            var tags = JSON.parse(JSON.stringify($scope.tags));
-            tags.push(obj._id.toString())
+            var tags = [];
+            if($scope.tags) tags = JSON.parse(JSON.stringify($scope.tags));
+            // tags.push(obj._id.toString())
             for(key in obj){
-                var str = obj[key].toString().toLowerCase();
+                var str = obj[key].toString().toLowerCase().trim();
                 var strTags = str.split(/[^a-z0-9-_]/)
-                strTags.map(function(tag){ if(tag != "") tags.push(tag)})
+                strTags.map(function(tag){ if(tag != "" && tag.length > 1 && !isNumeric(tag)) tags.push(tag)})
             }
             return(_.unique(tags))
         }
@@ -75,9 +84,17 @@ ctrl.controller('upload',
         if(_.uniq($scope.data.map(function(obj){ return obj[$scope.columns[0]] })).length == $scope.data.length)
             idcolumn = true;
         var data = $scope.data.map(function(obj, k, m){
+            if($scope.options.trim) for(k in obj) obj[k] = obj[k].toString().trim();
+            if($scope.options.parse) for(k in obj) {
+                if(isNumeric(obj[k].toString())){
+                    obj[k] = parseFloat(obj[k].toString())
+                }
+            }
             if(idcolumn) obj._id = obj[$scope.columns[0]];
             else obj._id = uuid().split('-')[0];
-            obj._tags = extractTags(obj)
+            obj._tags = []
+            if($scope.tags) obj._tags = obj._tags.concat(JSON.parse(JSON.stringify($scope.tags)));
+            if($scope.options.tags) obj._tags = obj._tags.concat(extractTags(obj))
             $scope.progress = Math.ceil((k + 1) / m.length * 100)
             return(obj)
         })
@@ -101,6 +118,7 @@ ctrl.controller('upload',
         .success(function (data, status, headers, config){
             $scope.saved = true
             $scope.status = "Succesfully saved data."
+            $scope.accept()
         }).error(function (data, status, headers, config){
             $scope.saved = false
             $scope.status = "Failed to save data (!)."

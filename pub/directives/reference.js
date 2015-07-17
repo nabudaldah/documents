@@ -14,7 +14,8 @@ app.directive('reference', function ($http) {
 
     scope.search = function(){
 
-      var parts = scope.ngModel.split('/');
+      var parts = scope.ngModel?scope.ngModel.split('/'):null;
+      if(!parts) return;
 
       var collection = parts[0];
       var object     = parts[1];

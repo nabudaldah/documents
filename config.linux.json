@@ -20,9 +20,6 @@
     "me":     { "host": "127.0.0.1", "apiport": 3000, "shardport": 27017 },
     "nodes": [{ "host": "127.0.0.1", "apiport": 3000, "shardport": 27017 }]
   },
-  "sqlite": {
-    "database": "/tmp/documents.sqlite3"
-  },
   "admin": {
     "_id" : "admin",
     "name" : "Administrator",
@@ -41,5 +38,6 @@
     "_tags": [ "settings", "scheduler" ],
     "_template": [ { "type": "textarea", "name": "schedule" } ], 
     "schedule": "#\n# Scheduling scripts in crontab style (google for 'crontab'):\n#\n# [minute] [hour] [day] [month] [weekday] [collection/document/script]\n#\n\n# Run every minute\n#* * * * * documents/doc01/script01\n\n# Run every hour\n#0 * * * * documents/doc01/script01\n\n# Run every day at 14:30\n#30 14 * * * documents/doc01/script01"
-  }
+  },
+  "tmp": "c:/temp"
 }

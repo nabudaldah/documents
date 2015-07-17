@@ -211,6 +211,7 @@ if(cluster.isWorker){
     require(process.cwd() + '/api/auth.js')(context)
     require(process.cwd() + '/api/collection.js')(context)
     require(process.cwd() + '/api/upload.js')(context)
+    require(process.cwd() + '/api/pivot.js')(context)
     require(process.cwd() + '/api/document.js')(context)
     require(process.cwd() + '/api/timeseries.js')(context)
     require(process.cwd() + '/api/compute.js')(context)
@@ -220,7 +221,6 @@ if(cluster.isWorker){
     //require(process.cwd() + '/api/soap.js')(context)
     // require(process.cwd() + '/api/csv.js')(context)
     // require(process.cwd() + '/api/excel.js')(context)
-    // require(process.cwd() + '/api/pivot.js')(context)
     // require(process.cwd() + '/api/mapreduce.js')(context) // R-script only
     // require(process.cwd() + '/api/schedule.js')(context)
 

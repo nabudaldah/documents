@@ -1,86 +1,89 @@
 <style>
 
-  pivottable {
-    font-size: small;
-  }
+pivottable {
+  font-size: small;
+}
 
-  pivottable table {
-    margin: 0;
-    padding: 0;
-    font-family: inherit;
-    border-collapse: collapse;
-    border: 1px solid #eee;
-  }
+pivottable table {
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  border-collapse: collapse;
+  border: 1px solid #eee;
+}
 
-  pivottable tr:hover {
-    background-color: #eee;
-  }
+pivottable tr:hover {
+  background-color: #eee;
+}
 
-  pivottable td {
-    padding: 4pt;
-    padding-left: 16pt;
-    text-align: right;
-    border: 1px solid #eee;
-  }
+pivottable td {
+  padding: 4pt;
+  padding-left: 16pt;
+  text-align: right;
+  border: 1px solid #eee;
+}
 
-  pivottable th {
-    padding: 4pt;
-    padding-left: 16pt;
-    border: 1px solid #eee;
-  }
+pivottable th {
+  padding: 4pt;
+  padding-left: 16pt;
+  border: 1px solid #eee;
+}
 
+.watermark {
+  position: absolute;
+  top : 80px;
+  opacity: 0.25;
+  font-size: 3em;
+  width: 100%;
+  text-align: center;
+  z-index: 1000;
+}
 </style>
 
-<div class="container-fluid" style="margin: 20px;">
+<span id="angularhook"></span>
 
-  <button type="button" class="btn btn-default pull-right" ng-click="rebuild()" ng-disabled="rebuilding">
-    <span class="glyphicon glyphicon-refresh" ng-hide="rebuilding"></span>
-    <img  src="/images/loading.gif" ng-show="rebuilding"/>
-  </button>
+<div class="container-fluid">
 
-  <form class="form-inline">
-    
-    <select class="form-control" ng-change="load()" ng-model="aggregation">
-      <option>COUNT</option>
-      <option>AVG</option>
-      <option>SUM</option>
-      <option>MIN</option>
-      <option>MAX</option>
-    </select>
+  <div ui-grid="gridOptions" ui-grid-selection ui-grid-exporter class="grid">
+    <div class="watermark" ng-show="!gridOptions.data.length">Please select data</div>
+  </div>
 
-    of
+<p>
 
-    <select class="form-control" ng-change="load()" ng-model="variable" ng-disabled="!aggregation">
-        <option></option>
-      <option ng-repeat="dimension in dimensions">{{dimension}}</option>
-    </select>
+  <div class="btn-group" ng-repeat="item in group" style="margin-right: 0.5em; margin-bottom: 0.5em">
+    <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{item}} <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="" ng-click="removeGroup(item)"><strong>Remove</strong> <em>{{item}}</em></a></li>
+    </ul>
+  </div>
 
-    <span ng-show="(aggregation && variable)">
-      per
+  <div class="btn-group" ng-repeat="item in measures" style="margin-right: 0.5em; margin-bottom: 0.5em">
+    <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      <strong>{{item[0]}}</strong>({{item[1]}}) <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="" ng-click="removeMeasure(item)"><strong>Remove</strong> {{item[0]}} <em>{{item[1]}}</em></a></li>
+    </ul>
+  </div>
 
-      <select class="form-control" ng-change="load()" ng-model="row">
-        <option></option>
-        <option ng-repeat="dimension in dimensions" ng-hide="column==dimension">{{dimension}}</option>
-      </select>
-    </span>
+</p>
 
-    <span ng-show="(aggregation && variable && row)">
-      and
+  <input type="text" class="form-control" placeholder="search" ng-model="search" ng-change="filter()"></input>
+  <!-- <button draggable="true" ondragstart="drag(event)" id="{{item}}" style="display: box; width: 100%; margin-top: 0.5em" ng-repeat="item in selection" class="btn btn-primary btn-sm">{{item}}</button> -->
 
-      <select class="form-control" ng-change="load()" ng-model="column">
-        <option></option>
-        <option ng-repeat="dimension in dimensions" ng-hide="row==dimension">{{dimension}}</option>
-      </select>
+  <div class="btn-group" ng-repeat="item in selection" style="margin-top: 0.5em; margin-right: 0.5em">
+    <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      {{item}} <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu">
+      <li><a href="" ng-click="addGroup(item)"><strong>Group</strong> by <em>{{item}}</em></a></li>
+      <li role="separator" class="divider"></li>
+      <li><a href="" ng-click="addMeasure(['sum', item])"><strong>Sum</strong> over <em>{{item}}</em></a></li>
+      <li><a href="" ng-click="addMeasure(['avg', item])"><strong>Average</strong> over <em>{{item}}</em></a></li>
+    </ul>
+  </div>
 
-    </span>
-
-  </form>
-
-  <hr/>
-
-  <!-- <div class="container" style="height: 400px; width: 100%; overflow: auto;"> -->
-  <!-- <div class="container"> -->
-    <pivottable ng-model="data"></pivottable>
-  <!-- </div> -->
 
 </div>

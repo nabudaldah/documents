@@ -6,8 +6,8 @@ var app = angular.module('app', [
   'ctrl',
   'Messages',
   'jsonFormatter',
-  'ngGrid',
-  'ngFileUpload'
+  'ngFileUpload',
+  'ui.grid'
 ]);
 
 var ctrl = angular.module('ctrl', []);
@@ -18,15 +18,17 @@ app.config(['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
 
   $routeProvider
-    .when('/',                          { templateUrl: '/views/home.html',   controller: 'home'   })
-    .when('/home',                      { templateUrl: '/views/home.html',   controller: 'home'   })
-    .when('/:collection',               { templateUrl: '/views/list.html',   controller: 'list'   })
-    .when('/:collection/pivot',         { templateUrl: '/views/pivot.html',  controller: 'pivot'  })
-    .when('/:collection/new',           { templateUrl: '/views/edit.html',   controller: 'edit'   })
-    .when('/:collection/new/:template', { templateUrl: '/views/edit.html',   controller: 'edit'   })
-    .when('/:collection/upload',        { templateUrl: '/views/upload.html', controller: 'upload' })
-    .when('/:collection/:id',           { templateUrl: '/views/edit.html',   controller: 'edit'   })
-    .when('/:collection/:id/raw',       { templateUrl: '/views/raw.html' ,   controller: 'raw'    })
+    .when('/',                          { templateUrl: '/views/home.html',     controller: 'home'     })
+    .when('/home',                      { templateUrl: '/views/home.html',     controller: 'home'     })
+    .when('/:collection',               { templateUrl: '/views/list.html',     controller: 'list'     })
+    .when('/:collection/pivot',         { templateUrl: '/views/pivot.html',    controller: 'pivot'    })
+    .when('/:collection/new',           { templateUrl: '/views/edit.html',     controller: 'edit'     })
+    .when('/:collection/new/:template', { templateUrl: '/views/edit.html',     controller: 'edit'     })
+    .when('/:collection/upload',        { templateUrl: '/views/upload.html',   controller: 'upload'   })
+    .when('/:collection/automate',      { templateUrl: '/views/automate.html', controller: 'automate' })
+    .when('/:collection/share',         { templateUrl: '/views/share.html',    controller: 'share'    })
+    .when('/:collection/:id',           { templateUrl: '/views/edit.html',     controller: 'edit'     })
+    .when('/:collection/:id/raw',       { templateUrl: '/views/raw.html' ,     controller: 'raw'      })
 
     .otherwise({ redirectTo: '/home'});
 

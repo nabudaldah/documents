@@ -1,42 +1,65 @@
 <div class="container">
 
-  <h1>Upload data <small ng-if="file">{{file.name}} ({{file.rows}} rows, {{file.columns}} columns, {{file.size | bytes}})</small></h1>
+  <h1>Upload data <button type="button" class="btn btn-warning pull-right" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-info-sign"></span></button> <small ng-if="file">{{file.name}} ({{file.rows}} rows, {{file.columns}} columns, {{file.size | bytes}})</small></h1>
 
-  <hr/>
+  <progressbar ng-model="progress"></progressbar>
 
-  <button class="btn btn-primary btn-lg" ng-show="true" ng-disabled="data" ngf-select ng-model="files" >Upload &nbsp; <span class="glyphicon glyphicon-upload"></span> </button>
 
-  <button class="btn btn-danger btn-lg" ng-show="data" ng-disabled="saved" ng-click="clear()">Clear &nbsp; <span class="glyphicon glyphicon-remove"></span></button>
+  <!-- <button class="btn btn-primary btn-lg" ng-show="true" ng-disabled="data" ngf-select ng-model="files" >Upload XLSX sheet &nbsp; <span class="glyphicon glyphicon-upload"></span> </button> -->
 
-  <button class="btn btn-success btn-lg" ng-show="data" ng-disabled="saved" ng-click="save()">Save &nbsp; <span class="glyphicon glyphicon-save"></span></button>
+  <button class="btn btn-success btn-lg" ng-show="data" ng-disabled="saved" ng-click="save()">Save data &nbsp; <span class="glyphicon glyphicon-save"></span></button>
 
-  <button class="btn btn-danger btn-lg" ng-show="saved" ng-click="undo()">Undo &nbsp; <span class="glyphicon glyphicon-repeat"></span></button>
+  <!-- <button class="btn btn-danger btn-lg" ng-show="saved" ng-click="undo()">Undo &nbsp; <span class="glyphicon glyphicon-repeat"></span></button> -->
 
-  <button class="btn btn-success btn-lg" ng-show="saved" ng-click="accept()">Accept &nbsp; <span class="glyphicon glyphicon-ok"></span></button>
+  <!-- <button class="btn btn-success btn-lg" ng-show="saved" ng-click="accept()">Go to my data &nbsp; <span class="glyphicon glyphicon-ok"></span></button> -->
 
   <span>{{ status }}</span>
 
-  <button type="button" class="btn btn-warning pull-right" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-info-sign"></span></button>
-
-  <hr />
-
-  <progressbar  ng-model="progress" ng-disabled="!data"></progressbar>
-
-  <hr />
-
-  <taginput ng-model="tags"></taginput>
-
-  <hr />
-
   <style>
-    .gridStyle { height: 400px;}
+    .drop-box {
+      padding: 2em;
+      text-align: center;
+      font-size: x-large;
+      font-style: italic;
+    }
   </style>
+  <div ng-show="!data" ngf-drop="" ngf-select="" ng-model="files" ng-model-rejected="rejFiles" ngf-drag-over-class="{accept:'dragover', reject:'dragover-err', delay:100}" class="drop-box well well-lg ng-valid ng-dirty" ngf-multiple="false" ngf-allow-dir="false" ngf-accept="'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'" ngf-drop-available="dropAvailable">
+    Click here to upload or simply drop your XLSX document here
+  </div>
 
-  <datatable ng-model="data" name="data"></datatable>
 
-  <hr />
+  <div ng-if="data">
 
-  <json-formatter json="data" style="font-size: small; border: 1px solid #ccc; border-radius: 4px; padding: 1em;"></json-formatter>
+    <hr />
+
+<!--     <div class="row" ng-show="data">
+      <div class="col-sm-6">
+        <h2>Tag data</h2>
+        <taginput ng-model="tags"></taginput>
+      </div>
+      <div class="col-sm-6">
+        <h2>Options</h2>
+        <form class="form-inline">
+          <div class="checkbox"><label><input type="checkbox" ng-model="options.tags"> Tags from data</label></div>
+          <div class="checkbox"><label><input type="checkbox" ng-model="options.parse"> Parse numeric data</label></div>
+          <div class="checkbox"><label><input type="checkbox" ng-model="options.trim"> Trim white space</label></div>
+        </form>
+      </div>
+    </div>
+ -->
+    <!-- <h2>Check table</h2> -->
+
+    <style>
+      .gridStyle { height: 400px;}
+    </style>
+
+    <datatable ng-model="data" name="data"></datatable>
+
+    <!-- <h2>Check documents</h2> -->
+
+    <!-- <json-formatter ng-show="data" json="data" style="font-size: small; border: 1px solid #ccc; border-radius: 4px; padding: 1em;"></json-formatter> -->
+
+  </div>
 
 </div>
 

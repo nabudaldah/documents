@@ -1,0 +1,30 @@
+<div class="container">
+
+  <h3 style="margin-top: 1em">Things to do every <strong>hour</strong></h3>
+  <hr/>
+  <ul class="list-group">
+	  <li class="list-group-item" ng-repeat="item in hour">
+	  	<a href="">{{item.name}}</a>
+	  </li>
+	</ul>
+
+  <h3 style="margin-top: 1em">Things to do every <strong>day</strong></h3>
+  <hr/>
+  <ul class="list-group">
+	  <li class="list-group-item" ng-repeat="item in day">
+	  	<span class="badge">{{item.at}}</span>
+	  	<a href="">{{item.name}}</a>
+	  </li>
+	</ul>
+
+  <h3 style="margin-top: 1em">Things to do every <strong>week</strong></h3>
+  <hr/>
+  <ul class="list-group">
+	  <li class="list-group-item" ng-repeat="item in week">
+	  	<span class="badge">{{item.at}}</span>
+	  	<a href="">{{item.name}}</a>
+	  </li>
+	</ul>
+
+</div>
+
