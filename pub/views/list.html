@@ -4,58 +4,60 @@
 		<span ng-if="query">{{queryCount}} / </span>{{totalCount}}
 	</small>
 </h1>
- -->
+-->
 
 <style>
-	
-	div#list {
-		padding-top:    20px;
-	}
+
+div#list {
+	padding-top:    20px;
+}
 
 </style>
 
-<div id="search">
-	<div class="input-group">
+<div class="container">
 
-		<span class="input-group-btn">
+	<div id="search">
+		<div class="input-group">
 
-			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-				<span class="glyphicon glyphicon-plus"></span> &nbsp; 
-				<span class="caret" style="font-size: small;"></span>
-				<span class="sr-only">Toggle Dropdown</span>
-			</button>
+			<span class="input-group-btn">
 
-			<ul class="dropdown-menu" role="menu">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+					<span class="glyphicon glyphicon-plus"></span> &nbsp; 
+					<span class="caret" style="font-size: small;"></span>
+					<span class="sr-only">Toggle Dropdown</span>
+				</button>
 
-				<li><a href="{{::route}}/new">New empty document</a></li>
-				<li ng-if="templates.length" class="divider"></li>
-				<li ng-repeat="template in templates"><a href="" ng-click="new(template._id)">Template: {{::template._id}}</a></li>
+				<ul class="dropdown-menu" role="menu">
 
-			</ul>
+					<li><a href="{{::route}}/new">New empty document</a></li>
+					<li ng-if="templates.length" class="divider"></li>
+					<li ng-repeat="template in templates"><a href="" ng-click="new(template._id)">Template: {{::template._id}}</a></li>
 
-		</span>
-		<input ng-model="query" ondragover="drop(event)" ng-change="search()" name="search" type="search" class="form-control" placeholder="Search...">
-		<span class="input-group-btn">
+				</ul>
 
-			<a href="" class="btn btn-default">
-				<span ng-if="query">{{queryCount}} of </span>{{totalCount}}
-			</a>
+			</span>
+			<input ng-model="query" ondragover="drop(event)" ng-change="search()" name="search" type="search" class="form-control" placeholder="Search...">
+			<span class="input-group-btn">
 
-			<a ng-click="colDown()" ng-hide="" class="btn btn-default hidden-xs">
-				<span class="glyphicon glyphicon-zoom-out"></span>
-			</a>
+				<a href="" class="btn btn-default">
+					<span ng-if="query">{{queryCount}} of </span>{{totalCount}}
+				</a>
 
-			<a ng-click="colUp()" class="btn btn-default hidden-xs">
-				<span class="glyphicon glyphicon-zoom-in"></span>
-			</a>
+				<a ng-click="colDown()" ng-hide="" class="btn btn-default hidden-xs">
+					<span class="glyphicon glyphicon-zoom-out"></span>
+				</a>
 
-		</span>
+				<a ng-click="colUp()" class="btn btn-default hidden-xs">
+					<span class="glyphicon glyphicon-zoom-in"></span>
+				</a>
+
+			</span>
+
+		</div>
 
 	</div>
 
-</div>
-
-<style>
+	<style>
 	.item:hover { 
 		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
 		border-color: rgb(106, 176, 232);
@@ -65,27 +67,28 @@
 		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
 		border-color: rgb(106, 176, 232);
 	}
-</style>
+	</style>
 
 
-<!-- infinite-scroll="loadmore()" -->
-<div id="list" class="row fade" ng-class="{in:list.length}">
-	<div ng-repeat="item in list" class="col-var col-sm-3">
-		<div ng-click="open(item._id)" class="panel panel-default item" id="{{::object}}/{{::item._id}}" style="overflow: hidden; min-height: 200px;" draggable="true" ondragstart="dragstart(event)">
-			<div class="panel-heading">
-				<a href="{{::route}}/{{::item._id}}">{{::item._id}}</a>
-			</div>
-			<div class="panel-body">
-				<p>{{::item.name}}</p>
-				<taglist tags="{{::item._tags}}"></taglist>
+	<!-- infinite-scroll="loadmore()" -->
+	<div id="list" class="row fade" ng-class="{in:list.length}">
+		<div ng-repeat="item in list" class="col-var col-sm-3">
+			<div ng-click="open(item._id)" class="panel panel-default item" id="{{::object}}/{{::item._id}}" style="overflow: hidden; min-height: 200px;" draggable="true" ondragstart="dragstart(event)">
+				<div class="panel-heading">
+					<a href="{{::route}}/{{::item._id}}">{{::item._id}}</a>
+				</div>
+				<div class="panel-body">
+					<p>{{::item.name}}</p>
+					<taglist tags="{{::item._tags}}"></taglist>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
 
-<div class="col-md-4 col-md-offset-4">
-<div class="btn-group btn-group-justified" role="group" ng-show="list.length < queryCount" style="padding-bottom: 6em">
-	<a href="" ng-click="loadmore()" ng-show="list.length < queryCount" class="btn btn-default" role="button">{{queryCount - list.length}} more</a>
-</div>
-	
+	<div class="col-md-4 col-md-offset-4">
+		<div class="btn-group btn-group-justified" role="group" ng-show="list.length < queryCount" style="padding-bottom: 6em">
+			<a href="" ng-click="loadmore()" ng-show="list.length < queryCount" class="btn btn-default" role="button">{{queryCount - list.length}} more</a>
+		</div>
+	</div>
+
 </div>

@@ -1,92 +1,64 @@
 <div class="container">
 
-  <h1>Upload data <button type="button" class="btn btn-warning pull-right" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-info-sign"></span></button> <small ng-if="file">{{file.name}} ({{file.rows}} rows, {{file.columns}} columns, {{file.size | bytes}})</small></h1>
-
   <progressbar ng-model="progress"></progressbar>
 
+  <taginput ng-show="data" name="tags" ng-model="tags"></taginput>
+  <h2 ng-if="file">{{file.name}} <small>({{file.rows}} rows, {{file.columns}} columns, {{file.size | bytes}})</small></h2>
+  <button class="btn btn-success" ng-show="data" ng-disabled="saved" ng-click="save()">Save data &nbsp; <span class="glyphicon glyphicon-save"></span></button>
 
-  <!-- <button class="btn btn-primary btn-lg" ng-show="true" ng-disabled="data" ngf-select ng-model="files" >Upload XLSX sheet &nbsp; <span class="glyphicon glyphicon-upload"></span> </button> -->
-
-  <button class="btn btn-success btn-lg" ng-show="data" ng-disabled="saved" ng-click="save()">Save data &nbsp; <span class="glyphicon glyphicon-save"></span></button>
-
-  <!-- <button class="btn btn-danger btn-lg" ng-show="saved" ng-click="undo()">Undo &nbsp; <span class="glyphicon glyphicon-repeat"></span></button> -->
-
-  <!-- <button class="btn btn-success btn-lg" ng-show="saved" ng-click="accept()">Go to my data &nbsp; <span class="glyphicon glyphicon-ok"></span></button> -->
-
-  <span>{{ status }}</span>
+  <hr />
 
   <style>
-    .drop-box {
-      padding: 2em;
-      text-align: center;
-      font-size: x-large;
-      font-style: italic;
-    }
+  .drop-box {
+    padding: 2em;
+    text-align: center;
+    font-size: x-large;
+    font-style: italic;
+  }
   </style>
+
   <div ng-show="!data" ngf-drop="" ngf-select="" ng-model="files" ng-model-rejected="rejFiles" ngf-drag-over-class="{accept:'dragover', reject:'dragover-err', delay:100}" class="drop-box well well-lg ng-valid ng-dirty" ngf-multiple="false" ngf-allow-dir="false" ngf-accept="'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'" ngf-drop-available="dropAvailable">
     Click here to upload or simply drop your XLSX document here
+    <br/>
+    <img src="/images/upload-help.png" style="opacity: 0.2; margin-top: 1em" />
   </div>
 
 
   <div ng-if="data">
 
-    <hr />
-
-<!--     <div class="row" ng-show="data">
-      <div class="col-sm-6">
-        <h2>Tag data</h2>
-        <taginput ng-model="tags"></taginput>
-      </div>
-      <div class="col-sm-6">
-        <h2>Options</h2>
-        <form class="form-inline">
-          <div class="checkbox"><label><input type="checkbox" ng-model="options.tags"> Tags from data</label></div>
-          <div class="checkbox"><label><input type="checkbox" ng-model="options.parse"> Parse numeric data</label></div>
-          <div class="checkbox"><label><input type="checkbox" ng-model="options.trim"> Trim white space</label></div>
-        </form>
-      </div>
-    </div>
- -->
-    <!-- <h2>Check table</h2> -->
-
     <style>
-      .gridStyle { height: 400px;}
+    .gridStyle { height: 400px;}
     </style>
 
-    <datatable ng-model="data" name="data"></datatable>
-
-    <!-- <h2>Check documents</h2> -->
-
-    <!-- <json-formatter ng-show="data" json="data" style="font-size: small; border: 1px solid #ccc; border-radius: 4px; padding: 1em;"></json-formatter> -->
+    <div ui-grid="{ data: data }" ui-grid-selection ui-grid-exporter class="grid"></div>
 
   </div>
 
-</div>
-
-<!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Uploading data to DataBox</h4>
-      </div>
-      <div class="modal-body">
-        <p>To upload data from your computer to your DataBox, make sure you:</p>
-        <ol>
-          <li>Have an Excel 2007 or newer sheet prepared (.xlsx)</li>
-          <li>Your Excel sheet has only 1 tab (remove all others)</li>
-          <li>Your Excel sheet is 1 table of rows</li>
-          <li>The columns in your table have unique column names</li>
-          <li>Optionally have your first column contain unique ids for each row</li>
-        </ol>
-        <p>Here follows an example of a perfect upload Excel sheet:</p>
-        <p><img src="/images/upload-help.png"/></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Uploading data to DataBox</h4>
+        </div>
+        <div class="modal-body">
+          <p>To upload data from your computer to your DataBox, make sure you:</p>
+          <ol>
+            <li>Have an Excel 2007 or newer sheet prepared (.xlsx)</li>
+            <li>Your Excel sheet has only 1 tab (remove all others)</li>
+            <li>Your Excel sheet is 1 table of rows</li>
+            <li>The columns in your table have unique column names</li>
+            <li>Optionally have your first column contain unique ids for each row</li>
+          </ol>
+          <p>Here follows an example of a perfect upload Excel sheet:</p>
+          <p><img src="/images/upload-help.png"/></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div>
     </div>
   </div>
-</div>
 
+</div>
