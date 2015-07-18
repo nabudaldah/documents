@@ -5,8 +5,10 @@ ctrl.controller('list',
   $scope.object = $location.path().split('/')[1];
   $scope.api  = '/api/' + $scope.object;
   $scope.route = '/#/' + $scope.object;
+  $scope.query = $location.search()['query']
+  if(!$scope.query) $scope.query = ''
 
-  $scope.query = $window.localStorage.query || '';
+  //$scope.query = $window.localStorage.query || '';
 
   $scope.col = parseInt($window.localStorage.col) || 3;
 
@@ -44,6 +46,7 @@ ctrl.controller('list',
   }
 
   $scope.load = function(){
+    if(!$scope.query) $scope.query = ''
     var url = $scope.api + '/?query=' + $scope.query + '&limit=24';
     $http.get(url).success(function(data) { 
       $scope.list = data;
@@ -75,6 +78,7 @@ ctrl.controller('list',
     $window.localStorage.query = $scope.query;
     $scope.selected = [];
     $scope.load();
+    $location.search({ query: $scope.query });
   };
 
   $scope.selected = [];
@@ -87,13 +91,12 @@ ctrl.controller('list',
   }
 
   $scope.delete = function(){
-    if($scope.selected.length){
-      $scope.selected.map(function(id){
-        $http.delete($scope.api + '/' + id).success(function(){
-          $scope.selected.splice($scope.selected.indexOf(id), 1);      
-        });
-      })
-    }
+    $http.delete($scope.api + '?query=' + $scope.query)
+      .success(function(data){
+        $scope.load()
+      }).error(function(error){
+        $scope.load()
+      });
   }
 
   $scope.load();

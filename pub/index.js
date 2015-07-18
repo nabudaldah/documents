@@ -20,7 +20,7 @@ app.config(['$routeProvider', '$locationProvider',
   $routeProvider
     .when('/',                          { templateUrl: '/views/home.html',     controller: 'home'     })
     .when('/home',                      { templateUrl: '/views/home.html',     controller: 'home'     })
-    .when('/:collection',               { templateUrl: '/views/list.html',     controller: 'list'     })
+    .when('/:collection',               { templateUrl: '/views/list.html',     controller: 'list',    reloadOnSearch: false })
     .when('/:collection/pivot',         { templateUrl: '/views/pivot.html',    controller: 'pivot'    })
     .when('/:collection/new',           { templateUrl: '/views/edit.html',     controller: 'edit'     })
     .when('/:collection/new/:template', { templateUrl: '/views/edit.html',     controller: 'edit'     })

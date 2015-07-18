@@ -21,6 +21,26 @@ ctrl.controller('upload',
     $scope.data = null
     // $scope.file = { name: "Upload.xlsx", size: 15323, rows: 1203, columns: 7 }
 
+    var copy = function(obj){
+        return(JSON.parse(JSON.stringify(obj)))
+    }
+
+    var tokenize = function(str){ return(str.replace(/\s+/g, '_').replace(/\W+/g, '')) }
+
+    var tokenizeDocuments = function(documents){
+        return(documents.map(function(doc){
+            for(oldKey in doc){
+                var newKey = tokenize(oldKey)
+                if(newKey != oldKey) {
+                    doc[newKey] = copy(doc[oldKey]);
+                    delete doc[oldKey]
+                    console.log('old: '+oldKey+', new: ' + newKey)
+                }
+            }
+            return(doc)
+        }))
+    }
+
     $scope.upload = function (files) {
         if (files && files.length) {
             $scope.status = "Uploading data..."
@@ -42,10 +62,12 @@ ctrl.controller('upload',
                     console.log(config.file)
                     // $scope.data = data
                     console.log(data);
+                    var tokenizedData = tokenizeDocuments(copy(data));
+                    console.log(tokenizedData);
                     var columns = []
-                    for(c in data[0]) columns.push(c)
+                    for(c in tokenizedData[0]) columns.push(c)
                     console.log(columns)
-                    var rows = data //.slice(1).map(function(row){ var obj = {}; for(var i = 0; i < columns.length; i++) obj[columns[i]] = row[i]; return(obj) })
+                    var rows = tokenizedData //.slice(1).map(function(row){ var obj = {}; for(var i = 0; i < columns.length; i++) obj[columns[i]] = row[i]; return(obj) })
                     console.log(rows)
                     $scope.data = rows
                     $scope.columns = columns

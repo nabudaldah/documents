@@ -37,4 +37,20 @@ module.exports = function(context){
 
   });
 
+  // Bulk delete
+  app.delete('/api/:collection', function (req, res) {
+    var collection = db.collection(req.params.collection);
+
+    var regex;
+    try     { regex = new RegExp(req.query.query, 'i'); }
+    catch(e){ regex = req.query.query; }
+
+    var _tags = req.query.query?req.query.query.split(' '):[];
+    var query = { $or: [  { _id: regex }, { name: regex }, { _tags: { $all: _tags } } ] };
+
+    collection.remove(query, function (err, data) {
+      if(err || !data) { stderr(err); res.status(500).send('Database error.'); return; }
+      res.end(); 
+    });
+  });
 };

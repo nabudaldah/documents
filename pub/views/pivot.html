@@ -45,9 +45,14 @@
 
   <hr />
  -->
-  <div class="form-group" ng-show="showTags">
-    <taginput ng-model="tags" name="tags" style="margin-bottom: 1em"></taginput>
+<div class="row" ng-show="showTags">
+  <div class="col-sm-8"><div class="form-group"><taginput ng-model="tags" name="tags" style="margin-bottom: 1em"></taginput></div></div>
+  <div class="col-sm-4">
+    <select class="form-control" ng-model="template" ng-change="updateFields()">
+      <option ng-repeat="template in templates">{{template}}</option>
+    </select>
   </div>
+</div>
 
 <!--   <div class="row">
     <div class="col-sm-6">

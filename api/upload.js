@@ -23,7 +23,6 @@ module.exports = function(context){
     var fstream;
     req.pipe(req.busboy);
     req.busboy.on('file', function (fieldname, file, filename) {
-      console.log("Uploading: " + filename.split('[\/\\]').join(' '));
 
       //Path where image will be uploaded
       var id = uuid.v4();
@@ -31,13 +30,12 @@ module.exports = function(context){
       fstream = fs.createWriteStream(target);
       file.pipe(fstream);
       fstream.on('close', function () {    
-        console.log("Upload Finished of " + filename + ' into ' + target);              
 
         var wb = XLSX.readFile(target);
         var wsNames = []; for(s in wb.Sheets) wsNames.push(s);
         var ws = wb.Sheets[wsNames[0]]
         var json = XLSX.utils.sheet_to_json(ws)
-        console.log(json)
+
         res.send(json)
 
       });
