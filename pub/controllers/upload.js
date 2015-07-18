@@ -112,7 +112,7 @@ ctrl.controller('upload',
                     obj[k] = parseFloat(obj[k].toString())
                 }
             }
-            if(idcolumn) obj._id = obj[$scope.columns[0]];
+            if(idcolumn) obj._id = tokenize(obj[$scope.columns[0]]);
             else obj._id = uuid().split('-')[0];
             obj._tags = []
             if($scope.tags) obj._tags = obj._tags.concat(JSON.parse(JSON.stringify($scope.tags)));
