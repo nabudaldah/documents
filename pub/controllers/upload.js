@@ -105,7 +105,7 @@ ctrl.controller('upload',
         var idcolumn = false;
         if(_.uniq($scope.data.map(function(obj){ return obj[$scope.columns[0]] })).length == $scope.data.length)
             idcolumn = true;
-        var data = $scope.data.map(function(obj, k, m){
+        var data = $scope.data.map(function(obj, i, m){
             if($scope.options.trim) for(k in obj) obj[k] = obj[k].toString().trim();
             if($scope.options.parse) for(k in obj) {
                 if(isNumeric(obj[k].toString())){
@@ -117,7 +117,8 @@ ctrl.controller('upload',
             obj._tags = []
             if($scope.tags) obj._tags = obj._tags.concat(JSON.parse(JSON.stringify($scope.tags)));
             if($scope.options.tags) obj._tags = obj._tags.concat(extractTags(obj))
-            $scope.progress = Math.ceil((k + 1) / m.length * 100)
+            $scope.progress = Math.ceil((i + 1) / m.length * 90)
+            console.log($scope.progress)
             return(obj)
         })
 
@@ -140,9 +141,11 @@ ctrl.controller('upload',
         .success(function (data, status, headers, config){
             $scope.saved = true
             $scope.status = "Succesfully saved data."
+            $scope.progress = 100
             $scope.accept()
         }).error(function (data, status, headers, config){
             $scope.saved = false
+            $scope.progress = 0
             $scope.status = "Failed to save data (!)."
           messages.add('danger', 'Error saving data');
         });
