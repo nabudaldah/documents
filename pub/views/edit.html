@@ -171,8 +171,8 @@
             <!-- /change width of template field -->
 
             <!-- change position of template field -->
-            <button type="button" title="Move BE_DA_PRICE_FORECAST up" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, -1)" ng-disabled="$index == 0" disabled="disabled"><span class="glyphicon glyphicon-chevron-up"></span></button>          
-            <button type="button" title="Move BE_DA_PRICE_FORECAST down" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, +1)" ng-disabled="$index == doc._template.length - 1"><span class="glyphicon glyphicon-chevron-down"></span></button>
+            <button type="button" title="Move up" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, -1)" ng-disabled="$index == 0" disabled="disabled"><span class="glyphicon glyphicon-chevron-up"></span></button>          
+            <button type="button" title="Move down" class="btn btn-xs btn-success" ng-click="shiftTemplateField($index, +1)" ng-disabled="$index == doc._template.length - 1"><span class="glyphicon glyphicon-chevron-down"></span></button>
             <!-- /change position of template field -->
 
 
@@ -249,26 +249,33 @@
           <button type="submit" class="btn btn-default" ng-click="addProperty('text')" ng-disabled="!newPropertyOk()">Add</button>
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="!newPropertyOk()"><span class="caret"></span></button>
           <ul style="margin-bottom: 80px" class="dropdown-menu dropdown-menu-right" role="menu">
-            <li><a href="" ng-click="addProperty('textarea')">textarea</a></li>
-            <li><a href="" ng-click="addProperty('number')">number</a></li>
-            <li><a href="" ng-click="addProperty('date')">date</a></li>
-            <li><a href="" ng-click="addProperty('time')">time</a></li>
-            <li><a href="" ng-click="addProperty('timeslice')">timeslice</a></li>
-            <li><a href="" ng-click="addProperty('reference')">reference</a></li>
-            <li><a href="" ng-click="addProperty('timeseries')">timeseries</a></li>
-            <li><a href="" ng-click="addProperty('javascript')">javascript</a></li>
-            <li><a href="" ng-click="addProperty('rscript')">rscript</a></li>
-            <li><a href="" ng-click="addProperty('googlemaps')">googlemaps</a></li>
-            <li><a href="" ng-click="addProperty('tree')">tree</a></li>
-            <li><a href="" ng-click="addProperty('process')">process</a></li>
-            <li><a href="" ng-click="addProperty('file')">file</a></li>
-            <li><a href="" ng-click="addProperty('header')">header</a></li>
-            <li><a href="" ng-click="addProperty('password')">password</a></li>
-            <li><a href="" ng-click="addProperty('json')">json</a></li>
-            <li><a href="" ng-click="addProperty('datatable')">datatable</a></li>
-            <li><a href="" ng-click="addProperty('option')">option</a></li>
-            <li><a href="" ng-click="addProperty('progressbar')">progressbar</a></li>
-            <li><a href="" ng-click="addProperty('hidden')">hidden</a></li>
+            <li><a href="" ng-click="addProperty('textarea')">Text data</a></li>
+            <li><a href="" ng-click="addProperty('datatable')">Tabular data</a></li>
+            <li><a href="" ng-click="addProperty('json')">JSON data</a></li>
+
+            <li class="divider"></li>
+
+            <li><a href="" ng-click="addProperty('header')">Heading</a></li>
+            <li><a href="" ng-click="addProperty('progressbar')">Progress-bar</a></li>
+
+            <li class="divider"></li>
+
+            <li><a href="" ng-click="addProperty('javascript')">Business logic</a></li>
+
+            <!-- <li><a href="" ng-click="addProperty('number')">number</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('date')">date</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('time')">time</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('timeslice')">timeslice</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('reference')">reference</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('timeseries')">timeseries</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('rscript')">rscript</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('googlemaps')">googlemaps</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('tree')">tree</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('process')">process</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('file')">file</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('password')">password</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('option')">option</a></li> -->
+            <!-- <li><a href="" ng-click="addProperty('hidden')">hidden</a></li> -->
           </ul>
         </div><!-- /btn-group -->
       </div><!-- /input-group -->

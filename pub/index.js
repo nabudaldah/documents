@@ -7,7 +7,8 @@ var app = angular.module('app', [
   'Messages',
   'jsonFormatter',
   'ngFileUpload',
-  'ui.grid'
+  'ui.grid',
+  'infinite-scroll'
 ]);
 
 var ctrl = angular.module('ctrl', []);
