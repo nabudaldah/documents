@@ -1,6 +1,6 @@
 ctrl.controller('list',
-  ['$scope', '$http', '$window', '$location', 'socket', 'messages',
-  function ($scope, $http, $window, $location, socket, messages) {
+  ['$scope', '$http', '$window', '$location', 'socket', 'messages', '$timeout',
+  function ($scope, $http, $window, $location, socket, messages, $timeout) {
 
   $scope.object = $location.path().split('/')[1];
   $scope.api  = '/api/' + $scope.object;
@@ -45,7 +45,7 @@ ctrl.controller('list',
     $('.col-var').addClass('col-sm-' + newCol);
   }
 
-  $scope.load = function(){
+  $scope.loadImmediate = function(){
     if(!$scope.query) $scope.query = ''
     var url = $scope.api + '/?query=' + $scope.query + '&limit=24';
     $http.get(url).success(function(data) { 
@@ -74,7 +74,16 @@ ctrl.controller('list',
 
   };
 
+  $scope.loading = null
+  $scope.load = function(){
+    if($scope.loading) {
+      $timeout.cancel($scope.loading)
+    }
+    $scope.loading = $timeout($scope.loadImmediate, 100);
+  }
+
   $scope.search = function(){
+
     $window.localStorage.query = $scope.query;
     $scope.selected = [];
     $scope.load();

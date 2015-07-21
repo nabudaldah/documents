@@ -8,6 +8,7 @@ var app = angular.module('app', [
   'jsonFormatter',
   'ngFileUpload',
   'ui.grid',
+  'ui.grid.autoResize',
   'infinite-scroll'
 ]);
 
@@ -22,7 +23,7 @@ app.config(['$routeProvider', '$locationProvider',
     .when('/',                          { templateUrl: '/views/home.html',     controller: 'home'     })
     .when('/home',                      { templateUrl: '/views/home.html',     controller: 'home'     })
     .when('/:collection',               { templateUrl: '/views/list.html',     controller: 'list',    reloadOnSearch: false })
-    .when('/:collection/pivot',         { templateUrl: '/views/pivot.html',    controller: 'pivot'    })
+    .when('/:collection/pivot',         { templateUrl: '/views/pivot.html',    controller: 'pivot',   reloadOnSearch: false })
     .when('/:collection/new',           { templateUrl: '/views/edit.html',     controller: 'edit'     })
     .when('/:collection/new/:template', { templateUrl: '/views/edit.html',     controller: 'edit'     })
     .when('/:collection/upload',        { templateUrl: '/views/upload.html',   controller: 'upload'   })
@@ -66,6 +67,14 @@ ctrl.controller('index',
 
   // $scope.username = "admin@localhost";
   // $scope.password = "admin";
+
+  $scope.expandedView = JSON.parse('' + $window.localStorage['expandedView']);
+
+  $scope.expandedViewToggle = function(){
+    $scope.expandedView = !$scope.expandedView;
+    $window.localStorage['expandedView'] = '' + $scope.expandedView;
+  }
+
 
   $scope.currentCollection = function(){
     var collection = $location.path().split('/')[1];

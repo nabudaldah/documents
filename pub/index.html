@@ -140,7 +140,7 @@
 
   <!-- Top menu -->
   <nav id="menu" class="navbar navbar-default navbar-inverse navbar-fixed-top" ng-show="authenticated()" style="border-bottom: 5px solid #337ab7; padding: 10px">
-    <div class="container" ng-class="expand?'container-fluid':'container'">
+    <div class="container" ng-class="expandedView?'container-fluid':'container'">
       <img src="/images/cube.png" width="50" height="50" style="float: left; margin-right: 10px"/>
       <!-- Brand and toggle get grouped for better mobile display -->
       <div class="navbar-header">
@@ -171,8 +171,8 @@
           <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span class="caret"></span></a>
           <ul class="dropdown-menu">
 
-            <li><a href="" ng-click="expand=!expand" ng-hide="expand"><span class="glyphicon glyphicon-resize-full"></span> &nbsp; Expand view</a></li>
-            <li><a href="" ng-click="expand=!expand" ng-show="expand"><span class="glyphicon glyphicon-resize-small"></span> &nbsp; Normal view</a></li>
+            <li><a href="" ng-click="expandedViewToggle()" ng-hide="expandedView"><span class="glyphicon glyphicon-resize-full"></span> &nbsp; Expand view</a></li>
+            <li><a href="" ng-click="expandedViewToggle()" ng-show="expandedView"><span class="glyphicon glyphicon-resize-small"></span> &nbsp; Normal view</a></li>
 
             <li role="separator" class="divider"></li>
 
@@ -289,7 +289,7 @@
 
   </div>
 
-  <div id="view" ng-if="authenticated()" class="container" ng-class="expand?'container-fluid':'container'">
+  <div id="view" ng-if="authenticated()" class="container" ng-class="expandedView?'container-fluid':'container'">
     <div ng-view></div>
   </div>
 

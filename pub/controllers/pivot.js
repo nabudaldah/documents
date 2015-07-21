@@ -4,6 +4,26 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location, messages) 
   $scope.api  = '/api/' + $scope.object;
   $scope.route = '/' + $scope.object;
 
+// ({ by: $scope.group.join(','), measures: $scope.measures.map(function(m){return(m[0] + '(' + m[1] + ')')}).join(',') });
+  // console.log()
+
+  $scope.group = []
+  $scope.measures = []
+
+  if($location.search().by){
+    $scope.group = $location.search().by.split(',')
+    console.log($scope.group)    
+  }
+
+  if($location.search().measures){
+    $scope.measures = $location.search().measures.split(',').map(function(str){
+      var aggregation = str.match(/sum|avg|min|max/)[0]
+      var field = str.match(/\(([\w]+)\)/)[1]
+      return([aggregation,  field])
+    })
+    console.log($scope.measures)    
+  }
+
   $scope.gridOptions = { data: null }
 
   $http.get($scope.api + '/?query=template').success(function(list){
@@ -48,9 +68,6 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location, messages) 
     })
   }
 
-  $scope.group = []
-  $scope.measures = []
-
   $scope.addGroup = function(item){
     $scope.group.push(item);
     $scope.load();
@@ -83,6 +100,8 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location, messages) 
     var query = { measures: $scope.measures, by: $scope.group }
 
     if($scope.tags && $scope.tags.length) query.tags = $scope.tags;
+
+    $location.search({ by: $scope.group.join(','), measures: $scope.measures.map(function(m){return(m[0] + '(' + m[1] + ')')}).join(',') });
 
     $http.post(url, query)
     .success(function (data, status, headers, config){
