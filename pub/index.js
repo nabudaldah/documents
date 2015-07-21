@@ -68,14 +68,6 @@ ctrl.controller('index',
   // $scope.username = "admin@localhost";
   // $scope.password = "admin";
 
-  $scope.expandedView = JSON.parse('' + $window.localStorage['expandedView']);
-
-  $scope.expandedViewToggle = function(){
-    $scope.expandedView = !$scope.expandedView;
-    $window.localStorage['expandedView'] = '' + $scope.expandedView;
-  }
-
-
   $scope.currentCollection = function(){
     var collection = $location.path().split('/')[1];
     return collection;
