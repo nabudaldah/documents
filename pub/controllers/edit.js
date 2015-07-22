@@ -11,6 +11,7 @@ ctrl.controller('edit',
   $scope.collection = $location.path().split('/')[1];
   $scope.reference  = $scope.collection + '/' + $scope.id;
   $scope.api        = '/api/' + $scope.reference;
+  $scope.baseurl    = $location.protocol() + '://' + $location.host() + ':' + $location.port() + '';
 
   $('[data-toggle="popover"]').popover({html: true, container: 'body', trigger: 'hover' });
 
@@ -78,7 +79,7 @@ ctrl.controller('edit',
 
   $scope.additional = function(field){
     //if(field.charAt(0) == '_') return false;
-    if(field == '_id' || field == '_tags' || field == "_template" || field == "_data" || field == "_update") return false;
+    if(['_id', '_tags', '_template', '_data', '_update', '_public'].indexOf(field) != -1) return false;
     for(t in $scope.doc._template) if($scope.doc._template[t].name == field) return false;
     return true;
   }
@@ -478,6 +479,38 @@ ctrl.controller('edit',
       // $scope.addItem(field.name);
       $scope.bindField(field.name);
     })
+  }
+
+  $scope.share = function(){
+
+    if($scope.doc._public){
+
+      var url = $scope.api + '/public';
+      console.log(url)
+      $http.delete(url)
+      .success(function (data, status, headers, config){
+        $scope.doc._public = ""
+        $scope.save();
+      }).error(function (data, status, headers, config){
+        messages.add('danger', 'Error creating doc "' + $scope.doc._id + '".');
+        console.log('failed')
+      });
+
+    } else {
+
+      var url = $scope.api + '/public';
+      console.log(url)
+      $http.post(url, {})
+      .success(function (data, status, headers, config){
+        $scope.doc._public = data
+        $scope.save();
+      }).error(function (data, status, headers, config){
+        messages.add('danger', 'Error creating doc "' + $scope.doc._id + '".');
+        console.log('failed')
+      });
+
+    }
+
   }
 
 }]);

@@ -98,6 +98,16 @@ module.exports = function(context){
   // Credits: https://davidbeath.com/posts/expressjs-40-basicauth.html 
   app.use('/api', function (req, res, next) {
 
+    stdout('Auth: Authorizing ...')
+
+    // Allow all publicly shared documents (but not listing of shared documents!)
+    var url = req.originalUrl.split('/')
+    if(url.length > 3 && url[1] == 'api' && url[2] == 'public' && url[3] != ''){
+      stdout('Access Control: Granted: Public document.')
+      next()
+      return;
+    }
+
     // Allow trusted cluster connections without authenticating (mapreduce)
     // if(trusted.indexOf(req.hostname) != -1 || trusted.indexOf(req.ip) != -1) { next(); return; }
 
@@ -106,6 +116,7 @@ module.exports = function(context){
 
     // If there is no authorization at all ... request for Basic auth
     if(authorization == undefined){
+      stdout('Auth: Unauthorized');
       res.set('WWW-Authenticate', 'Basic realm=Authorization Required');
       return res.sendStatus(401);
     }
@@ -124,6 +135,14 @@ module.exports = function(context){
   // Generic Access Policy
   app.use('/api/:collection?/:id?/:operation?/:property?', function(req, res, next){
 
+    // Allow all publicly shared documents (but not listing of shared documents!)
+    var url = req.originalUrl.split('/')
+    if(url.length > 3 && url[1] == 'api' && url[2] == 'public' && url[3] != ''){
+      stdout('Access Control: Granted: Public document.')
+      next()
+      return;
+    }
+
     if(req.user.name) req.username = req.user.name; // Basic auth  (API)
     if(req.user._id)  req.username = req.user._id;  // Token based (web-app)
 
@@ -131,48 +150,48 @@ module.exports = function(context){
 
     // No authorization (does not work with bearer auth yet..)
     if(!req.username){
-      stderr('Denied: No username');
+      stderr('Access Control: Denied: No username');
       res.status(401).send('Denied: No username')
       return;
     }
 
     // Admin can access anything ...
     if(req.username == 'admin'){
-      stdout('Granted: Admin');
+      stdout('Access Control: Granted: Admin');
       next();
       return;
     }
 
     // Users in this multi-tenant system are allowed to view their own user settings 
     if(req.params.collection == 'users' && req.params.id == req.username) {
-      stdout('Granted: Own user settings');
+      stdout('Access Control: Granted: Own user settings');
       next();
       return;
     }
 
     // Users in this multi-tenant system are only allowed to access their own collection 
     if(req.params.collection == req.username) {
-      stdout('Granted: Own collection');
+      stdout('Access Control: Granted: Own collection');
       next();
       return;
     }
 
     // Users are allowed to access documents having id's that start with their user name
     // if((req.params.id || '').substr(0, req.username.length) == req.username) {
-    //   stdout('Granted: ID begins with username');
+    //   stdout('Access Control: Granted: ID begins with username');
     //   next();
     //   return;
     // }
 
     // Users are allowed to access documents having id's that start with their user name
     // if(req.params.collection == 'timeseries' && (!req.params.id || req.params.id.trim() == '')) {
-    //   stdout('Granted: Listing timeseries');
+    //   stdout('Access Control: Granted: Listing timeseries');
     //   next();
     //   return;
     // }
 
     res.status(400).send('Denied: End');
-    stderr('Denied: End')
+    stderr('Access Control: Denied: End')
   })
 
 

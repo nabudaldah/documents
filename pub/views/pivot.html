@@ -20,7 +20,7 @@
 <div class="container-fluid">
 
   <div ui-grid="gridOptions" ui-grid-auto-resize ui-grid-selection ui-grid-exporter class="grid" style="margin-bottom: 1em">
-    <div class="watermark" ng-show="!gridOptions.data.length">Please select data</div>
+    <div class="watermark" ng-show="!gridOptions.data.length">No data</div>
   </div>
 
   <div class="row" ng-show="showTags">
@@ -32,8 +32,8 @@
 
     <button type="button" class="btn btn-default btn-sm pull-right" ng-click="hideFields=(!hideFields && (group.length + measures.length))" style="margin-bottom: 0.5em; margin-right: 0.5em"><span class="glyphicon glyphicon-eye-open"></span></button>
     <button type="button" class="btn btn-default btn-sm pull-right" ng-click="showTags=!showTags" style="margin-bottom: 0.5em; margin-right: 0.5em"><span class="glyphicon glyphicon-tags"></span></button>
-    <button type="button" class="btn btn-default btn-sm pull-right" ng-click="showSearch=!showSearch" style="margin-bottom: 0.5em; margin-right: 0.5em"><span class="glyphicon glyphicon-search"></span></button>
-    <input ng-show="showSearch" type="text" class="form-control input-sm pull-right" placeholder="search" ng-model="search" ng-change="filter()" style="margin-bottom: 0.5em; margin-right: 0.5em"></input>
+    <!-- <button type="button" class="btn btn-default btn-sm pull-right" ng-click="showSearch=!showSearch" style="margin-bottom: 0.5em; margin-right: 0.5em"><span class="glyphicon glyphicon-search"></span></button> -->
+    <input type="text" class="form-control input-sm pull-right" placeholder="Search fields" ng-model="search" ng-change="filter()" style="margin-bottom: 0.5em; margin-right: 0.5em"></input>
 
     <div class="btn-group" ng-repeat="item in group" style="margin-bottom: 0.5em; margin-right: 0.5em">
       <button type="button" class="btn btn-success dropdown-toggle btn-sm" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -77,4 +77,10 @@
 
   </form>
 
+  <div ng-show="group.length || measures.length" >
+    <hr/>
+    <button type="button" class="btn btn-success btn-lg" ng-click="savePivot()">Save Pivot &nbsp; <span class="glyphicon glyphicon-floppy-disk"></span></button>
+    <a class="btn btn-link" ng-if="message" href="/{{collection}}/{{savedId}}">{{message}}</a>
+  </div>
+  
 </div>

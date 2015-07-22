@@ -1,8 +1,8 @@
 ctrl.controller('pivot', function ($scope, $http, $window, $location, messages) {
 
-  $scope.object = $location.path().split('/')[1];
-  $scope.api  = '/api/' + $scope.object;
-  $scope.route = '/' + $scope.object;
+  $scope.collection = $location.path().split('/')[1];
+  $scope.api  = '/api/' + $scope.collection;
+  $scope.route = '/' + $scope.collection;
 
 // ({ by: $scope.group.join(','), measures: $scope.measures.map(function(m){return(m[0] + '(' + m[1] + ')')}).join(',') });
   // console.log()
@@ -95,9 +95,10 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location, messages) 
 
     $scope.data = {};
 
-    var url = "/api/" + $scope.object + "/pivot";
+    var url = "/api/" + $scope.collection + "/pivot";
 
-    var query = { measures: $scope.measures, by: $scope.group }
+    var query = { by: $scope.group, measures: $scope.measures }
+    $scope.query = query
 
     if($scope.tags && $scope.tags.length) query.tags = $scope.tags;
 
@@ -134,5 +135,32 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location, messages) 
     });
 
   };
+
+  $scope.savePivot = function(){
+    console.log('savePivot()')
+    var id = 'pivot-' + uuid().split('-')[0]
+    var obj = {
+      _id: id,
+      _tags: ['pivot'],
+      _tags: ['date:' + moment().format('YYYY-MM-DD'), 'time:' + moment().format('HH:mm')],
+      _template: [
+        { name: 'table', type: 'table' },
+        { name: 'query',  type: 'json' }
+      ],
+      table: $scope.data,
+      query: $scope.query
+    }
+    console.log(obj)
+    
+    $http.post('/api/' + $scope.collection + '/' + id, obj)
+    .success(function (data, status, headers, config){
+      // all ok
+      console.log('pivot saved')
+      $scope.message = "Pivot saved as document '" + id + "'"
+      $scope.savedId = id
+    }).error(function (data, status, headers, config){
+      messages.add('danger', 'Error saving doc "' + id + '".');
+    });
+  }
 
 });

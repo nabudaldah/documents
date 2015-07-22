@@ -20,6 +20,7 @@ app.config(['$routeProvider', '$locationProvider',
   function($routeProvider, $locationProvider) {
 
   $routeProvider
+    .when('/public/:id',                { templateUrl: '/views/public.html',   controller: 'public'   })
     .when('/',                          { templateUrl: '/views/home.html',     controller: 'home'     })
     .when('/home',                      { templateUrl: '/views/home.html',     controller: 'home'     })
     .when('/:collection',               { templateUrl: '/views/list.html',     controller: 'list',    reloadOnSearch: false })
@@ -65,6 +66,11 @@ ctrl.controller('index',
   ['$scope', '$http', '$window', '$location', '$route', '$interval', 'messages', 'socket',
   function ($scope, $http, $window, $location, $route, $interval, messages, socket) {
 
+  $scope.collection = $location.path().split('/')[1];
+
+  if($scope.collection == 'public') $scope.public = true;
+  else $scope.public = false;
+
   // $scope.username = "admin@localhost";
   // $scope.password = "admin";
 
@@ -88,27 +94,30 @@ ctrl.controller('index',
   };
 
   $scope.updateStars = function(){
-
-    $http
-      .get('/api/users/' + $scope.user._id)
-      .success(function(data, status, headers, config){
-        $scope.stars = data.starred;
-      }).error(function(data, status, headers, config){
-        $scope.stars = [];        
-      });
+    if(!$scope.public && $scope.authenticated()){
+      $http
+        .get('/api/users/' + $scope.user._id)
+        .success(function(data, status, headers, config){
+          $scope.stars = data.starred;
+        }).error(function(data, status, headers, config){
+          $scope.stars = [];        
+        });      
+    }
   }
 
   $scope.showContent = function(){
     $scope.updateCollections();
     $scope.updateStars();
     
-    socket.on('users/' + $scope.user._id, function (data) {
-      $scope.updateStars();
-    });
+    if(!$scope.public && $scope.authenticated()){
+      socket.on('users/' + $scope.user._id, function (data) {
+        $scope.updateStars();
+      });
 
-    $scope.$on('$destroy', function () {
-      socket.close('users/' + $scope.user._id);
-    });
+      $scope.$on('$destroy', function () {
+        socket.close('users/' + $scope.user._id);
+      });      
+    }
   }
 
   $scope.showAuthentication = function(){
@@ -137,7 +146,7 @@ ctrl.controller('index',
     // });
   };
 
-  if($scope.authenticated()){
+  if($scope.authenticated() || $scope.public){
     $scope.showContent();
   } else {
     $scope.showAuthentication();
@@ -208,17 +217,6 @@ ctrl.controller('index',
     $location.path('/');
     $scope.showAuthentication();
   };
-
-  $scope.checkStatus = function(){
-    if(!$scope.authenticated()) return;
-    $http
-      .get('/status')
-      .success(function(data, status, headers, config){
-        console.log(data);
-      }).error(function(data, status, headers, config){
-        console.error(data);
-      });
-  }
 
   $('[data-toggle="tooltip"]').tooltip();
   $('[data-toggle="popover"]').popover()
