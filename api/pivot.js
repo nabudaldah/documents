@@ -24,8 +24,8 @@ module.exports = function(context){
     if(pivot.by) {      
       for(index in pivot.by) {
         var field = pivot.by[index]
-        if(group._id) { group._id[field] = '$' + field } 
-        else { group._id = {}; group._id[field] = '$' + field }        
+        if(!group._id) group._id = {}
+        group._id[field] = { '$ifNull': [ '$' + field, 'NA' ] }
       }
     }
 

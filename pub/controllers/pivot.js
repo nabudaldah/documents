@@ -136,9 +136,11 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location, messages) 
 
   };
 
+  $scope.pivotId = 'pivot-' + uuid().split('-')[0]
+
   $scope.savePivot = function(){
     console.log('savePivot()')
-    var id = 'pivot-' + uuid().split('-')[0]
+    var id = $scope.pivotId;
     var obj = {
       _id: id,
       _tags: ['pivot'],
@@ -155,9 +157,8 @@ ctrl.controller('pivot', function ($scope, $http, $window, $location, messages) 
     $http.post('/api/' + $scope.collection + '/' + id, obj)
     .success(function (data, status, headers, config){
       // all ok
+      $scope.pivotSaved = true;
       console.log('pivot saved')
-      $scope.message = "Pivot saved as document '" + id + "'"
-      $scope.savedId = id
     }).error(function (data, status, headers, config){
       messages.add('danger', 'Error saving doc "' + id + '".');
     });

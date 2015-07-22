@@ -77,10 +77,16 @@
 
   </form>
 
-  <div ng-show="group.length || measures.length" >
+  <form class="form-inline form-group" ng-show="group.length || measures.length">
     <hr/>
-    <button type="button" class="btn btn-success btn-lg" ng-click="savePivot()">Save Pivot &nbsp; <span class="glyphicon glyphicon-floppy-disk"></span></button>
-    <a class="btn btn-link" ng-if="message" href="/{{collection}}/{{savedId}}">{{message}}</a>
+    <!-- <button type="button" class="btn btn-success" ng-click="savingPivot = true">Save Pivot &nbsp; <span class="glyphicon glyphicon-arrow-right"></span></button> -->
+    <button ng-hide="pivotSaved" type="button" class="btn btn-success" ng-click="savePivot()">Save &nbsp; <span class="glyphicon glyphicon-floppy-disk"></span></button>
+    <input type="text" class="form-control" ng-model="pivotId" ng-hide="pivotSaved"></input>
+  </form>
+
+  <div class="alert alert-success" role="alert" ng-if="pivotSaved">
+    <label class="control-label">This pivot table is saved as <a href="{{route}}/{{pivotId}}" class="alert-link">{{pivotId}}</a>.</label>
   </div>
+
   
 </div>

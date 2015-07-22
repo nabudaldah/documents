@@ -1,3 +1,13 @@
+    <div class="alert alert-success" role="alert" ng-if="doc._public">
+      <label class="control-label">This document is publicly shared as (<a target="new" href="{{baseurl}}/public/{{doc._public}}" class="alert-link">open link</a>): </label>
+      <input id="public" type="text" class="form-control" value="{{baseurl}}/public/{{doc._public}}"></input>
+      <script>
+        $("#public").on("click", function () {
+          $(this).select();
+        });
+      </script>
+    </div>
+
 
 <style ng-if="!editTemplate">
   label {
@@ -129,16 +139,6 @@
       </div>
     </div>
     <!-- /_id (only new documents) -->
-
-    <div class="alert alert-success" role="alert" ng-if="doc._public">
-      <label class="control-label">This document is publicly shared as (<a target="new" href="{{baseurl}}/public/{{doc._public}}" class="alert-link">open link</a>): </label>
-      <input id="public" type="text" class="form-control" value="{{baseurl}}/public/{{doc._public}}"></input>
-      <script>
-        $("#public").on("click", function () {
-          $(this).select();
-        });
-      </script>
-    </div>
 
     <!-- _tags -->
     <div class="form-group col-sm-12" style="margin-top: 0.5em">
