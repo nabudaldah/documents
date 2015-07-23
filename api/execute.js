@@ -30,16 +30,17 @@ module.exports = function(context){
 	var executeJavascript = function (javascript, context, callback){
 
 	  var vmContext = {
-	  	console: console,
+	  	// console: console,
 	    Fiber: Fiber,
-	    mongo: mongo,
-	    fs: fs,
+	    // mongo: mongo,
+	    // fs: fs,
 	    request: request,
 	    moment: moment,
 	    xmldoc: xmldoc,
-	    EDI: EDI,
-	    Timeseries: Timeseries,
-	    context: context
+	    // EDI: EDI,
+	    // Timeseries: Timeseries,
+	    context: context,
+	    db: context.db
 	  };
 
 	  var vmScript = executeJavascriptContext.replace('/* SCRIPT */', javascript);
@@ -78,6 +79,7 @@ module.exports = function(context){
 	    if(!data)        { console.error('Object not found in database.'); }
 	    if(!data[req.params.script]) { console.error('Script not found.'); }
 
+	    // Do we really need this?
 	    var end = (function(req, res) {
 		    var ref = req.params.collection + '/' + req.params.id + '/' + req.params.script;
 	    	var f = function(exception){
@@ -91,14 +93,15 @@ module.exports = function(context){
 
 	    var javascript = data[req.params.script];
 	    var context = {
-	    	host:       config.db.host,
-	    	port:       config.db.port,
-	    	database:   config.db.database,
+	    	// host:       config.db.host,
+	    	// port:       config.db.port,
+	    	// database:   config.db.database,
+	    	db:         collection,
 	    	collection: req.params.collection,
 	    	id:         req.params.id,
 	    	script:     req.params.script,
-	    	end:        end,
-	    	pid:        process.pid // for mubsub triggers
+	    	end:        end
+	    	// pid:        process.pid // for mubsub triggers
 	    };
 
 	    var ref = req.params.collection + '/' + req.params.id + '/' + req.params.script;
