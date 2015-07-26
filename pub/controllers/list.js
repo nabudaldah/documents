@@ -56,21 +56,22 @@ ctrl.controller('list',
       messages.add('danger', 'Error retrieving list of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
     });
 
-    var url = $scope.api + '?count=true';
-    $http.get(url).success(function(data) { 
-      $scope.totalCount = data.count;
-    }).error(function(error){
-      console.log(error);
-      messages.add('danger', 'Error retrieving count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
-    });
 
-    var url = $scope.api + '/?count=true&query=' + $scope.query;
-    $http.get(url).success(function(data) { 
-      $scope.queryCount = data.count;
-    }).error(function(error){
-      console.log(error);
-      messages.add('danger', 'Error retrieving query result count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
-    });
+    // var url = $scope.api + '?count=true';
+    // $http.get(url).success(function(data) { 
+    //   $scope.totalCount = data.count;
+    // }).error(function(error){
+    //   console.log(error);
+    //   messages.add('danger', 'Error retrieving count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+    // });
+
+    // var url = $scope.api + '/?count=true&query=' + $scope.query;
+    // $http.get(url).success(function(data) { 
+    //   $scope.queryCount = data.count;
+    // }).error(function(error){
+    //   console.log(error);
+    //   messages.add('danger', 'Error retrieving query result count of collection "' + $scope.object + '": ' + JSON.stringify(error, undefined, 2));
+    // });
 
   };
 
