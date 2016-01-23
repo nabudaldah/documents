@@ -41,44 +41,43 @@ ctrl.controller('upload',
         }))
     }
 
-    $scope.upload = function (files) {
-        if (files && files.length) {
+    $scope.upload = function (file) {
+        console.log('received file for upload: ')
+        console.log(file)
+        if (file) {
             $scope.status = "Uploading data..."
-            for (var i = 0; i < files.length; i++) {
-                var file = files[i];
-                Upload.upload({
-                    url: '/api/' + $scope.collection + '/upload',
-                    // fields: {'username': $scope.username},
-                    file: file
-                }).progress(function (evt) {
-                    var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
-                    console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
-                    $scope.progress = progressPercentage
-                }).success(function (data, status, headers, config) {
-                    //console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
-                    console.log('file ' + config.file.name + 'uploaded succes.');
-                    $scope.file = config.file;
-                    console.log(config)
-                    console.log(config.file)
-                    // $scope.data = data
-                    console.log(data);
-                    var tokenizedData = tokenizeDocuments(copy(data));
-                    console.log(tokenizedData);
-                    var columns = []
-                    for(c in tokenizedData[0]) columns.push(c)
-                    console.log(columns)
-                    var rows = tokenizedData //.slice(1).map(function(row){ var obj = {}; for(var i = 0; i < columns.length; i++) obj[columns[i]] = row[i]; return(obj) })
-                    console.log(rows)
-                    $scope.data = rows
-                    $scope.columns = columns
-                    $scope.file.rows = rows.length
-                    $scope.file.columns = columns.length
-                    $scope.status = "Succesfully uploaded data."
-                }).error(function (data, status, headers, config) {
-                    $scope.status = "Failed to upload data (!)."
-                    console.log('error status: ' + status);
-                });
-            }
+            Upload.upload({
+                url: '/api/' + $scope.collection + '/upload',
+                // fields: {'username': $scope.username},
+                file: file
+            }).progress(function (evt) {
+                var progressPercentage = parseInt(100.0 * evt.loaded / evt.total);
+                console.log('progress: ' + progressPercentage + '% ' + evt.config.file.name);
+                $scope.progress = progressPercentage
+            }).success(function (data, status, headers, config) {
+                //console.log('file ' + config.file.name + 'uploaded. Response: ' + data);
+                console.log('file ' + config.file.name + 'uploaded succes.');
+                $scope.file = config.file;
+                console.log(config)
+                console.log(config.file)
+                // $scope.data = data
+                console.log(data);
+                var tokenizedData = tokenizeDocuments(copy(data));
+                console.log(tokenizedData);
+                var columns = []
+                for(c in tokenizedData[0]) columns.push(c)
+                console.log(columns)
+                var rows = tokenizedData //.slice(1).map(function(row){ var obj = {}; for(var i = 0; i < columns.length; i++) obj[columns[i]] = row[i]; return(obj) })
+                console.log(rows)
+                $scope.data = rows
+                $scope.columns = columns
+                $scope.file.rows = rows.length
+                $scope.file.columns = columns.length
+                $scope.status = "Succesfully uploaded data."
+            }).error(function (data, status, headers, config) {
+                $scope.status = "Failed to upload data (!)."
+                console.log('error status: ' + status);
+            });
         }
     };
 
