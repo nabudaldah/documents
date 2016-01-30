@@ -15,89 +15,89 @@ div#list {
 
 </style>
 
-	<div id="search">
-		<div class="input-group">
+<div id="search">
+	<div class="input-group">
 
-			<span class="input-group-btn">
+		<span class="input-group-btn">
 
-				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-					<span class="glyphicon glyphicon-plus"></span> &nbsp; 
-					<span class="caret" style="font-size: small;"></span>
-					<span class="sr-only">Toggle Dropdown</span>
-				</button>
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+				<span class="glyphicon glyphicon-plus"></span> &nbsp; 
+				<span class="caret" style="font-size: small;"></span>
+				<span class="sr-only">Toggle Dropdown</span>
+			</button>
 
-				<ul class="dropdown-menu" role="menu">
+			<ul class="dropdown-menu" role="menu">
 
-					<li><a href="{{::route}}/new">New empty document</a></li>
-					<li ng-if="templates.length" class="divider"></li>
-					<li ng-repeat="template in templates"><a href="" ng-click="new(template._id)">Template: {{::template._id}}</a></li>
+				<li><a href="{{::route}}/new">New empty document</a></li>
+				<li ng-if="templates.length" class="divider"></li>
+				<li ng-repeat="template in templates"><a href="" ng-click="new(template._id)">Template: {{::template._id}}</a></li>
 
-				</ul>
+			</ul>
 
-			</span>
+		</span>
 
-			<input ng-model="query" ondragover="drop(event)" ng-change="search()" name="search" type="search" class="form-control" placeholder="Search...">
+		<input ng-model="query" ondragover="drop(event)" ng-change="search()" name="search" type="search" class="form-control" placeholder="Search...">
 
-			<span class="input-group-btn">
+		<span class="input-group-btn">
 
-				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
-					<span class="glyphicon glyphicon-cog"></span> &nbsp; 
-					<span class="caret" style="font-size: small;"></span>
-					<span class="sr-only">Toggle Dropdown</span>
-				</button>
+			<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" tabindex="-1">
+				<span class="glyphicon glyphicon-cog"></span> &nbsp; 
+				<span class="caret" style="font-size: small;"></span>
+				<span class="sr-only">Toggle Dropdown</span>
+			</button>
 
-				<ul class="dropdown-menu" role="menu">
+			<ul class="dropdown-menu" role="menu">
 
-					<!-- <li><a href=""><span class="glyphicon glyphicon-info-sign"></span> &nbsp; <span ng-if="query">{{queryCount}} / </span>{{totalCount}}</a></li> -->
-					<li><a ng-click="colDown()" ng-hide=""><span class="glyphicon glyphicon-zoom-out"></span> &nbsp; More</a></li>
-					<li><a ng-click="colUp()"><span class="glyphicon glyphicon-zoom-in"></span> &nbsp; Less</a></li>
-					<li class="divider"></li>
-					<li><a href="" ng-click="delete()"><span class="glyphicon glyphicon-trash"></span> &nbsp; Delete</a></li>
+				<!-- <li><a href=""><span class="glyphicon glyphicon-info-sign"></span> &nbsp; <span ng-if="query">{{queryCount}} / </span>{{totalCount}}</a></li> -->
+				<li><a ng-click="colDown()" ng-hide=""><span class="glyphicon glyphicon-zoom-out"></span> &nbsp; More</a></li>
+				<li><a ng-click="colUp()"><span class="glyphicon glyphicon-zoom-in"></span> &nbsp; Less</a></li>
+				<li class="divider"></li>
+				<li><a href="" ng-click="delete()"><span class="glyphicon glyphicon-trash"></span> &nbsp; Delete</a></li>
 
-				</ul>
+			</ul>
 
 
-			</span>
-
-		</div>
+		</span>
 
 	</div>
 
+</div>
 
 
-	<style>
-	.item:hover { 
-		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
-		border-color: rgb(106, 176, 232);
-		cursor: pointer;
-	}
-	.selected { 
-		box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
-		border-color: rgb(106, 176, 232);
-	}
-	</style>
+
+<style>
+.item:hover { 
+	box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
+	border-color: rgb(106, 176, 232);
+	cursor: pointer;
+}
+.selected { 
+	box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(102, 175, 232, 0.52549) 0px 0px 6.99039793014526px 0px;
+	border-color: rgb(106, 176, 232);
+}
+</style>
 
 
-	<!-- infinite-scroll="loadmore()" -->
-	<div id="list" class="row fade" ng-class="{in:list.length}">
-		<div ng-repeat="item in list" class="col-var col-sm-3">
-			<div ng-click="open(item._id)" class="panel panel-default item" id="{{::object}}/{{::item._id}}" style="overflow: hidden; min-height: 200px;" draggable="true" ondragstart="dragstart(event)">
-				<div class="panel-heading">
-					<a href="{{::route}}/{{::item._id}}">{{::item._id}}</a>
-				</div>
-				<div class="panel-body">
-					<p>{{::item.name}}</p>
-					<taglist tags="{{::item._tags}}"></taglist>
-				</div>
+<!-- infinite-scroll="loadmore()" -->
+<div id="list" class="row fade" ng-class="{in:list.length}">
+	<div ng-repeat="item in list" class="col-var col-sm-3">
+		<div ng-click="open(item._id)" class="panel panel-default item" id="{{::object}}/{{::item._id}}" style="overflow: hidden; height: 200px;" draggable="true" ondragstart="dragstart(event)">
+			<div class="panel-heading">
+				<a href="{{::route}}/{{::item._id}}">{{::item._id}}</a>
+			</div>
+			<div class="panel-body">
+				<p>{{::item.name}}</p>
+				<taglist tags="{{::item._tags}}"></taglist>
 			</div>
 		</div>
 	</div>
+</div>
 
-	<div class="col-md-4 col-md-offset-4">
-		<div class="btn-group btn-group-justified" role="group" ng-show="list.length < queryCount" style="padding-bottom: 6em">
-			<a href="" ng-click="loadmore()" ng-show="list.length < queryCount" class="btn btn-default" role="button">{{queryCount - list.length}} more</a>
-		</div>
+<div class="col-md-4 col-md-offset-4">
+	<div class="btn-group btn-group-justified" role="group" style="padding-bottom: 6em">
+		<a href="" ng-click="loadmore()" class="btn btn-default" role="button">{{queryCount - list.length}} more</a>
 	</div>
+</div>
 
 
 <div infinite-scroll="loadmore()" infinite-scroll-distance="0"></div>
