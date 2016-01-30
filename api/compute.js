@@ -15,7 +15,7 @@ module.exports = function(context){
   var R = require('computer');
   var R = new R(config.R.exe, require('os').cpus().length);
   R.start(function(){
-    R.init('source("../lib/functions.R");', function(err){
+    R.init(config.R.init, function(err){
       if(err) {
         console.log('R.init(): Error: ' + err);
       }

@@ -183,12 +183,13 @@ var apiBind = function(callback){
   require(process.cwd() + '/api/upload.js')(context)
   require(process.cwd() + '/api/pivot.js')(context)
   require(process.cwd() + '/api/document.js')(context)
-  require(process.cwd() + '/api/execute.js')(context)
+  require(process.cwd() + '/api/compute.js')(context)
 
+  // require(process.cwd() + '/api/execute.js')(context)
   // require(process.cwd() + '/api/timeseries.js')(context)
   // require(process.cwd() + '/api/compute.js')(context)
   // require(process.cwd() + '/api/status.js')(context)
-  //require(process.cwd() + '/api/soap.js')(context)
+  // require(process.cwd() + '/api/soap.js')(context)
   // require(process.cwd() + '/api/csv.js')(context)
   // require(process.cwd() + '/api/excel.js')(context)
   // require(process.cwd() + '/api/mapreduce.js')(context) // R-script only
