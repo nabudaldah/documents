@@ -40,6 +40,15 @@ DataBox <- setRefClass("DataBox",
       warn_for_status(result)
       status <- http_status(result)
       return(status$message)
+    },
+    del = function(id){
+      auth <- authenticate(user, pass, type = "basic")
+      conf <- config(ssl_verifypeer = F)
+      urlx <- paste0(url, '/', user, '/', id)
+      result <- DELETE(urlx, auth, conf)
+      warn_for_status(result)
+      status <- http_status(result)
+      return(status$message)
     }
   )
 )
