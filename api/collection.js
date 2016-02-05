@@ -22,7 +22,7 @@ module.exports = function(context){
 
     if(req.query.count){
   	  collection.count(query, function (err, data) { 
-  	    if(err) { stderr(err); res.status(500).send('Database error.'); return; }
+  	    if(err) { stderr(err); res.status(500).end(); return; }
   	    if(!data) data = 0;
   	    res.send({ count: data });
   	  });
@@ -30,7 +30,7 @@ module.exports = function(context){
   		collection.find(query, { _id: 1, name: 1, _tags: 1 })
   		.limit(limit)
   		.skip(skip).toArray(function (err, data) { 
-  			if(err || !data) { stderr(err); res.status(500).send('Database error.'); return; }
+  			if(err || !data) { stderr(err); res.status(500).end(); return; }
   			res.send(data); 
   		});
     }
@@ -49,7 +49,7 @@ module.exports = function(context){
     var query = { $or: [  { _id: regex }, { name: regex }, { _tags: { $all: _tags } } ] };
 
     collection.remove(query, function (err, data) {
-      if(err || !data) { stderr(err); res.status(500).send('Database error.'); return; }
+      if(err || !data) { stderr(err); res.status(500).end(); return; }
       res.end(); 
     });
   });
