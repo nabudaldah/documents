@@ -47,6 +47,4 @@ bower install -s --allow-root --no-interactive | xargs echo
 systemctl daemon-reload
 systemctl start documents
 
-ln -s /var/log/documents.log /opt/documents/documents.log
-
 cd $CWD
