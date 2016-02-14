@@ -9,7 +9,7 @@
   },
   "R": {
     "exe": "/usr/bin/R",
-    "init": ""
+    "init": "source('/opt/documents/lib/functions.R')"
   },
   "db": {
     "host": "127.0.0.1",
