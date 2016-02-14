@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo ""
-echo "### Documents App Upgrade v0.1 "
+echo "### Documents App Upgrade"
 echo ""
 
 if [[ "$USER" != "root" ]]; then
@@ -49,7 +49,7 @@ echo ""
 echo "### Restarting service."
 echo ""
 
-service documents restart
+systemctl restart documents
 
 echo ""
 echo "### All done."

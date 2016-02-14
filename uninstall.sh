@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo ""
-echo "### Documents App Uninstall v0.1"
+echo "### Documents App Uninstall"
 echo ""
 
 if [[ "$USER" != "root" ]]; then 
@@ -29,13 +29,13 @@ echo ""
 echo "### Stopping NodeJS server ..."
 echo ""
 
-service documents stop
+systemctl stop documents
 
 echo ""
 echo "### Removing /etc/init/documents.conf ..."
 echo ""
 
-rm /etc/init/documents.conf
+rm /etc/systemd/system/documents.service
 
 echo ""
 echo "### Removing packages mongodb r-base-core nodejs-legacy npm git ..."

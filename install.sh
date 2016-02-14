@@ -34,19 +34,18 @@ npm install forever -g
 Rscript -e "install.packages('rmongodb', repos='http://cran-mirror.cs.uu.nl/')"
 Rscript -e "install.packages('xts',      repos='http://cran-mirror.cs.uu.nl/')"
 
-service mongodb restart
+cp /opt/documents/documents.service /etc/init/documents.service
 
-cp /opt/documents/init.conf /etc/init/documents.conf
-
-cp /opt/documents/config.linux.json /opt/documents/config.json
+cp /opt/documents/config.template /opt/documents/config.json
 
 cd /opt/documents
 npm install
 
 cd /opt/documents/pub
-bower install -s --allow-root --no-interactive
+bower install -s --allow-root --no-interactive | xargs echo
 
-service documents start
+systemctl daemon-reload
+systemctl start documents
 
 ln -s /var/log/documents.log /opt/documents/documents.log
 
