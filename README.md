@@ -6,7 +6,7 @@ Documents Prototyping App
 Installation
 ---------------------
 
-Deploy on any cloud-based Ubuntu 14.10 VM:
+Deploy on any vanilla Ubuntu 15.10 box:
 
 ```
 wget https://raw.github.com/nabudaldah/documents/master/install.sh -O install.sh

@@ -223,7 +223,7 @@ var appListen = function(callback) {
       res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
       res.end();
     }).listen(config.http);
-    stdout('App redirecting HTTP connections on TCP port ' + config.https + ' to HTTPS URL.');
+    stdout('App redirecting HTTP connections on TCP port ' + config.http + ' to HTTPS on TCP port ' + config.http + '.');
 
     // Credits: http://qugstart.com/blog/node-js/install-comodo-positivessl-certificate-with-node-js/
     var options = {
