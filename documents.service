@@ -1,0 +1,10 @@
+[Unit]
+Description=Job that runs the documents daemon
+Requires=mongodb
+
+[Service]
+WorkingDirectory=/opt/documents
+ExecStart=/usr/bin/node /opt/documents/server.js
+
+[Install]
+WantedBy=multi-user.target
