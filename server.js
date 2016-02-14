@@ -211,30 +211,48 @@ var apiBind = function(callback){
 
 var appListen = function(callback) {
 
-  // Credits: http://stackoverflow.com/a/23975955/3514414
-  // Redirect from http port 80 to https
-  var http = require('http');
-  http.createServer(function (req, res) {
-    res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
-    res.end();
-  }).listen(config.http);
-  stdout('App redirecting HTTP connections on TCP port ' + config.https + ' to HTTPS URL.');
+  if(config.ssl &&
+     config.ssl.ca  && fs.existsSync(config.ssl.ca)  &&
+     config.ssl.key && fs.existsSync(config.ssl.key) &&
+     config.ssl.crt && fs.existsSync(config.ssl.crt)){
+  
+    // Credits: http://stackoverflow.com/a/23975955/3514414
+    // Redirect from http port 80 to https
+    var http = require('http');
+    http.createServer(function (req, res) {
+      res.writeHead(301, { "Location": "https://" + req.headers['host'] + req.url });
+      res.end();
+    }).listen(config.http);
+    stdout('App redirecting HTTP connections on TCP port ' + config.https + ' to HTTPS URL.');
 
-  // Credits: http://qugstart.com/blog/node-js/install-comodo-positivessl-certificate-with-node-js/
-  var options = {
-    ca:   fs.readFileSync(config.ssl.ca,   { encoding: 'utf-8' }),
-    key:  fs.readFileSync(config.ssl.key,  { encoding: 'utf-8' }),
-    cert: fs.readFileSync(config.ssl.crt,  { encoding: 'utf-8' })
-  };
+    // Credits: http://qugstart.com/blog/node-js/install-comodo-positivessl-certificate-with-node-js/
+    var options = {
+      ca:   fs.readFileSync(config.ssl.ca,   { encoding: 'utf-8' }),
+      key:  fs.readFileSync(config.ssl.key,  { encoding: 'utf-8' }),
+      cert: fs.readFileSync(config.ssl.crt,  { encoding: 'utf-8' })
+    };
 
-  var https  = require('https');
-  var server = https.createServer(options, app).listen(config.https, function(err){
-    if(err) { callback(err); process.exit(); return; }
-    stdout('App listening for HTTPS connections on TCP port ' + config.https + '.');
-    callback();
-  });
-  server.timeout = 30 * 60 * 1000; // 30min
-  io = io.listen(server);  
+    var https  = require('https');
+    var server = https.createServer(options, app).listen(config.https, function(err){
+      if(err) { callback(err); process.exit(); return; }
+      stdout('App listening for HTTPS connections on TCP port ' + config.https + '.');
+      callback();
+    });
+    server.timeout = 30 * 60 * 1000; // 30min
+    io = io.listen(server);  
+
+  } else {
+  
+    var http   = require('http');
+    var server = http.createServer(app).listen(config.http, function(err){
+      if(err) { callback(err); process.exit(); return; }
+      stdout('App listening for HTTP connections on TCP port ' + config.http + '.');
+      callback();
+    });
+    server.timeout = 30 * 60 * 1000; // 30min
+    io = io.listen(server);  
+
+  }
 
 }
 
