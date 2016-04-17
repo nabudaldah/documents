@@ -2,57 +2,31 @@ app.directive('reference', function ($http) {
 
   var link = function (scope, element, attr, ngModel) {
 
-    scope.name = attr.name;
+    $(function () { $('[data-toggle="tooltip"]').tooltip() })
+
+    scope.col   = attr.col;
+    scope.name  = attr.name;
+    scope.id    = attr.id;
+    scope.limit = 10;
 
     scope.select = function(item){
-      var parts = scope.ngModel.split('/');
-      parts[parts.length - 1] = item;
-      scope.ngModel = parts.join('/');
-      // if(p.length < 3) scope.ngModel = scope.ngModel + '/'
+      scope.ngModel = item;
+      scope.editing = false;
+      scope.limit   = 10;
+    }
+
+    scope.more = function(){
+      scope.limit = scope.limit + 10;
       scope.search();
     }
 
     scope.search = function(){
 
-      var parts = scope.ngModel?scope.ngModel.split('/'):null;
-      if(!parts) return;
-
-      var collection = parts[0];
-      var object     = parts[1];
-      var field      = parts[2];
-
-      if(parts.length == 3){
-        scope.level = 'fields';
-        $http.get('/api/' + collection + '/' + object)
-          .success(function (data) { 
-            scope.results = [];
-            if(!data || !data._template) return;
-            data._template.map(function(item){
-              if((new RegExp(field)).test(item.name))
-                scope.results.push(item.name);
-            });
-          });
-        return;
-      };
-
-      if(parts.length == 2){
-        scope.level = 'documents';
-        $http.get('/api/' + collection + '?query=' + object + '&limit=10')
-          .success(function (data) { 
-            scope.results = data.map(function(c){ return c._id; });
-          });
-        return;
-      };
-
-      scope.level = 'collections';
-      $http.get('/api/settings?query=collection')
+      $http.get('/api/' + scope.col + '/?query=' + scope.ngModel + '&limit=' + scope.limit)
         .success(function (data) { 
-          scope.results = [];
-          if(!data) return;
-          data.map(function(item){
-            if((new RegExp(collection)).test(item._id))
-              scope.results.push(item._id);
-          });
+          scope.limit   = 10;
+          scope.results = data;
+          if(!data) { scope.results = []; return; }
         });
     };
 
@@ -74,7 +48,7 @@ app.directive('reference', function ($http) {
       restrict: 'E',
       require: '^ngModel',
       templateUrl: '/directives/reference.html',
-      scope: { ngModel: '=', ngDisabled: '=' },
+      scope: { ngModel: '=', ngDisabled: '=', col: '@col', id: '@id', name: '@name' },
       transclude: true,
       link: link
   };

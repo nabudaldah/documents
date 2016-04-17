@@ -1,15 +1,20 @@
-<div class="input-group">  
-  <input type="text" class="form-control" ng-model="ngModel" ng-change="search()" placeholder="({{name}})">
-  <div class="input-group-btn">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-      {{results.length}}{{results.length == 10?'+':''}}
-      {{level}}
-      &nbsp; <span class="caret"></span></button>
-    <ul class="dropdown-menu dropdown-menu-right" role="menu">
-      <li><a href="" ng-repeat="item in results" ng-click="select(item)">{{item}}</a></li>
-      <li ng-if="results.length == 10"><a href="">...</a></li>
-    </ul>
-  </div>
+
+
+<div ng-show="editing">
+	<div class="input-group">
+
+		<input type="text" class="form-control" ng-model="ngModel" ng-change="search()">
+		<span class="input-group-btn">
+        <button class="btn btn-default" type="button" ng-click="editing = false">Done</button>
+    </span>
+	</div>
+	<a class="btn btn-xs"  ng-repeat="item in results" title="{{item._tags.join(' ')}}" ng-click="select(item._id)" data-toggle="tooltip" data-placement="top">{{item._id}}</a>
+	<button class="btn btn-xs btn-default" ng-click="more()">More</button>
+</div>
+
+<div ng-show="!editing">
+	<a class="btn btn-default" href="/{{col}}/{{ngModel}}" target="new">{{ngModel||"N/A"}}</a>
+	<a class="lnk lnk-default" ng-click="editing = true" href="">Edit</a>
 </div>
 
 <!-- <pre>{{ngModel}}</pre> -->

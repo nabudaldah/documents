@@ -102,8 +102,10 @@
       <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="raw()" ng-show="!new">RAW</button>
 
       <!-- edit -->
-      <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="editTemplateStart()" ng-hide="editTemplate"><span class="glyphicon glyphicon-pencil"/></button>
-      <button type="button" class="btn btn-warning pull-right" style="margin-right: 0.3em" ng-click="editTemplateStop()" ng-show="editTemplate"><span class="glyphicon glyphicon-pencil"/></button>
+      <div ng-show="hasTemplate">
+        <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="editTemplateStart()" ng-hide="editTemplate"><span class="glyphicon glyphicon-pencil"/></button>
+        <button type="button" class="btn btn-warning pull-right" style="margin-right: 0.3em" ng-click="editTemplateStop()" ng-show="editTemplate"><span class="glyphicon glyphicon-pencil"/></button>
+      </div>
       <!-- /edit -->
 
       <!-- save -->
@@ -148,7 +150,7 @@
     <!-- /_tags -->
 
     <!-- _template -->
-    <div ng-repeat="field in doc._template track by field.name">
+    <div ng-repeat="field in template track by field.name">
 
       <!-- before field, visual helper for drag-and-drop -->
       <div id="before-field-{{field.name}}" class="before-field" style="display: none; background-color: green; opacity: 0.5"></div>
@@ -199,20 +201,20 @@
 
 
         <!-- Primitive data types (should autosave on changes) -->
-        <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'text'"       ng-model="doc[field.name]" ng-disabled="!editing" type="text" class="form-control" placeholder="({{field.name}})">
-        <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'number'"     ng-model="doc[field.name]" ng-disabled="!editing" type="number" class="form-control" placeholder="({{field.name}})">
+        <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'text'"       ng-model="doc[field.name]" ng-disabled="!editing" type="text" class="form-control">
+        <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'number'"     ng-model="doc[field.name]" ng-disabled="!editing" type="number" class="form-control">
         <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'date'"       ng-model="doc[field.name]" ng-disabled="!editing" type="date" class="form-control">
         <input         ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'time'"       ng-model="doc[field.name]" ng-disabled="!editing" type="time" class="form-control">
-        <textarea      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'textarea'"   ng-model="doc[field.name]" ng-disabled="!editing" class="form-control code" rows="9" placeholder="({{field.name}})" style="margin-bottom: -10px; font-size: small; font-family: monospace; border: 1px solid #ccc; border-radius: 4px"></textarea>
+        <textarea      ng-change="autosaveEventually(field.name)" ng-blur="autosaveNow(field.name)" ng-if="field.type == 'textarea'"   ng-model="doc[field.name]" ng-disabled="!editing" class="form-control code" rows="9" style="margin-bottom: -10px; font-size: small; font-family: monospace; border: 1px solid #ccc; border-radius: 4px"></textarea>
 
         <!-- Fields that contact the API directly -->
         <javascript    ng-if="field.type == 'javascript'"   ng-model="doc[field.name]" ng-disabled="!editing" col       ="{{collection}}" id="{{id}}" script="{{field.name}}"></javascript>
         <rscript       ng-if="field.type == 'rscript'"      ng-model="doc[field.name]" ng-disabled="!editing" col       ="{{collection}}" id="{{id}}" script="{{field.name}}"></rscript>
         <password      ng-if="field.type == 'password'"     ng-model="doc[field.name]" ng-disabled="!editing" collection="{{collection}}" id="{{id}}" name  ="{{field.name}}"></password>
+        <reference     ng-if="field.type == 'reference'"    ng-model="doc[field.name]" ng-disabled="!editing" col       ="{{collection}}" id="{{id}}" name  ="{{field.name}}"></reference>
 
         <!-- Fields that are simply using ngModel of current scope -->
         <timeslice     ng-if="field.type == 'timeslice'"    ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></timeslice>
-        <reference     ng-if="field.type == 'reference'"    ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></reference>
         <tree          ng-if="field.type == 'tree'"         ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></tree>
         <process       ng-if="field.type == 'process'"      ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></process>
         <file          ng-if="field.type == 'file'"         ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></file>
@@ -250,7 +252,7 @@
     <div class="form-group clean-inputs col-sm-{{columns}}" ng-repeat="(key, value) in doc" ng-if="additional(key)">
       <label class="control-label">{{key}}</label>
       <div class="">
-        <input ng-change="autosaveEventually(key)" ng-blur="autosaveNow(key)" type="text"   class="form-control" ng-model="doc[key]" ng-disabled="!editing" placeholder="({{key}})">
+        <input ng-change="autosaveEventually(key)" ng-blur="autosaveNow(key)" type="text"   class="form-control" ng-model="doc[key]" ng-disabled="!editing">
       </div>
     </div>
     <!-- /non _template fields -->
@@ -262,7 +264,7 @@
       </label>
 
       <div class="input-group">
-        <input type="text" class="form-control" ng-model="newPropertyName" placeholder="(new property)">
+        <input type="text" class="form-control" ng-model="newPropertyName">
         <div class="input-group-btn">
           <button type="submit" class="btn btn-default" ng-click="addProperty('text')" ng-disabled="!newPropertyOk()">Add</button>
           <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" ng-disabled="!newPropertyOk()"><span class="caret"></span></button>
@@ -285,7 +287,9 @@
             <!-- <li><a href="" ng-click="addProperty('date')">date</a></li> -->
             <!-- <li><a href="" ng-click="addProperty('time')">time</a></li> -->
             <!-- <li><a href="" ng-click="addProperty('timeslice')">timeslice</a></li> -->
-            <!-- <li><a href="" ng-click="addProperty('reference')">reference</a></li> -->
+            
+            <li><a href="" ng-click="addProperty('reference')">Reference</a></li>
+
             <!-- <li><a href="" ng-click="addProperty('timeseries')">timeseries</a></li> -->
             <!-- <li><a href="" ng-click="addProperty('googlemaps')">googlemaps</a></li> -->
             <!-- <li><a href="" ng-click="addProperty('tree')">tree</a></li> -->
@@ -307,3 +311,6 @@
 
 </div>
 <!-- /panel -->
+
+<!-- <pre>{{template}}</pre> -->
+<!-- <pre>{{doc}}</pre> -->

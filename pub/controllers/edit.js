@@ -16,19 +16,6 @@ ctrl.controller('edit',
   $('[data-toggle="popover"]').popover({html: true, container: 'body', trigger: 'hover' });
 
   $scope.doc   = {};
-  $scope.doc._template = [];
-
-  // setTimeout(function(){
-  //   console.log('timeout zv!')
-  //   $scope.doc['zv'] = [{height: 1.8, name: "Moroni", age: Math.round(Math.random() * 500) },
-  //                   {name: "Tiancum", age: Math.round(Math.random() * 430) },
-  //                   {name: "Jacob", age: Math.round(Math.random() * 270) },
-  //                   {name: "Nephi", age: Math.round(Math.random() * 290) },
-  //                   {name: "Enos", age: Math.round(Math.random() * 340) }];
-  //   $scope.$apply();
-
-  // }, 1000);
-
 
   $scope.new = !$scope.id;
   //$scope.ready = true;
@@ -38,11 +25,8 @@ ctrl.controller('edit',
 
     $scope.editing = true;
     $scope.doc = {
-      // _id: $scope.collection + '-' + uuid().split('-')[0],
       _id: uuid().split('-')[0],
-      // _tags: [$scope.collection],
-      _tags: ['by:' + $scope.user._id, 'date:' + moment().format('YYYY-MM-DD'), 'time:' + moment().format('HH:mm')],
-      _template: []
+      _tags: ['by:' + $scope.user._id, 'date:' + moment().format('YYYY-MM-DD'), 'time:' + moment().format('HH:mm')]
     }
     
     if($routeParams.template){
@@ -52,11 +36,14 @@ ctrl.controller('edit',
           var index = templateObject._tags.indexOf('template');
           templateObject._tags.splice(index, 1);
         }
-        $scope.doc = templateObject;
-        $scope.doc._id = uuid().split('-')[0],
-        $scope.ready= true;
+        $scope.template      = templateObject._template;
+        $scope.doc           = templateObject;
+        $scope.doc._id       = uuid().split('-')[0],
+        $scope.doc._template = $routeParams.template;
+        $scope.hasTemplate   = false;
+        $scope.ready         = true;
       }).error(function(error){
-        $scope.ready = true;
+        $scope.ready         = true;
       });
     } else {
       $scope.ready= true;
@@ -71,6 +58,30 @@ ctrl.controller('edit',
       $scope.doc = doc;
       $scope.ready = true;
 
+      // If object has an referenced template (indicated by a string refereing to ID of template object), take that objects template as template here
+      if(typeof($scope.doc._template) == 'string'){
+
+        $http.get('/api/' + $scope.collection + '/' + $scope.doc._template)
+        .success(function (templateObject) {
+          if(templateObject._tags && templateObject._tags.indexOf('template') != -1) {
+            var index = templateObject._tags.indexOf('template');
+            templateObject._tags.splice(index, 1);
+          }
+          $scope.template      = templateObject._template;
+          $scope.hasTemplate   = false;
+          $scope.ready         = true;
+        }).error(function(error){
+          $scope.ready         = true;
+        });
+
+      }
+
+      if(typeof($scope.doc._template) == 'object'){
+        $scope.template = $scope.doc._template;
+        $scope.hasTemplate = true;
+      }
+
+
     }).error(function(error){
       messages.add('danger', 'Error retrieving doc "' + $scope.reference + '".');
     });
@@ -80,6 +91,7 @@ ctrl.controller('edit',
   $scope.additional = function(field){
     //if(field.charAt(0) == '_') return false;
     if(['_id', '_tags', '_template', '_data', '_update', '_public'].indexOf(field) != -1) return false;
+    for(t in $scope.template) if($scope.template[t].name == field) return false;
     for(t in $scope.doc._template) if($scope.doc._template[t].name == field) return false;
     return true;
   }

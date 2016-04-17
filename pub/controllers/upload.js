@@ -25,7 +25,7 @@ ctrl.controller('upload',
         return(JSON.parse(JSON.stringify(obj)))
     }
 
-    var tokenize = function(str){ return(str.replace(/\s+/g, '_').replace(/\W+/g, '')) }
+    var tokenize = function(str){ if(typeof(str) == "string") return(str.replace(/\s+/g, '_').replace(/\W+/g, '')); else return(str) }
 
     var tokenizeDocuments = function(documents){
         return(documents.map(function(doc){
@@ -104,6 +104,20 @@ ctrl.controller('upload',
         var idcolumn = false;
         if(_.uniq($scope.data.map(function(obj){ return obj[$scope.columns[0]] })).length == $scope.data.length)
             idcolumn = true;
+
+        var templateId;
+        if($scope.tags && $scope.tags.length)
+            templateId = $scope.tags.join('_');
+        else
+            templateId = uuid().split('-')[0]
+        var tags;
+        if($scope.tags && $scope.tags.length)
+            tags = JSON.parse(JSON.stringify($scope.tags));
+        else tags = []
+        tags.push('template')
+        var template = $scope.columns.map(function(column){ return ({type: 'text', name: column })})
+        var templateObject = { _id: templateId, _tags: tags, _template: template }
+
         var data = $scope.data.map(function(obj, i, m){
             if($scope.options.trim) for(k in obj) obj[k] = obj[k].toString().trim();
             if($scope.options.parse) for(k in obj) {
@@ -114,25 +128,15 @@ ctrl.controller('upload',
             if(idcolumn) obj._id = tokenize(obj[$scope.columns[0]]);
             else obj._id = uuid().split('-')[0];
             obj._tags = []
+            obj._template = templateId;
             if($scope.tags) obj._tags = obj._tags.concat(JSON.parse(JSON.stringify($scope.tags)));
             if($scope.options.tags) obj._tags = obj._tags.concat(extractTags(obj))
+            obj._tags.push('template:' + templateId)
             $scope.progress = Math.ceil((i + 1) / m.length * 90)
             console.log($scope.progress)
             return(obj)
         })
 
-        var id;
-        if($scope.tags && $scope.tags.length)
-            id = 'upload_' + $scope.tags.join('_');
-        else
-            id = 'upload_' + uuid().split('-')[0]
-        var tags;
-        if($scope.tags && $scope.tags.length)
-            tags = JSON.parse(JSON.stringify($scope.tags));
-        else tags = []
-        tags.push('template')
-        var template = $scope.columns.map(function(column){ return ({type: 'text', name: column })})
-        var templateObject = { _id: id, _tags: tags, _template: template }
         data.push(templateObject)
 
         var url = '/api/' + $scope.collection;
