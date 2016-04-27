@@ -14,8 +14,9 @@ module.exports = function(context){
     var skip   = parseInt(req.query.skip)  || 0;
     var fields = req.query.fields || '';
 
-    var queryFields = { _id: 1, name: 1, _tags: 1 }
-    if(fields != '') fields.split(',').map(function(field) { queryFields[field] = 1 })
+    var queryFields = { _id: 1 }
+    if(fields != '') { fields.split(',').map(function(field) { queryFields[field] = 1 }) }
+    else { queryFields = { _id: 1, name: 1, _tags: 1 } }
 
     var regex;
     try     { regex = new RegExp(req.query.query, 'i'); }
