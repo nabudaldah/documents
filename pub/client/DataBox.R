@@ -14,10 +14,10 @@ DataBox <- setRefClass("DataBox",
       user <<- user
       pass <<- pass
     },
-    list = function(query = '', skip = 0, limit = 24) {
+    list = function(query = '', skip = 0, limit = 24, fields = '') {
       auth <- authenticate(user, pass, type = "basic")
       conf <- config(ssl_verifypeer = F)
-      urlx <- paste0(url, '/', user, '?query=', query, '&skip=', skip, '&limit=', limit)
+      urlx <- paste0(url, '/', user, '?query=', query, '&skip=', skip, '&limit=', limit, '&fields=', fields)
       result <- GET(urlx, auth, conf)
       warn_for_status(result)
       result <- content(result)

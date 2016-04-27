@@ -10,8 +10,12 @@ module.exports = function(context){
 
   app.get('/api/:collection', function (req, res) {
     var collection = db.collection(req.params.collection);
-    var limit = parseInt(req.query.limit) || 25;
-    var skip  = parseInt(req.query.skip)  || 0;
+    var limit  = parseInt(req.query.limit) || 25;
+    var skip   = parseInt(req.query.skip)  || 0;
+    var fields = req.query.fields || '';
+
+    var queryFields = { _id: 1, name: 1, _tags: 1 }
+    if(fields != '') fields.split(',').map(function(field) { queryFields[field] = 1 })
 
     var regex;
     try     { regex = new RegExp(req.query.query, 'i'); }
@@ -27,7 +31,7 @@ module.exports = function(context){
   	    res.send({ count: data });
   	  });
     } else {
-  		collection.find(query, { _id: 1, name: 1, _tags: 1 })
+  		collection.find(query, queryFields)
   		.limit(limit)
   		.skip(skip).toArray(function (err, data) { 
   			if(err || !data) { stderr(err); res.status(500).end(); return; }
