@@ -45,8 +45,13 @@ ctrl.controller('edit',
       }).error(function(error){
         $scope.ready         = true;
       });
+      
     } else {
-      $scope.ready= true;
+
+      $scope.ready = true;
+      $scope.template = [];
+      $scope.doc._template = [];
+
     }
   }
 
