@@ -86,8 +86,10 @@
     <!-- buttons -->
     <div id="buttons">
 
-      <!-- remove + confirm -->
+      <!-- close -->
       <a href="/#/{{collection}}" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()"><span class="glyphicon glyphicon-remove"></span></a>
+
+      <!-- remove + confirm -->
       <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="deleting=!deleting" ng-show="!new"><span class="glyphicon glyphicon-trash"/></button>
       <button type="button" class="btn btn-danger pull-right" style="margin-right: 0.3em" ng-show="deleting" ng-click="delete()">DELETE</button>
       <!-- /remove -->
@@ -100,6 +102,9 @@
 
       <!-- raw -->
       <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="raw()" ng-show="!new">RAW</button>
+
+      <!-- script -->
+      <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="script()" ng-show="!new"><span class="glyphicon glyphicon-play"></span></button>
 
       <!-- edit -->
       <div ng-show="hasTemplate">
@@ -280,7 +285,7 @@
 
             <li class="divider"></li>
 
-            <li><a href="" ng-click="addProperty('rscript')">Computation</a></li>
+            <!-- <li><a href="" ng-click="addProperty('rscript')">Computation</a></li> -->
             <!-- <li><a href="" ng-click="addProperty('javascript')">Business logic</a></li> -->
 
             <!-- <li><a href="" ng-click="addProperty('number')">number</a></li> -->

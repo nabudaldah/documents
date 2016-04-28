@@ -95,7 +95,7 @@ ctrl.controller('edit',
 
   $scope.additional = function(field){
     //if(field.charAt(0) == '_') return false;
-    if(['_id', '_tags', '_template', '_data', '_update', '_public'].indexOf(field) != -1) return false;
+    if(['_id', '_tags', '_template', '_data', '_update', '_public', '_script'].indexOf(field) != -1) return false;
     for(t in $scope.template) if($scope.template[t].name == field) return false;
     for(t in $scope.doc._template) if($scope.doc._template[t].name == field) return false;
     return true;
@@ -118,6 +118,11 @@ ctrl.controller('edit',
 
   $scope.raw = function(){
     var url = $location.path() + '/raw';
+    $location.path(url);
+  }
+
+  $scope.script = function(){
+    var url = $location.path() + '/script';
     $location.path(url);
   }
 

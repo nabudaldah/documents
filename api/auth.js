@@ -169,6 +169,13 @@ module.exports = function(context){
       return;
     }
 
+    // Users in this multi-tenant system are allowed to view their own user settings 
+    if(req.params.collection == 'automate') {
+      stdout('Access Control: Granted: Own automated items');
+      next();
+      return;
+    }
+
     // Users in this multi-tenant system are only allowed to access their own collection 
     if(req.params.collection == req.username) {
       stdout('Access Control: Granted: Own collection');

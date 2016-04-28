@@ -32,6 +32,7 @@ app.config(['$routeProvider', '$locationProvider',
     .when('/:collection/share',         { templateUrl: '/views/share.html',    controller: 'share'    })
     .when('/:collection/:id',           { templateUrl: '/views/edit.html',     controller: 'edit'     })
     .when('/:collection/:id/raw',       { templateUrl: '/views/raw.html' ,     controller: 'raw'      })
+    .when('/:collection/:id/script',    { templateUrl: '/views/script.html' ,  controller: 'script'   })
 
     .otherwise({ redirectTo: '/home'});
 

@@ -179,6 +179,7 @@ var apiBind = function(callback){
 
   require(process.cwd() + '/api/auth.js')(context)
   require(process.cwd() + '/api/public.js')(context)
+  require(process.cwd() + '/api/automate.js')(context)
   require(process.cwd() + '/api/collection.js')(context)
   require(process.cwd() + '/api/upload.js')(context)
   require(process.cwd() + '/api/pivot.js')(context)

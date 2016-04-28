@@ -1,0 +1,279 @@
+<!-- panel -->
+<div id="main-panel" class="panel panel-default fade" ng-class="{in:ready}">
+
+  <!-- panel-heading -->
+  <div class="panel-heading clearfix">
+
+    <!-- title -->
+    <h3 style="padding-left: 0.6em; padding-right: 0.5em; margin: 0; margin-top: 0.2em" class="pull-left">{{doc._id}} <small ng-if="doc._update" title="{{doc._update}}">updated {{doc._update | fromNow}}</small></h3>
+
+    <!-- buttons -->
+    <div id="buttons">
+
+      <!-- remove + confirm -->
+      <a href="/#/{{collection}}/{{id}}" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="close()"><span class="glyphicon glyphicon-remove"></span></a>
+
+      <!-- save -->
+      <button class="btn btn-default pull-right" ng-click="save()" ng-disabled="saving" style="margin-right: 0.3em"><span class="glyphicon glyphicon-floppy-disk" ng-hide="saving"></span><img  src="/images/loading.gif" ng-show="saving"/></button>
+      
+    </div>
+    <!-- /buttons -->
+
+  </div>
+  <!-- /panel-heading -->
+
+  <!-- panel-body -->
+  <div class="panel-body">
+
+<div class="form-group">
+
+  <!-- exec -->
+  <button class="btn btn-default pull-right" ng-click="compute()" ng-disabled="computing" style="margin-right: 0.3em"><span class="glyphicon glyphicon-play" ng-hide="computing"></span> &nbsp; Execute<img  src="/images/loading.gif" ng-show="computing"/></button>
+
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      <span class="glyphicon glyphicon-book"></span> &nbsp; Quick &nbsp; <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="" class="function" ng-click="insert('v(property, id, collection)')"><strong>v</strong>(property, id, collection)            </a></li>
+      <li><a href="" class="function" ng-click="insert('doc(id, collection)')"><strong>doc</strong>(id, collection)                      </a></li>
+      <li><a href="" class="function" ng-click="insert('docs(tags, collection)')"><strong>docs</strong>(tags, collection)                    </a></li>
+    </ul>
+  </div>
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      <span class="glyphicon glyphicon-book"></span> &nbsp; My &nbsp; <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="" class="function" ng-click="insert('me()')"><strong>me</strong>()                                    </a></li>
+      <li><a href="" class="function" ng-click="insert('my(property, value)')"><strong>my</strong>(property, value)                     </a></li>
+      <li><a href="" class="function" ng-click="insert('my.ts(property, vector)')"><strong>my.ts</strong>(property, vector)                    </a></li>
+      <li><a href="" class="function" ng-click="insert('my.tree(property)')"><strong>my.tree</strong>(property)                            </a></li>
+    </ul>
+  </div>
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      <span class="glyphicon glyphicon-book"></span> &nbsp; Timeseries &nbsp; <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="" class="function" ng-click="insert('ts(property, id, collection)')"><strong>ts</strong>(property, id, collection)            </a></li>
+      <li><a href="" class="function" ng-click="insert('ts.new(base, interval, vector)')"><strong>ts.new</strong>(base, interval, vector)              </a></li>
+      <li><a href="" class="function" ng-click="insert('ts.save(vector, property, id, collection)')"><strong>ts.save</strong>(vector, property, id, collection)    </a></li>
+      <li><a href="" class="function" ng-click="insert('ts.sum(tags, property, collection)')"><strong>ts.sum</strong>(tags, property, collection)          </a></li>
+    </ul>
+  </div>
+
+  <div class="btn-group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+      <span class="glyphicon glyphicon-book"></span> &nbsp; Misc. &nbsp; <span class="caret"></span>
+    </button>
+    <ul class="dropdown-menu" role="menu">
+      <li><a href="" class="function" ng-click="insert('trigger.me()')"><strong>trigger.me</strong>()                                    </a></li>
+      <li><a href="" class="function" ng-click="insert('trigger.my(property)')"><strong>trigger.my</strong>(property)                            </a></li>
+      <li class="divider"></li>
+      <li><a href="" class="function" ng-click="insert('shard()')"><strong>shard</strong>()                                    </a></li>
+      <li><a href="" class="function" ng-click="insert('cluster()')"><strong>cluster</strong>()                                    </a></li>
+    </ul>
+  </div>
+
+
+</div>
+
+<!-- <textarea rows="10" type="text" class="form-control code" ng-model="ngModel"></textarea>  -->
+<div class="form-group">
+<textarea id="editor" ng-model="script"></textarea>  
+</div>
+
+<hr/>
+
+<div class="form-group">
+  <textarea class="form-control" style="font-family: monospace, 'Courier', 'Courier New'; font-size: small" id="message" rows = '10' ng-model="message" ng-disabled="true"></textarea>  
+</div>
+
+  </div>
+  <!-- /panel-body -->
+
+</div>
+<!-- /panel -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+  .CodeMirror-lint-mark-error {
+    color: yellow;
+    background-color: red;
+  }
+
+  .CodeMirror {
+    font-size: small;
+-webkit-appearance: none;
+-webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
+-webkit-rtl-ordering: logical;
+-webkit-transition-delay: 0s, 0s;
+-webkit-transition-duration: 0.15s, 0.15s;
+-webkit-transition-property: border-color, box-shadow;
+-webkit-transition-timing-function: ease-in-out, ease-in-out;
+-webkit-user-select: text;
+-webkit-writing-mode: horizontal-tb;
+background-color: rgb(255, 255, 255);
+background-image: none;
+border-bottom-color: rgb(204, 204, 204);
+border-bottom-left-radius: 4px;
+border-bottom-right-radius: 4px;
+border-bottom-style: solid;
+border-bottom-width: 1px;
+border-image-outset: 0px;
+border-image-repeat: stretch;
+border-image-slice: 100%;
+border-image-source: none;
+border-image-width: 1;
+border-left-color: rgb(204, 204, 204);
+border-left-style: solid;
+border-left-width: 1px;
+border-right-color: rgb(204, 204, 204);
+border-right-style: solid;
+border-right-width: 1px;
+border-top-color: rgb(204, 204, 204);
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
+border-top-style: solid;
+border-top-width: 1px;
+box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset;
+box-sizing: border-box;
+color: rgb(85, 85, 85);
+cursor: auto;
+display: block;
+flex-direction: column;
+font-family: monospace;
+font-size: 12px;
+font-stretch: normal;
+font-style: normal;
+font-variant: normal;
+font-weight: normal;
+height: 167px;
+letter-spacing: normal;
+line-height: 17.142858505249px;
+margin-bottom: -10px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 0px;
+/*overflow-x: auto;*/
+/*overflow-y: auto;*/
+padding: 0;
+resize: both;
+text-align: start;
+text-indent: 0px;
+text-shadow: none;
+text-transform: none;
+transition-delay: 0s, 0s;
+transition-duration: 0.15s, 0.15s;
+transition-property: border-color, box-shadow;
+transition-timing-function: ease-in-out, ease-in-out;
+white-space: pre-wrap;
+word-spacing: 0px;
+word-wrap: break-word;
+writing-mode: lr-tb;
+
+  }
+
+  .CodeMirror-focused {
+-webkit-appearance: none;
+-webkit-box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(103, 175, 233, 0.6) 0px 0px 7.99997997283936px 0px;
+-webkit-rtl-ordering: logical;
+-webkit-transition-delay: 0s, 0s;
+-webkit-transition-duration: 0.15s, 0.15s;
+-webkit-transition-property: border-color, box-shadow;
+-webkit-transition-timing-function: ease-in-out, ease-in-out;
+-webkit-user-select: text;
+-webkit-writing-mode: horizontal-tb;
+background-color: rgb(255, 255, 255);
+background-image: none;
+border-bottom-color: rgb(102, 175, 233);
+border-bottom-left-radius: 4px;
+border-bottom-right-radius: 4px;
+border-bottom-style: solid;
+border-bottom-width: 1px;
+border-image-outset: 0px;
+border-image-repeat: stretch;
+border-image-slice: 100%;
+border-image-source: none;
+border-image-width: 1;
+border-left-color: rgb(102, 175, 233);
+border-left-style: solid;
+border-left-width: 1px;
+border-right-color: rgb(102, 175, 233);
+border-right-style: solid;
+border-right-width: 1px;
+border-top-color: rgb(102, 175, 233);
+border-top-left-radius: 4px;
+border-top-right-radius: 4px;
+border-top-style: solid;
+border-top-width: 1px;
+box-shadow: rgba(0, 0, 0, 0.0745098) 0px 1px 1px 0px inset, rgba(103, 175, 233, 0.6) 0px 0px 7.99997997283936px 0px;
+box-sizing: border-box;
+color: rgb(85, 85, 85);
+cursor: auto;
+display: block;
+flex-direction: column;
+font-family: monospace;
+font-size: 12px;
+font-stretch: normal;
+font-style: normal;
+font-variant: normal;
+font-weight: normal;
+height: 167px;
+letter-spacing: normal;
+line-height: 17.142858505249px;
+margin-bottom: -10px;
+margin-left: 0px;
+margin-right: 0px;
+margin-top: 0px;
+/*overflow-x: auto;*/
+/*overflow-y: auto;*/
+padding: 0;
+resize: both;
+text-align: start;
+text-indent: 0px;
+text-shadow: none;
+text-transform: none;
+transition-delay: 0s, 0s;
+transition-duration: 0.15s, 0.15s;
+transition-property: border-color, box-shadow;
+transition-timing-function: ease-in-out, ease-in-out;
+white-space: pre-wrap;
+word-spacing: 0px;
+word-wrap: break-word;
+writing-mode: lr-tb;
+  }
+
+.CodeMirror-fullscreen {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  height: auto;
+  z-index: 9;
+}
+
+</style>
