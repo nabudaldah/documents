@@ -45,6 +45,7 @@ module.exports = function(context){
       var init = 'context <- list('
         + 'collection="' + req.params.collection + '", '
         + 'id="'         + req.params.id         + '", '
+        + 'pubtmp="'     + config.R.pubtmp       + '", '
         + 'dbhost="'     + config.db.host        + '", '
         + 'dbport="'     + config.db.port        + '", '
         + 'database="'   + config.db.database    + '", '

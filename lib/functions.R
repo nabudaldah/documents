@@ -596,7 +596,7 @@ figure <- function(p, property, width = 800, height = 600){
   library(ggplot2)
 
   id <- UUIDgenerate()
-  file_temp <- paste0('C:/temp/documents/pub/tmp/', id, '.png')
+  file_temp <- paste0(context$pubtmp, '/', id, '.png')
   file_link <- paste0('/tmp/', id, '.png')
 
   if('ggplot' %in% class(p)){
