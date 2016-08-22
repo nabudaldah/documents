@@ -537,4 +537,19 @@ ctrl.controller('edit',
 
   }
 
+  $scope.compute = function(){
+    $scope.message = "Computing..."
+    $scope.computing = true;
+    $http.get($scope.api + '/compute/_script')
+    .success(function(data, status, headers, config) {
+        $scope.message = data;
+        $scope.computing = false;
+        $scope.refresh();
+    }).error(function(data, status, headers, config){
+        $scope.message = data;
+        $scope.computing = false;
+    });
+  };
+
+
 }]);

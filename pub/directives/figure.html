@@ -1,0 +1,12 @@
+
+<div>
+
+	<img src="{{ngModel}}" class="img-responsive" alt="Responsive image">
+
+	<div ng-show="edit" class="form-group">
+        <label class="control-label">Options list for {{name}}</label>
+		<input ng-model="ngModel" ng-change="update()" name="{{name}}" type="text" class="form-control" placeholder="({{name}} url)">	
+	</div>
+
+
+</div>

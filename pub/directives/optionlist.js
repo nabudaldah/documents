@@ -39,7 +39,7 @@ app.directive('optionlist', function() {
       restrict: 'E',
       require: '^ngModel',
       templateUrl: '/directives/optionlist.html',
-      scope: { ngModel: '=', ngDisabled: '=', name: '@', list: '=', edit: '@'},
+      scope: { ngModel: '=', ngDisabled: '=', name: '@', list: '=', edit: '='},
       transclude: true,
       link: link
   };

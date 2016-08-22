@@ -31,8 +31,7 @@ cd /opt/documents
 npm install bower -g
 npm install forever -g
 
-Rscript -e "install.packages('rmongodb', repos='http://cran-mirror.cs.uu.nl/')"
-Rscript -e "install.packages('xts',      repos='http://cran-mirror.cs.uu.nl/')"
+Rscript -e "install.packages(c('data.table', 'readxl', 'magrittr', 'dplyr', 'tidyr', 'rmongodb', 'xts', 'uuid', 'ggplot2', 'stringr'), repos='http://cran-mirror.cs.uu.nl/')"
 
 cp /opt/documents/documents.service /etc/init/documents.service
 
@@ -43,6 +42,8 @@ npm install
 
 cd /opt/documents/pub
 bower install -s --allow-root --no-interactive | xargs echo
+
+[ -d /opt/documents/pub/tmp ] || mkdir -p /opt/documents/pub/tmp
 
 systemctl daemon-reload
 systemctl start documents

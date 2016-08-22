@@ -3,9 +3,21 @@
 # Nabi Abudaldah, GEN B.V., 2014, v0.1                                        #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# Once
+#install.packages(c('data.table', 'readxl', 'magrittr', 'dplyr', 'tidyr', 'rmongodb', 'xts', 'uuid', 'ggplot2', 'stringr'), repos='http://cran-mirror.cs.uu.nl/')
+
 # Libraries
+library(data.table)
+library(readxl)
+library(magrittr)
+library(dplyr)
+library(tidyr)
 library(rmongodb)
 library(xts)
+library(uuid)
+library(ggplot2)
+library(stringr)
+
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # Generic functions that are static and do not need a DB connection           #
@@ -576,3 +588,25 @@ untag <- function(tags, id = NULL, collection = NULL){
 #v(collection = 'timeseries', id = 'new-functions-r', property = 'results', value='nabi')
 #trigger(collection = 'timeseries', id = 'new-functions-r')
 
+# Figure
+
+figure <- function(p, property, width = 800, height = 600){
+  
+  library(uuid)
+  library(ggplot2)
+
+  id <- UUIDgenerate()
+  file_temp <- paste0('C:/temp/documents/pub/tmp/', id, '.png')
+  file_link <- paste0('/tmp/', id, '.png')
+
+  if('ggplot' %in% class(p)){
+    print(p)
+    ggsave(file_temp, width = width / 100, height = height / 100, dpi = 100)
+  } else {
+    png(file_temp, width = width, height = height)
+    print(p)
+    dev.off()
+  }
+  
+  my(property, file_link)
+}
