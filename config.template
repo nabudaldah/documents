@@ -9,7 +9,8 @@
   },
   "R": {
     "exe": "/usr/bin/R",
-    "init": "source('/opt/documents/lib/functions.R')"
+    "init": "source('/opt/documents/lib/functions.R')",
+    "pubtmp": "/opt/documents/pub/tmp"
   },
   "db": {
     "host": "127.0.0.1",
