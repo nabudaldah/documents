@@ -107,7 +107,7 @@
       <button type="button" class="btn btn-default pull-right" style="margin-right: 0.3em" ng-click="script()" ng-show="!new">R-code</button>
 
       <!-- exec -->
-      <button class="btn btn-default pull-right" ng-click="compute()" ng-disabled="computing" style="margin-right: 0.3em"><span class="glyphicon glyphicon-play" ng-hide="computing"></span><img  src="/images/loading.gif" ng-show="computing"/></button>
+      <button class="btn btn-default pull-right" ng-click="compute()" ng-disabled="computing" style="margin-right: 0.3em" ng-hide="new || computing"><span class="glyphicon glyphicon-play"></span><img  src="/images/loading.gif" ng-show="computing"/></button>
 
 
       <!-- edit -->

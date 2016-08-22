@@ -34,6 +34,9 @@ db
 # Bower dependencies
 pub/bower_components
 
+# Temporary R-graphics
+pub/tmp
+
 # Configurations
 config.json
 ssl
