@@ -225,7 +225,8 @@
         <file          ng-if="field.type == 'file'"         ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></file>
         <header        ng-if="field.type == 'header'"       ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></header>
         <progressbar   ng-if="field.type == 'progressbar'"  ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></progressbar>
-        <taginput      ng-if="field.type == 'taginput'"     ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></taginput>
+        <taginput      ng-if="field.type == 'taginput'"     ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></taginput>      
+        <optionlist    ng-if="field.type == 'optionlist'"   ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}" list="field.list" edit="{{editTemplate}}"></optionlist>
         <!-- <datatable     ng-if="field.type == 'datatable'"    ng-model="doc[field.name]" ng-disabled="!editing" name="{{field.name}}"></datatable> -->
 
         <div ng-if="field.type == 'table'" ui-grid="{ data: 'doc[field.name]' }" ui-grid-selection ui-grid-exporter class="grid" style="margin-bottom: 1em"></div>
@@ -301,7 +302,7 @@
             <!-- <li><a href="" ng-click="addProperty('process')">process</a></li> -->
             <!-- <li><a href="" ng-click="addProperty('file')">file</a></li> -->
             <!-- <li><a href="" ng-click="addProperty('password')">password</a></li> -->
-            <!-- <li><a href="" ng-click="addProperty('option')">option</a></li> -->
+            <li><a href="" ng-click="addProperty('optionlist')">Option List</a></li>
             <!-- <li><a href="" ng-click="addProperty('hidden')">hidden</a></li> -->
           </ul>
         </div><!-- /btn-group -->
@@ -317,5 +318,7 @@
 </div>
 <!-- /panel -->
 
+<!-- <pre>{{_template}}</pre> -->
 <!-- <pre>{{template}}</pre> -->
+<!-- <pre>{{doc._template}}</pre> -->
 <!-- <pre>{{doc}}</pre> -->

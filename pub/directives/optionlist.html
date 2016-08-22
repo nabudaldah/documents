@@ -1,0 +1,16 @@
+
+<div>
+
+	<div class="form-group">
+	<select class="form-control" id="options" ng-model="ngModel">
+		<option ng-repeat="i in list">{{i}}</option>
+	</select>
+	</div>
+
+	<div ng-show="edit" class="form-group">
+        <label class="control-label">Options list for {{name}}</label>
+		<input ng-model="listInput" ng-change="update()" name="{{name}}" type="text" class="form-control" placeholder="({{name}})">	
+	</div>
+
+
+</div>

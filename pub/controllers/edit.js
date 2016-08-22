@@ -221,6 +221,7 @@ ctrl.controller('edit',
   }
 
   $scope.addProperty = function(type){
+    // if($scope.hasTemplate == false);
     $scope.newProperty = { type: type, name: $scope.newPropertyName } // default text field...
     if(!$scope.doc._template) $scope.doc._template = [];
     $scope.doc._template.push($scope.newProperty);
@@ -240,8 +241,9 @@ ctrl.controller('edit',
       };
     }
     // Auto save after adding property
-    $scope.save();
     delete $scope.newPropertyName;
+    $scope.template = $scope.doc._template;
+    if(!$scope.new) $scope.save();
   };
 
   $scope.newPropertyOk = function(){
